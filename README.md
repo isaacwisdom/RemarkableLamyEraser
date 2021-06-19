@@ -21,3 +21,28 @@ systemctl daemon-reload
 systemctl enable LamyEraser.service
 systemctl start LamyEraser.service
 ```
+# Usage 
+When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
+thinking you are using the eraser side of the Marker Plus.
+Press and hold to eraser, release to use as a normal pen
+
+Toggle Mode:
+I also created a mode that toggles between eraser mode and pen mode on the button press. However, due to the way the EMR technology works, the reMarkable can only catch when you've pressed the button on the Lamy pen when it is close to the screen. Personally, I found this made it difficult to use this mode, but if you'd like to switch modes, add --toggle argument in line 6 of the LamyEraser.service file (using nano or whatever). It should look like this:
+```
+ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle
+```
+(Remove the argument to return to press and hold mode.)
+Then run these commands
+``` Shell
+cd ~/RemarkableLamyEraser
+cp LamyEraser.service /lib/systemd/system/
+systemctl stop LamyEraser.service
+systemctl daemon-reload
+systemctl start LamyEraser.service
+```
+
+# TODO:
+- [ ] RM1 support (testers needed)
+- [ ] Nice install script
+- [ ] Some way of changing the toggle mode preference while the service is already running (Anyone have any ideas for this?)
+
