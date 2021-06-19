@@ -1,6 +1,9 @@
 # RemarkableLamyEraser
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
+Also confirmed to work with these other styli:
+ * Samsung S6 S Pen
+
 # Install Instructions
 SSH into your reMarkable and make a directory to store our files:
 ```Shell
@@ -21,6 +24,18 @@ systemctl daemon-reload
 systemctl enable LamyEraser.service
 systemctl start LamyEraser.service
 ```
+
+# Uninstall Instrucions
+```Shell
+systemctl stop LamyEraser.service
+systemctl disable LamyEraser.service
+rm -rf ~/RemarkableLamyEraser
+rm /lib/systemd/system/LamyEraser.servicea
+systemctl daemon-reload
+systemctl reset-failed
+```
+
+
 # Usage 
 When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
 thinking you are using the eraser side of the Marker Plus.
