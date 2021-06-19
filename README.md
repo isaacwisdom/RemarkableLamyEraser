@@ -1,7 +1,7 @@
 # RemarkableLamyEraser
 Turns the button on the Lamy Pen into an eraser on the reMarkable.
 
-#Install Instructions
+# Install Instructions
 SSH into your reMarkable and make a directory to store our files
 ```Shell
 cd
