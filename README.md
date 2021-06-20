@@ -60,4 +60,4 @@ systemctl start LamyEraser.service
 - [ ] RM1 support (testers needed)
 - [ ] Nice install script
 - [ ] Some way of changing the toggle mode preference while the service is already running (Anyone have any ideas for this?)
-
+- [ ] Double press to undo
