@@ -4,6 +4,7 @@ Standalone tool that turns the button on the Lamy Pen into an eraser on the reMa
 Also confirmed to work with these other styli:
  * Samsung S6 S Pen
 
+The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
 SSH into your reMarkable and make a directory to store our files:
 ```Shell
@@ -59,5 +60,6 @@ systemctl start LamyEraser.service
 # TODO:
 - [ ] RM1 support (testers needed)
 - [ ] Nice install script
+- [ ] toltec package
 - [ ] Some way of changing the toggle mode preference while the service is already running (Anyone have any ideas for this?)
 - [ ] Double press to undo
