@@ -8,8 +8,13 @@ INCLUDEPATH += /opt/codex/rm11x/2.5.2/sysroots/x86_64-codexsdk-linux/usr/lib/arm
 SOURCES += \
         main.c
 
-target.path = /home/root
-INSTALLS += target
-
+service.path = /home/isaacwisdom/reMarkbleLamyEraser/reMarkableLamyEraser/LamyEraser.service
+service.file = home/isaacwisdom/reMarkbleLamyEraser/reMarkableLamyEraser/LamyEraser.service
 DISTFILES += \
     RemarkableLamyEraser/LamyEraser.service
+
+target.path = /home/root/reMarkableLamyEraser
+
+INSTALLS += \
+        target
+        service
