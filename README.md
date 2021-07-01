@@ -31,7 +31,7 @@ systemctl start LamyEraser.service
 systemctl stop LamyEraser.service
 systemctl disable LamyEraser.service
 rm -rf ~/RemarkableLamyEraser
-rm /lib/systemd/system/LamyEraser.servicea
+rm /lib/systemd/system/LamyEraser.service
 systemctl daemon-reload
 systemctl reset-failed
 ```
