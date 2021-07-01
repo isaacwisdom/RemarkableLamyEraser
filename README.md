@@ -63,3 +63,14 @@ systemctl start LamyEraser.service
 - [ ] toltec package
 - [ ] Some way of changing the toggle mode preference while the service is already running (Anyone have any ideas for this?)
 - [ ] Double press to undo
+
+# Testing Branch
+The testing branch is used for code that builds towards the items on the TODO list above, but isn't yet in a format that is
+ready to be committed to the main branch. Essentially, any commits to the main branch should be stable and relatively clean,
+while the testing branch code will be "stable", but messy.
+Currently, the testing branch is being used to test:
+ - [ ] Double click actions
+The actions currently being implemented are:
+- [X] undo *(working only for portrait view with right hand orientation)*
+- [ ] redo
+- [ ] erase selection
