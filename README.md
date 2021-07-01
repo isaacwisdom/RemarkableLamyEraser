@@ -70,6 +70,7 @@ ready to be committed to the main branch. Essentially, any commits to the main b
 while the testing branch code will be "stable", but messy.
 Currently, the testing branch is being used to test:
  - [ ] Double click actions
+
 The actions currently being implemented are:
 - [X] undo *(working only for portrait view with right hand orientation)*
 - [ ] redo
