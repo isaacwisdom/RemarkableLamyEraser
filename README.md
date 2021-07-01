@@ -61,6 +61,7 @@ systemctl start LamyEraser.service
 - [ ] RM1 support (testers needed)
 - [ ] Nice install script
 - [ ] toltec package
+- [ ] config file (as opposed to current command line argument system)
 - [ ] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.)
 - [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
       some significant code restructuring)*
