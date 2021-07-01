@@ -11,19 +11,17 @@ SOURCES += \
 
 OTHER_FILES += \
     RemarkableLamyEraser/LamyEraser.service \
-    RemarkableLamyEraser/undo_touch.bin
+    README.md
+
 service.files = RemarkableLamyEraser/LamyEraser.service
-bin.files = RemarkableLamyEraser/undo_touch.bin
 
 
 target.path = /home/root/RemarkableLamyEraser
 service.path = /home/root/RemarkableLamyEraser
-bin.path = /home/root/RemarkableLamyEraser
 
 INSTALLS += \
         target \
-        service \
-        bin
+        service
 
 HEADERS += \
     screenlocations.h
