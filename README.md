@@ -61,8 +61,9 @@ systemctl start LamyEraser.service
 - [ ] RM1 support (testers needed)
 - [ ] Nice install script
 - [ ] toltec package
-- [ ] Some way of changing the toggle mode preference while the service is already running (Anyone have any ideas for this?)
-- [ ] Double press to undo
+- [ ] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.)
+- [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
+      some significant code restructuring)*
 
 # Testing Branch
 The testing branch is used for code that builds towards the items on the TODO list above, but isn't yet in a format that is
@@ -74,4 +75,6 @@ Currently, the testing branch is being used to test:
 The actions currently being implemented are:
 - [X] undo *(working only for portrait view with right hand orientation)*
 - [ ] redo
+- [ ] erase (needed for RM1 support, since it can't use the Marker Plus style rubber events)
 - [ ] erase selection
+- [ ] select
