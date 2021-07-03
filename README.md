@@ -75,7 +75,7 @@ Currently, the testing branch is being used to test:
 
 The actions currently being implemented are:
 - [X] undo *(working only for portrait view with right hand orientation)*
-- [ ] redo
+- [X] redo *(working only for portrait view with right hand orientation)*
 - [ ] erase (needed for RM1 support, since it can't use the Marker Plus style rubber events)
 - [ ] erase selection
 - [ ] select
