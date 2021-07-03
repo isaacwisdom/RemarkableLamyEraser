@@ -9,10 +9,6 @@
 //buttons do not support press and holds, but support clicks.
 #define UNDO                  1 //undo button
 #define REDO                  2 //redo button
-//tools support press and holds, and clicks with toggle handling.
-#define ERASER_TOOL           3 //eraser tool for RM1
-#define ERASE_SELECTION_TOOL  4 //erase selection tool
-#define SELECT_TOOL           5 //selection tool
 
 //portrait locations
 #define toolX 63 //define one x coordinate for all panel tools

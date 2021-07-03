@@ -81,7 +81,6 @@ void toggleMode(struct input_event ev, int fd) {
       }
 }
 
-
 void pressMode(struct input_event ev, int fd) {
   if (ev.code == BTN_STYLUS) {
       ev.code = BTN_TOOL_RUBBER; //value will follow the button, so we can reuse the message
@@ -89,51 +88,9 @@ void pressMode(struct input_event ev, int fd) {
     }
 }
 
-void toggleModeRM1 (struct input_event ev, int fd) { //TODO: FIX THIS!!!
-  static int toggle = 0;
-  static int actionComplete = 0;
-  if (ev.code == BTN_STYLUS && ev.value == 1) { // change state of toggle on button press
-      toggle = !toggle;
-      actionComplete = 0;
-      printf("toggle: %d \n", toggle);
-    }
-  if (toggle && !actionComplete) {
-        printf("writing eraser on\n");
-        writeTapWithTouch(fd, eraserTouch);
-        writeTapWithTouch(fd, panelTouch);
-        writeTapWithTouch(fd, eraserTouch);
-        writeTapWithTouch(fd, panelTouch);
-        actionComplete = 1;
-          }
-  else if (!actionComplete){
-        printf("writing eraser off\n");
-        writeTapWithTouch(fd, markerTouch);
-        writeTapWithTouch(fd, panelTouch);
-        writeTapWithTouch(fd, markerTouch);
-        writeTapWithTouch(fd, panelTouch);
-        actionComplete = 1;
-    }
-}
-
-void pressModeRM1(struct input_event ev, int fd) {
-  if (ev.code == BTN_STYLUS && ev.value == 1) {
-      printf("writing eraser_tool on...\n");
-      writeTapWithTouch(fd, eraserTouch);
-      writeTapWithTouch(fd, panelTouch);
-      writeTapWithTouch(fd, eraserTouch);
-      writeTapWithTouch(fd, panelTouch);
-    }
-  else if (ev.code == BTN_STYLUS && ev.value == 0) {
-      printf("writing marker tool on...\n");
-      writeTapWithTouch(fd, markerTouch);
-      writeTapWithTouch(fd, panelTouch);
-      writeTapWithTouch(fd, markerTouch);
-      writeTapWithTouch(fd, panelTouch);
-    }
-}
 bool doublePressHandler(struct input_event ev) { //returns true if a double press has happened
   static struct timeval prevTime;
-  const double maxDoublePressTime = .5;
+  const double maxDoublePressTime = .5; //500ms seems to be the standard double press time
   double elapsedTime = (ev.time.tv_sec + ev.time.tv_usec/1000000.0) - (prevTime.tv_sec + prevTime.tv_usec/1000000.0);
   if (ev.code == BTN_STYLUS && ev.value == 1) {
       //printf("Current Time: %f | ", ev.time.tv_sec + ev.time.tv_usec/1000000.0);
@@ -147,14 +104,6 @@ bool doublePressHandler(struct input_event ev) { //returns true if a double pres
   return false;
 }
 
-bool doublePressToggler(int doublePressHandler) { //returns a toggle based on input. Should be fed doublePressHandler as input
-  static int toggle = 0;
-  if (doublePressHandler) {
-    toggle = !toggle;
-    }
-  return toggle;
-}
-
 int main(int argc, char *argv[]) {
     int mode = 0, doublePressAction = 0;
     struct input_event ev_pen;
@@ -162,6 +111,8 @@ int main(int argc, char *argv[]) {
 
     char name[256] = "Unknown";
 
+
+    printf("RemarkableLamyEraser 1.1\n");
     //check our input args
     for(int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "--toggle", 8)) {
@@ -181,21 +132,6 @@ int main(int argc, char *argv[]) {
             else if (!strncmp(argv[i+1], "redo", 4)) {
                 printf("DOUBLE CLICK ACTION: REDO\n");
                 doublePressAction = REDO;
-                i++; //manually increment i so we skip interpretting the double press action arg
-              }
-            else if (!strncmp(argv[i+1], "eraser-tool", 11)) {
-                printf("DOUBLE CLICK ACTION: ERASER TOOL\n");
-                doublePressAction = ERASER_TOOL;
-                i++; //manually increment i so we skip interpretting the double press action arg
-              }
-            else if (!strncmp(argv[i+1], "erase-selection", 15)) {
-                printf("DOUBLE CLICK ACTION: ERASE SELECTION\n");
-                doublePressAction = ERASE_SELECTION_TOOL;
-                i++; //manually increment i so we skip interpretting the double press action arg
-              }
-            else if (!strncmp(argv[i+1], "select-tool", 11)) {
-                printf("DOUBLE CLICK ACTION: SELECT TOOL\n");
-                doublePressAction = SELECT_TOOL;
                 i++; //manually increment i so we skip interpretting the double press action arg
               }
             else {
@@ -246,7 +182,6 @@ int main(int argc, char *argv[]) {
         read(fd_pen, &ev_pen, ev_pen_size); //note: read pauses until there is data
 
         if(doublePressHandler(ev_pen)) {
-          printf("double click detected\n");
           switch(doublePressAction) {
             case UNDO :
               printf("writing undo\n");
@@ -261,21 +196,6 @@ int main(int argc, char *argv[]) {
               writeTapWithTouch(fd_touch, panelTouch);
               writeTapWithTouch(fd_touch, redoTouch);
               writeTapWithTouch(fd_touch, panelTouch);
-              break;
-            case ERASER_TOOL :
-              printf("writing redo\n");
-              writeTapWithTouch(fd_touch, eraserTouch);
-              writeTapWithTouch(fd_touch, panelTouch);
-              writeTapWithTouch(fd_touch, eraserTouch);
-              writeTapWithTouch(fd_touch, panelTouch);
-              break;
-            case ERASE_SELECTION_TOOL :
-              printf("writing erase selection\n");
-              printf("TODO: add in ERASE_SELECTION handling.");
-              break;
-            case SELECT_TOOL :
-              printf("writing select tool\n");
-              printf("TODO: add in SELECT_TOOL handling.");
               break;
             }
           }
