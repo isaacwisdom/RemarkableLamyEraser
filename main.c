@@ -7,62 +7,17 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <screenlocations.h>
+#include "screenlocations.h"
+#include "orientation.h"
 
 #define PEN_DEVICE   "/dev/input/event1"
 #define TOUCH_DEVICE "/dev/input/event2"
 
 // const struct input_event tool_touch_off = { .type = EV_KEY, .code =BTN_TOUCH, .value = 0}; //these might be used in the future to improve press and hold mode
-//const struct input_event tool_pen_on = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value = 1}; //used when pen approaches the screen const struct
+// const struct input_event tool_pen_on = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value = 1}; //used when pen approaches the screen const struct
 // input_event tool_pen_off = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value =0};
 const struct input_event tool_rubber_on = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 1}; // used when rubber approaches the screen
 const struct input_event tool_rubber_off = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 0};
-
-#define BUFSIZE 48
-int getOpenFileUUID(char *UUID) {
-  char buf[BUFSIZE] = "";
-  char *command = "PID=`pidof xochitl`; ls -l /proc/$PID/fd 2> /dev/null | grep lock | egrep -v 'rm|xochitl/xochitl' | egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o";
-  FILE *cmd = popen(command, "r");
-  if (cmd == NULL) {
-    printf("getOpenFileGUID: Failed to run command\n");
-    return -1;
-  }
-  fgets(buf, BUFSIZE, cmd);
-  pclose(cmd);
-
-  if (strlen(buf) == 0) {
-    return 0; // return 0 if no open file
-  }
-  strcpy(UUID, buf);
-  UUID[strcspn(UUID, "\n")] = 0; // trim off new line
-  return 1;                      // return 1 if open file
-}
-
-int checkConf(const char *path, const char *param, const char *paramTrue) {
-  FILE *fp;
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  fp = fopen(path, "r");
-  if (fp == NULL) {
-    printf("checkConf: File %s doesn't exist\n", path);
-    return -1;
-  }
-  while ((read = getline(&line, &len, fp)) != -1) {
-    // int i = 1;
-    // printf("line: %d", i++);
-    // printf("%s", line);
-    if (!strncmp(line, param, strlen(param))) {
-      // printf("%s", line);
-      int value = !strncmp(line, paramTrue, strlen(paramTrue));
-      fclose(fp);
-      if (line)
-        free(line);
-      return value;
-    }
-  }
-  return -1;
-}
 
 void writeEvent(int fd, struct input_event event) {
   struct timeval tv;
