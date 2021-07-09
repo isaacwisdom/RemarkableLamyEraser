@@ -38,17 +38,20 @@ systemctl reset-failed
 
 
 # Usage 
-When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
-thinking you are using the eraser side of the Marker Plus.
-Press and hold to erase, release to use as a normal pen.
+Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait
+documents in right handed orientation.
 
-Toggle Mode:
-I also created a mode that toggles between eraser mode and pen mode on the button press. However, due to the way the EMR technology works, the reMarkable can only catch when you've pressed the button on the Lamy pen when it is close to the screen. Personally, I found this made it difficult to use this mode, but if you'd like to switch modes, add --toggle argument in line 6 of the LamyEraser.service file (using nano or whatever). It should look like this:
-```
-ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle
-```
-(Remove the argument to return to press and hold mode.)
-Then run these commands
+Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano ~/RemarkableLamyEraser/LamyEraser.service`.
+The supported arguments are:  
+`--press`   Press and hold to erase, release to use as a normal pen. *This is the default behavior.*  
+`--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
+`--double-press undo` Double click the button to undo. *This is the default behavior.*  
+`--double-press redo` Double click the button to redo.  
+For example, this line would use the toggle mode and redo on a double click:  
+`ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
+
+
+To apply your config, run these commands:
 ``` Shell
 cd ~/RemarkableLamyEraser
 cp LamyEraser.service /lib/systemd/system/
@@ -57,11 +60,17 @@ systemctl daemon-reload
 systemctl start LamyEraser.service
 ```
 
+# How it works
+When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
+thinking you are using the eraser side of the Marker Plus.
+
 # TODO:
 - [ ] RM1 support (testers needed)
+- [ ] Left handed and landscape support for actions
 - [ ] Nice install script
 - [ ] toltec package
 - [ ] config file (as opposed to current command line argument system)
+- [ ] expand "How it works" section.
 - [ ] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.)
 - [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
       some significant code restructuring)*

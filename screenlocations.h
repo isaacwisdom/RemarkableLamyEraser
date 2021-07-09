@@ -1,32 +1,43 @@
 #ifndef SCREENLOCATIONS_H
 #define SCREENLOCATIONS_H
 
-//erase modes
-#define PRESS_MODE      1 //press and hold mode
-#define TOGGLE_MODE     2 //toggle mode
+//Touch Screen Coordinates:
+//Right Hand, Portrait locations
+#define RHtoolX 60 //define one x coordinate for all panel tools
+static const int RHPpanel[2]   = {RHtoolX, 1820};
+static const int RHPmarker[2]  = {RHtoolX, 1680};
+static const int RHPeraser[2]  = {RHtoolX, 1450};
+static const int RHPselect[2]  = {RHtoolX, 1340};
+static const int RHPundo[2]    = {RHtoolX, 1220};
+static const int RHPredo[2]    = {RHtoolX, 1090};
 
-//actions:
-//buttons do not support press and holds, but support clicks.
-#define UNDO                  1 //undo button
-#define REDO                  2 //redo button
-//tools support press and holds, and clicks with toggle handling.
-#define ERASER_TOOL           3 //eraser tool for RM1
-#define ERASE_SELECTION_TOOL  4 //erase selection tool
-#define SELECT_TOOL           5 //selection tool
+//Right Hand, Landscape locations
+#define RHtoolY 50 //define one y coordinate for panel tools
+static const int RHLpanel[2]     = {  40,  RHtoolY};
+static const int RHLmarker[2]    = {  80,  RHtoolY};
+static const int RHLeraser[2]    = { 430,  RHtoolY};
+static const int RHLselect[2]    = { 550,  RHtoolY};
+static const int RHLundo[2]      = { 670,  RHtoolY};
+static const int RHLredo[2]      = { 800,  RHtoolY};
 
-//portrait locations
-#define toolX 63 //define one x coordinate for all panel tools
-int panelTouch[2]   = {toolX, 1820};
-int markerTouch[2]  = {toolX, 1683};
-int eraserTouch[2]  = {toolX, 1450};
-int undoTouch[2]    = {toolX, 1220};
-int redoTouch[2]    = {toolX, 1090};
+//Left Hand, Portrait locations
+#define LHtoolX 1360 //define one y coordinate for panel tools
+static const int LHPpanel[2]     = {LHtoolX,  1820};
+static const int LHPmarker[2]    = {LHtoolX,  1680};
+static const int LHPeraser[2]    = {LHtoolX,  1450};
+static const int LHPselect[2]    = {LHtoolX,  1340};
+static const int LHPundo[2]      = {LHtoolX,  1220};
+static const int LHPredo[2]      = {LHtoolX,  1090};
 
-//landscape locations
-#define toolY 60 //define one y coordinate for panel tools
-int LpanelTouch[2]     = {  65, toolY};
-int LnotebookTouch[2]  = {1355, toolY};
-int LnotebookLower[2]  = {1250, 360};
-int LnotebookUpper[2]  = {1130, 360};
+//Left Hand, Landscape locations
+#define LHtoolY 1820 //define one y coordinate for panel tools
+static const int LHLpanel[2]     = {  40,  LHtoolY};
+static const int LHLmarker[2]    = {  80,  LHtoolY};
+static const int LHLeraser[2]    = { 430,  LHtoolY};
+static const int LHLselect[2]    = { 550,  LHtoolY};
+static const int LHLundo[2]      = { 670,  LHtoolY};
+static const int LHLredo[2]      = { 800,  LHtoolY};
+
+//Pen Coordinates: (currently not needed)
 
 #endif // SCREENLOCATIONS_H
