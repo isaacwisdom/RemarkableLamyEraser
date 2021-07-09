@@ -7,156 +7,10 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "screenlocations.h"
-#include "orientation.h"
+#include "actions.h"
 
-#define PEN_DEVICE   "/dev/input/event1"
-#define TOUCH_DEVICE "/dev/input/event2"
-
-// const struct input_event tool_touch_off = { .type = EV_KEY, .code =BTN_TOUCH, .value = 0}; //these might be used in the future to improve press and hold mode
-// const struct input_event tool_pen_on = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value = 1}; //used when pen approaches the screen const struct
-// input_event tool_pen_off = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value =0};
-const struct input_event tool_rubber_on = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 1}; // used when rubber approaches the screen
-const struct input_event tool_rubber_off = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 0};
-
-void writeEvent(int fd, struct input_event event) {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  event.time = tv;
-  // debug: printf("writing: seconds = %ld, usec= %ld, type = %d, code = %d, value = %d\n", event.time.tv_sec, event.time.tv_usec, event.type, event.code, event.value);
-  write(fd, &event, sizeof(struct input_event));
-}
-
-void writeTapWithTouch(int fd, int location[2]) {
-  struct input_event event;
-
-  // this is the minimum (probably) seqeunce of events that must be sent to tap the screen in a location.
-  event = (struct input_event){.type = EV_ABS, .code = ABS_MT_SLOT, .value = 0x7FFFFFFF}; // Use max signed int slot
-  // printf("Writing ABS_MT_SLOT: %d\n", event.value);
-  writeEvent(fd, event);
-
-  event = (struct input_event){
-      .type = EV_ABS, .code = ABS_MT_TRACKING_ID, .value = time(NULL)};
-  // printf("Writing Tracking ID: %d\n", event.value);
-  writeEvent(fd, event);
-
-  event = (struct input_event){
-      .type = EV_ABS, .code = ABS_MT_POSITION_X, .value = location[0]};
-  // printf("Writing Touch X: %d\n", event.value);
-  writeEvent(fd, event);
-
-  event = (struct input_event){
-      .type = EV_ABS, .code = ABS_MT_POSITION_Y, .value = location[1]};
-  // printf("Writing Touch Y: %d\n", event.value);
-  writeEvent(fd, event);
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1};
-  // printf("Writing SYN Report\n");
-  writeEvent(fd, event);
-
-  event = (struct input_event){
-      .type = EV_ABS, .code = ABS_MT_TRACKING_ID, .value = -1};
-  // printf("Writing Tracking ID: -1\n");
-  writeEvent(fd, event);
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1};
-  // printf("Writing SYN Report\n");
-  writeEvent(fd, event);
-}
-
-void toggleMode(struct input_event ev, int fd) {
-  static int toggle = 0;
-  if (ev.code == BTN_STYLUS &&
-      ev.value == 1) { // change state of toggle on button press
-    toggle = !toggle;
-    printf("toggle: %d \n", toggle);
-  }
-  if (toggle)
-    if (ev.code == BTN_TOOL_PEN) { // when toggle is on, we write these events
-                                   // following the pen state
-      if (ev.value == 1) {
-        printf("writing eraser on\n");
-        writeEvent(fd, tool_rubber_on);
-      } else {
-        printf("writing eraser off\n");
-        writeEvent(fd, tool_rubber_off);
-      }
-    }
-}
-
-void pressMode(struct input_event ev, int fd) {
-  if (ev.code == BTN_STYLUS) {
-    ev.code = BTN_TOOL_RUBBER; // value will follow the button, so we can reuse
-                               // the message
-    writeEvent(fd, ev);
-  }
-}
-
-void actionUndo(int fd) {
-  int rightHanded = 0;
-  int portrait = 0;
-
-  //get handedness
-  const char *confPath = "/home/root/.config/remarkable/xochitl.conf";
-  rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true");
-
-  //get portrait or landscape
-  char UUID[BUFSIZE];
-  if (getOpenFileUUID(UUID)) {
-    char openFilePath[128] = "/home/root/.local/share/remarkable/xochitl/";
-    strcat(UUID, ".content");
-    strcat(openFilePath, UUID);
-    //printf("%s\n", openFilePath);
-    portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
-  }
-  else {
-    printf("getOpenFileGUID failed, maybe No Open File?\n");
-  }
-
-  printf("rightHanded = %d, portrait = %d\n", rightHanded, portrait);
-
-  if (rightHanded) { // RH
-    if (portrait) {  // RH, Portrait
-      writeTapWithTouch(fd, RHPundo);
-      writeTapWithTouch(fd, RHPpanel);
-      writeTapWithTouch(fd, RHPundo);
-      writeTapWithTouch(fd, RHPpanel);
-    } else { // RH, Landscape
-      writeTapWithTouch(fd, RHLundo);
-      writeTapWithTouch(fd, RHLpanel);
-      writeTapWithTouch(fd, RHLundo);
-      writeTapWithTouch(fd, RHLpanel);
-    }
-  } else {          // LH
-    if (portrait) { // LH, Portrait
-      writeTapWithTouch(fd, LHPundo);
-      writeTapWithTouch(fd, LHPpanel);
-      writeTapWithTouch(fd, LHPundo);
-      writeTapWithTouch(fd, LHPpanel);
-    } else { // LH, Landscape
-      writeTapWithTouch(fd, LHLundo);
-      writeTapWithTouch(fd, LHLpanel);
-      writeTapWithTouch(fd, LHLundo);
-      writeTapWithTouch(fd, LHLpanel);
-    }
-  }
-}
-
-bool doublePressHandler(
-    struct input_event ev) { // returns true if a double press has happened
-  static struct timeval prevTime;
-  const double maxDoublePressTime = .5; // 500ms seems to be the standard double press time
-  double elapsedTime = (ev.time.tv_sec + ev.time.tv_usec / 1000000.0) - (prevTime.tv_sec + prevTime.tv_usec / 1000000.0);
-  if (ev.code == BTN_STYLUS && ev.value == 1) {
-    // printf("Current Time: %f | ", ev.time.tv_sec + ev.time.tv_usec/1000000.0); printf("Prev Time: %f |", prevTime.tv_sec + prevTime.tv_usec/1000000.0);
-    // printf("Elapsed Time: %f\n", elapsedTime);
-    if (elapsedTime <= maxDoublePressTime) {
-      return true;
-    }
-    prevTime = ev.time;
-  }
-  return false;
-}
+#define PEN_DEVICE_RM2   "/dev/input/event1"
+#define TOUCH_DEVICE_RM2 "/dev/input/event2"
 
 int main(int argc, char *argv[]) {
   int mode = 0, doublePressAction = 0;
@@ -204,25 +58,25 @@ int main(int argc, char *argv[]) {
   }
 
   /* Open Device: Pen */
-  fd_pen = open(PEN_DEVICE, O_RDWR);
+  fd_pen = open(PEN_DEVICE_RM2, O_RDWR);
   if (fd_pen == -1) {
-    fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE);
+    fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM2);
     exit(EXIT_FAILURE);
   }
   /* Open Device: Touch */
-  fd_touch = open(TOUCH_DEVICE, O_WRONLY);
+  fd_touch = open(TOUCH_DEVICE_RM2, O_WRONLY);
   if (fd_touch == -1) {
-    fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE);
+    fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM2);
     exit(EXIT_FAILURE);
   }
 
   /* Print Device Name */
   ioctl(fd_pen, EVIOCGNAME(sizeof(name)), name);
   printf("Using Devices:\n");
-  printf("1. device file = %s\n", PEN_DEVICE);
+  printf("1. device file = %s\n", PEN_DEVICE_RM2);
   printf("   device name = %s\n", name);
   ioctl(fd_touch, EVIOCGNAME(sizeof(name)), name);
-  printf("2. device file = %s\n", TOUCH_DEVICE);
+  printf("2. device file = %s\n", TOUCH_DEVICE_RM2);
   printf("   device name = %s\n", name);
 
   for (;;) {
@@ -237,7 +91,7 @@ int main(int argc, char *argv[]) {
         break;
       case REDO:
         printf("writing redo\n");
-        //actionRedo(fd_touch);
+        actionRedo(fd_touch);
         break;
       }
     }

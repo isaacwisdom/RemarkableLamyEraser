@@ -1,8 +1,6 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "orientation.h"
 
@@ -59,12 +57,15 @@ int checkConf(const char *path, const char *param, const char *paramTrue) {
   return -1;
 }
 
-struct panelOrientation getPanelOrientation() {
-  struct panelOrientation orientation = {-1,-1,-1};
+toolbarOrientation getToolbarOrientation() {
+  //returns panelOrientation struct with params:
+  //{openNotebook | 1 for open notebook, 0 for no open notebook
+  // rightHanded  | 1 for right handedness, 0 for left, -1 if invalid
+  // portrait     | 1 for portrait orientation, 0 for landscape, -1 if invalid }
+  toolbarOrientation orientation = {-1,-1,-1};
   // get portrait or landscape
   char UUID[BUFSIZE];
 
-  orientation.openNotebook = getOpenFileUUID(UUID);
   if ( (orientation.openNotebook = getOpenFileUUID(UUID)) == 1) {
     char openFilePath[128] = "/home/root/.local/share/remarkable/xochitl/";
     strcat(UUID, ".content");
@@ -72,7 +73,6 @@ struct panelOrientation getPanelOrientation() {
     // printf("%s\n", openFilePath);
     orientation.portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
   } else {
-    //printf("getOpenFileGUID failed, maybe No Open File?\n");
     return orientation; // other params will be -1 to indicate they are invalid
   }
 

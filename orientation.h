@@ -1,25 +1,17 @@
-#ifndef ORIENTATION
-#define ORIENTATION
-
-/*
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-*/
+#ifndef ORIENTATION_H
+#define ORIENTATION_H
 
 #define BUFSIZE 48
 
-struct panelOrientation {
+typedef struct {
   int openNotebook;
   int rightHanded;
   int portrait;
-};
+} toolbarOrientation;
 
 int getOpenFileUUID(char *UUID);
 int checkConf(const char *path, const char *param, const char *paramTrue);
-struct panelOrientation getPanelOrientation();
+toolbarOrientation getToolbarOrientation();
 
 
-#endif
+#endif //ORIENTATION_H
