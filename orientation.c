@@ -4,6 +4,7 @@
 
 #include "orientation.h"
 
+
 int getOpenFileUUID(char *UUID) {
   //returns  1 if success
   //returns  0 if no open file
@@ -81,4 +82,10 @@ toolbarOrientation getToolbarOrientation() {
   orientation.rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true");
 
   return orientation;
+}
+
+int getRmVersion() {
+  const char *sysPath = "/sys/devices/soc0/machine";
+  int RM2 = checkConf(sysPath, "reMarkable 2.0", "reMarkable 2.0");
+  return RM2 + 1; //returns 1 for RM1, 2 for RM2
 }

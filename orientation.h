@@ -10,8 +10,8 @@ typedef struct {
 } toolbarOrientation;
 
 int getOpenFileUUID(char *UUID);
-int checkConf(const char *path, const char *param, const char *paramTrue);
 toolbarOrientation getToolbarOrientation();
+int getRmVersion();
 
 
 #endif //ORIENTATION_H
