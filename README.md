@@ -46,7 +46,8 @@ The supported arguments are:
 `--press`   Press and hold to erase, release to use as a normal pen. *This is the default behavior.*  
 `--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
 `--double-press undo` Double click the button to undo. *This is the default behavior.*  
-`--double-press redo` Double click the button to redo.  
+`--double-press redo` Double click the button to redo.
+`--force-RM1` Debug option that forces the code to use RM1 style erase events so I can test on mr RM2.
 For example, this line would use the toggle mode and redo on a double click:  
 `ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
 
@@ -75,16 +76,17 @@ thinking you are using the eraser side of the Marker Plus.
 - [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
       some significant code restructuring)*
 
-# Testing Branch
-The testing branch is used for code that builds towards the items on the TODO list above, but isn't yet in a format that is
-ready to be committed to the main branch. Essentially, any commits to the main branch should be stable and relatively clean,
-while the testing branch code will be "stable", but messy.
-Currently, the testing branch is being used to test:
- - [ ] Double click actions
+# RM1 Branch
+The RM1 branch is being used to test RM1 support. Currently, the RM1 code runs, **but not on an actual RM1 device.**
+While the screens on the RM1 and the RM2 are physically the same size, they have different ranges of outputs. While the code
+will run on an RM1, it will have unexpected effects until I can add a screenlocations.h file that is specific to the RM1's
+screen.
+
+Currently, the RM1-style erase doesn't always work. It's the same issue as #7, but more noticeable with the RM1-style erase.
 
 The actions currently being implemented are:
-- [X] undo *(working only for portrait view with right hand orientation)*
-- [X] redo *(working only for portrait view with right hand orientation)*
+- [X] undo
+- [X] redo
 - [ ] erase (needed for RM1 support, since it can't use the Marker Plus style rubber events)
 - [ ] erase selection
 - [ ] select
