@@ -1,20 +1,19 @@
 #include <linux/input.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <time.h>
 #include <unistd.h>
 
-#include "actions.h"
 #include "orientation.h"
-#include "screenlocations.h"
+#include "actions.h"
 
 void writeEvent(int fd, struct input_event event) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   event.time = tv;
-  // debug: printf("writing: seconds = %ld, usec= %ld, type = %d, code = %d,
-  // value = %d\n", event.time.tv_sec, event.time.tv_usec, event.type,
-  // event.code, event.value);
+  //printf("writing: seconds = %ld, usec= %ld, type = %d, code = %d, value = %d\n",
+  //     event.time.tv_sec, event.time.tv_usec, event.type, event.code, event.value);
   write(fd, &event, sizeof(struct input_event));
 }
 
@@ -23,7 +22,7 @@ void writeTapWithTouch(int fd_touch, const int location[]) {
 
   // this is the minimum (probably) seqeunce of events that must be sent to tap
   // the screen in a location.
-  event = (struct input_event){.type = EV_ABS, .code = ABS_MT_SLOT, .value = 0x7FFFFFFF}; // Use max signed int slot
+  event = (struct input_event){.type = EV_ABS, .code = ABS_MT_SLOT, .value = 15}; // Use slot 15. Should be high enough, right?
   // printf("Writing ABS_MT_SLOT: %d\n", event.value);
   writeEvent(fd_touch, event);
 
@@ -52,13 +51,38 @@ void writeTapWithTouch(int fd_touch, const int location[]) {
   writeEvent(fd_touch, event);
 }
 
+int writeOrientedTapSequence(int fd_touch, toolbarOrientation *orientation, int RMversion, int numLocations, ...) {
+  //give the fd to use, a pointer to a toolbarOrientation struct, the RMversion, and a list of action locations
+  //returns 0 on success, -1 on failure
+  int actionLocation[2];
+  int action;
+  va_list actionType;
+  va_start (actionType, numLocations);
+  printf("Orientation: %d\n", orientation->orientation);
+  RMversion--; //RMversion is either 1 or 2, decrement it to be 0 or 1 to work with array.
+  if(orientation->openNotebook) {
+      for (int i = 0; i < numLocations; i++)  {
+          action = va_arg(actionType, int);
+          for(int j = 0; j < 2; j++)
+              actionLocation[j] =  locationLookup[RMversion][action][orientation->orientation][j];
+          printf("Resolved Location for RM%d: {%d,%d}\n", RMversion+1, actionLocation[0], actionLocation[1]);
+          writeTapWithTouch(fd_touch, actionLocation);
+
+        }
+      va_end(actionType);
+      return 0;
+      }
+  else {
+    return -1; //no open notebook, didn't perform actions
+    }
+}
+//writeOrientedTapSequence(fd_touch, &orientation, int RMversion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
 
 
 bool doublePressHandler(struct input_event ev_pen) {
   // returns true if a double press has happened
   static struct timeval prevTime;
-  const double maxDoublePressTime =
-      .5; // 500ms seems to be the standard double press time
+  const double maxDoublePressTime = .5; // 500ms seems to be the standard double press time
   double elapsedTime = (ev_pen.time.tv_sec + ev_pen.time.tv_usec / 1000000.0) -
                        (prevTime.tv_sec + prevTime.tv_usec / 1000000.0);
   if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
@@ -73,10 +97,9 @@ bool doublePressHandler(struct input_event ev_pen) {
   return false;
 }
 
-void toggleMode(struct input_event ev_pen, int fd_pen) {
+void toggleModeRM2(struct input_event ev_pen, int fd_pen) {
   static int toggle = 0;
-  if (ev_pen.code == BTN_STYLUS &&
-      ev_pen.value == 1) { // change state of toggle on button press
+  if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) { // change state of toggle on button press
     toggle = !toggle;
     printf("toggle: %d \n", toggle);
   }
@@ -93,7 +116,7 @@ void toggleMode(struct input_event ev_pen, int fd_pen) {
     }
 }
 
-void pressMode(struct input_event ev_pen, int fd_pen) {
+void pressModeRM2(struct input_event ev_pen, int fd_pen) {
   if (ev_pen.code == BTN_STYLUS) {
     ev_pen.code = BTN_TOOL_RUBBER; // value will follow the button, so we can reuse
                                // the message
@@ -101,190 +124,77 @@ void pressMode(struct input_event ev_pen, int fd_pen) {
   }
 }
 
-void toggleModeRM1(struct input_event ev_pen, int fd_touch) { // TODO: FIX THIS!!!
+void toggleModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
   static int toggle = 0;
   static int actionComplete = 0;
+  static toolbarOrientation orientation;
+
   if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) { // change state of toggle on button press
     toggle = !toggle;
+    orientation = getToolbarOrientation();
     actionComplete = 0;
     printf("toggle: %d \n", toggle);
   }
+
   if (toggle && !actionComplete) {
-    printf("writing eraser on\n");
-    writeTapWithTouch(fd_touch, RHPeraser);
-    writeTapWithTouch(fd_touch, RHPtoolbar);
-    writeTapWithTouch(fd_touch, RHPeraser);
-    writeTapWithTouch(fd_touch, RHPtoolbar);
+    printf("writing eraser tool...\n");
+    writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, ERASER, TOOLBAR, ERASER, TOOLBAR);
     actionComplete = 1;
   } else if (!actionComplete) {
-    printf("writing eraser off\n");
-    writeTapWithTouch(fd_touch, RHPwriting);
-    writeTapWithTouch(fd_touch, RHPtoolbar);
-    writeTapWithTouch(fd_touch, RHPwriting);
-    writeTapWithTouch(fd_touch, RHPtoolbar);
+    printf("writing writing tool...\n");
+    writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
     actionComplete = 1;
   }
 }
 
-void pressModeRM1(struct input_event ev_pen, int fd_touch) {
-  struct timeval tv;
-  toolbarOrientation orientation;
+void pressModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
+  static toolbarOrientation orientation;
+  static int state = -1;
   if (ev_pen.code == BTN_STYLUS) {
-      orientation = getToolbarOrientation();
-    }
-  else
-    return;
-
-  if (orientation.openNotebook) {
-    if (orientation.rightHanded) { // RH
-      if (orientation.portrait) {  // RH, Portrait
-        if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
-            gettimeofday(&tv, NULL);
-            printf("%ld.%ld: ", tv.tv_sec, tv.tv_usec);
-            printf("writing RHPeraser...\n");
-            writeTapWithTouch(fd_touch, RHPeraser);
-            writeTapWithTouch(fd_touch, RHPtoolbar);
-            writeTapWithTouch(fd_touch, RHPeraser);
-            writeTapWithTouch(fd_touch, RHPtoolbar);
-        } else if (ev_pen.code == BTN_STYLUS && ev_pen.value == 0) {
-            gettimeofday(&tv, NULL);
-            printf("%ld.%ld: ", tv.tv_sec, tv.tv_usec);
-            printf("writing RHPwriting...\n");
-            writeTapWithTouch(fd_touch, RHPwriting);
-            writeTapWithTouch(fd_touch, RHPtoolbar);
-            writeTapWithTouch(fd_touch, RHPwriting);
-            writeTapWithTouch(fd_touch, RHPtoolbar);
-        }
-      } else { // RH, Landscape
-          if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
-            printf("writing RHLeraser on...\n");
-            writeTapWithTouch(fd_touch, RHLeraser);
-            writeTapWithTouch(fd_touch, RHLtoolbar);
-            writeTapWithTouch(fd_touch, RHLeraser);
-            writeTapWithTouch(fd_touch, RHLtoolbar);
-        } else if (ev_pen.code == BTN_STYLUS && ev_pen.value == 0) {
-            printf("writing RHLwriting on...\n");
-            writeTapWithTouch(fd_touch, RHLwriting);
-            writeTapWithTouch(fd_touch, RHLtoolbar);
-            writeTapWithTouch(fd_touch, RHLwriting);
-            writeTapWithTouch(fd_touch, RHLtoolbar);
-        }
+    orientation = getToolbarOrientation();
+    if(ev_pen.value == 1) {
+        printf("writing eraser tool...\n");
+        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, ERASER, TOOLBAR, ERASER, TOOLBAR);
+        state = 1;
       }
-    } else {                      // LH
-      if (orientation.portrait) { // LH, Portrait
-        if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
-          printf("writing RHLeraser on...\n");
-          writeTapWithTouch(fd_touch, LHLeraser);
-          writeTapWithTouch(fd_touch, LHLtoolbar);
-          writeTapWithTouch(fd_touch, LHLeraser);
-          writeTapWithTouch(fd_touch, LHLtoolbar);
-        } else if (ev_pen.code == BTN_STYLUS && ev_pen.value == 0) {
-          printf("writing RHLwriting on...\n");
-          writeTapWithTouch(fd_touch, LHLwriting);
-          writeTapWithTouch(fd_touch, LHLtoolbar);
-          writeTapWithTouch(fd_touch, LHLwriting);
-          writeTapWithTouch(fd_touch, LHLtoolbar);
-        } else { // LH, Landscape
-          if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
-            printf("writing LHLeraser on...\n");
-            writeTapWithTouch(fd_touch, LHLeraser);
-            writeTapWithTouch(fd_touch, LHLtoolbar);
-            writeTapWithTouch(fd_touch, LHLeraser);
-            writeTapWithTouch(fd_touch, LHLtoolbar);
-          } else if (ev_pen.code == BTN_STYLUS && ev_pen.value == 0) {
-            printf("writing LHLmarker tool on...\n");
-            writeTapWithTouch(fd_touch, LHLwriting);
-            writeTapWithTouch(fd_touch, LHLtoolbar);
-            writeTapWithTouch(fd_touch, LHLwriting);
-            writeTapWithTouch(fd_touch, LHLtoolbar);
-          }
-        }
+    else {
+        printf("writing writing tool...\n");
+        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+        state = 0;
       }
     }
+  else if (ev_pen.code == BTN_TOOL_PEN && ev_pen.value == 1 && state != -1) {
+      if (state == 1) {
+          printf("writing eraser tool...\n");
+          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, ERASER, TOOLBAR, ERASER, TOOLBAR);
+        }
+      else if (state == 0)
+        {
+          printf("writing writing tool...\n");
+          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+        }
   }
 }
 
-/*
-void actionTemplate(int fd) {
-  //Be aware that getting the orientation is slow, and not ideal for actions that have to
-  //read ev_pen data
+void actionToolbar(int fd_touch, int RMversion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  if(orientation.openNotebook) {
-      if (orientation.rightHanded) { // RH
-        if (orientation.portrait) {  // RH, Portrait
-          // do action here...
-        } else { // RH, Landscape
-          // do action here...
-        }
-      } else {          // LH
-        if (orientation.portrait) { // LH, Portrait
-          // do action here...
-        } else { // LH, Landscape
-          // do action here...
-        }
-      }
-  }
-}
-*/
-
-void actionUndo(int fd_touch) {
-  toolbarOrientation orientation = getToolbarOrientation();
-  if (orientation.openNotebook) {
-    if (orientation.rightHanded) { // RH
-      if (orientation.portrait) {  // RH, Portrait
-        writeTapWithTouch(fd_touch, RHPundo);
-        writeTapWithTouch(fd_touch, RHPtoolbar);
-        writeTapWithTouch(fd_touch, RHPundo);
-        writeTapWithTouch(fd_touch, RHPtoolbar);
-      } else { // RH, Landscape
-        writeTapWithTouch(fd_touch, RHLundo);
-        writeTapWithTouch(fd_touch, RHLtoolbar);
-        writeTapWithTouch(fd_touch, RHLundo);
-        writeTapWithTouch(fd_touch, RHLtoolbar);
-      }
-    } else {                      // LH
-      if (orientation.portrait) { // LH, Portrait
-        writeTapWithTouch(fd_touch, LHPundo);
-        writeTapWithTouch(fd_touch, LHPtoolbar);
-        writeTapWithTouch(fd_touch, LHPundo);
-        writeTapWithTouch(fd_touch, LHPtoolbar);
-      } else { // LH, Landscape
-        writeTapWithTouch(fd_touch, LHLundo);
-        writeTapWithTouch(fd_touch, LHLtoolbar);
-        writeTapWithTouch(fd_touch, LHLundo);
-        writeTapWithTouch(fd_touch, LHLtoolbar);
-      }
-    }
-  }
+  writeOrientedTapSequence(fd_touch, &orientation, RMversion, 1, TOOLBAR);
 }
 
-void actionRedo(int fd_touch) {
+void actionWriting(int fd_touch, int RMversion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  if (orientation.openNotebook) {
-    if (orientation.rightHanded) { // RH
-      if (orientation.portrait) {  // RH, Portrait
-        writeTapWithTouch(fd_touch, RHPredo);
-        writeTapWithTouch(fd_touch, RHPtoolbar);
-        writeTapWithTouch(fd_touch, RHPredo);
-        writeTapWithTouch(fd_touch, RHPtoolbar);
-      } else { // RH, Landscape
-        writeTapWithTouch(fd_touch, RHLredo);
-        writeTapWithTouch(fd_touch, RHLtoolbar);
-        writeTapWithTouch(fd_touch, RHLredo);
-        writeTapWithTouch(fd_touch, RHLtoolbar);
-      }
-    } else {                      // LH
-      if (orientation.portrait) { // LH, Portrait
-        writeTapWithTouch(fd_touch, LHPredo);
-        writeTapWithTouch(fd_touch, LHPtoolbar);
-        writeTapWithTouch(fd_touch, LHPredo);
-        writeTapWithTouch(fd_touch, LHPtoolbar);
-      } else { // LH, Landscape
-        writeTapWithTouch(fd_touch, LHLredo);
-        writeTapWithTouch(fd_touch, LHLtoolbar);
-        writeTapWithTouch(fd_touch, LHLredo);
-        writeTapWithTouch(fd_touch, LHLtoolbar);
-      }
-    }
-  }
+  writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
 }
+
+void actionUndo(int fd_touch, int RMversion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
+}
+
+void actionRedo(int fd_touch, int RMversion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, REDO, TOOLBAR, REDO, TOOLBAR);
+}
+
+
+

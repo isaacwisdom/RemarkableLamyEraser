@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   printf("RemarkableLamyEraser 1.1\n");
   printf("----------------------------------\n");
 
-  int mode = 0, doublePressAction = 0;
+  int forceRM1 = 0, mode = 0, doublePressAction = 0;
   struct input_event ev_pen;
   int fd_pen, fd_touch;
   char name[256] = "Unknown";
@@ -65,17 +65,13 @@ int main(int argc, char *argv[]) {
 
   // check our input args
   for (int i = 1; i < argc; i++) {
-    if (!strncmp(argv[i], "--force-RM1", 11)) {
-      printf("Debug: FORCING RM1-STYLE ACTIONS\n");
-      rmVersion = 1;
-      }
+    if (!strncmp(argv[i], "--press", 7)) {
+      printf("MODE: PRESS AND HOLD\n");
+      mode = PRESS_MODE;
+    }
     else if (!strncmp(argv[i], "--toggle", 8)) {
       printf("MODE: TOGGLE\n");
-      mode = (rmVersion == 2) ? TOGGLE_MODE_RM2 : TOGGLE_MODE_RM1;
-    }
-    else if (!strncmp(argv[i], "--press", 7)) {
-      printf("MODE: PRESS AND HOLD\n");
-      mode = (rmVersion == 2) ? PRESS_MODE_RM2 : PRESS_MODE_RM1;
+      mode = TOGGLE_MODE;
     }
     else if (!strncmp(argv[i], "--double-press", 14)) {
       if (!strncmp(argv[i + 1], "undo", 4)) {
@@ -93,18 +89,32 @@ int main(int argc, char *argv[]) {
         printf("DOUBLE CLICK ACTION: UNDO\n");
         doublePressAction = UNDO;
       }
-    } else {
+    }
+    else if (!strncmp(argv[i], "--force-RM1", 11)) {
+      printf("Debug: FORCING RM1-STYLE ACTIONS\n");
+      forceRM1 = 1;
+      }
+    else {
       printf("Unknown argument %s\nExiting...\n", argv[i]);
       exit(EXIT_FAILURE);
     }
   }
-  if (!mode) {
-    printf("No mode specified! Using default.\nMODE: PRESS AND HOLD\n");
-    mode = (rmVersion == 2) ? PRESS_MODE_RM2 : PRESS_MODE_RM1;
+
+  //select appropraite mode based on RM version
+  switch (mode) {
+    case 0: //unset
+      printf("No mode specified! Using default.\nMODE: PRESS AND HOLD\n");
+      /* FALL-THROUGH */
+    case PRESS_MODE:
+      mode = (rmVersion == 2 && !forceRM1) ? PRESS_MODE_RM2 : PRESS_MODE_RM1;
+      break;
+    case TOGGLE_MODE:
+      mode = (rmVersion == 2 && !forceRM1) ? TOGGLE_MODE_RM2 : TOGGLE_MODE_RM1;
+      break;
   }
+
   if (!doublePressAction) {
-    printf("No double click action specified! Using default.\nDOUBLE CLICK "
-           "ACTION: UNDO\n");
+    printf("No double click action specified! Using default.\nDOUBLE CLICK ACTION: UNDO\n");
     doublePressAction = UNDO;
   }
 
@@ -114,29 +124,33 @@ int main(int argc, char *argv[]) {
 
     if (doublePressHandler(ev_pen)) {
       switch (doublePressAction) {
+      case WRITING:
+        printf("writing write\n");
+        actionWriting(fd_touch, rmVersion);
+          break;
       case UNDO:
         printf("writing undo\n");
-        actionUndo(fd_touch);
+        actionUndo(fd_touch, rmVersion);
         break;
       case REDO:
         printf("writing redo\n");
-        actionRedo(fd_touch);
+        actionRedo(fd_touch, rmVersion);
         break;
       }
     }
 
     switch (mode) {
     case TOGGLE_MODE_RM2:
-      toggleMode(ev_pen, fd_pen);
+      toggleModeRM2(ev_pen, fd_pen);
       break;
     case PRESS_MODE_RM2:
-      pressMode(ev_pen, fd_pen);
+      pressModeRM2(ev_pen, fd_pen);
       break;
     case TOGGLE_MODE_RM1:
-      toggleModeRM1(ev_pen, fd_touch);
+      toggleModeRM1(ev_pen, fd_touch, rmVersion);
       break;
     case PRESS_MODE_RM1:
-      pressModeRM1(ev_pen, fd_touch);
+      pressModeRM1(ev_pen, fd_touch, rmVersion);
       break;
     default:
       printf("Somehow a mode wasn't set? Exiting...\n");
