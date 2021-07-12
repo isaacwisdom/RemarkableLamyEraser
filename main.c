@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
     const size_t ev_pen_size = sizeof(struct input_event);
     read(fd_pen, &ev_pen, ev_pen_size); // note: read pauses until there is data
 
-    if (doublePressHandler(ev_pen)) {
+    if (doublePressHandler(&ev_pen)) {
       switch (doublePressAction) {
       case WRITING:
         printf("writing write\n");
@@ -141,16 +141,16 @@ int main(int argc, char *argv[]) {
 
     switch (mode) {
     case TOGGLE_MODE_RM2:
-      toggleModeRM2(ev_pen, fd_pen);
+      toggleModeRM2(&ev_pen, fd_pen);
       break;
     case PRESS_MODE_RM2:
-      pressModeRM2(ev_pen, fd_pen);
+      pressModeRM2(&ev_pen, fd_pen);
       break;
     case TOGGLE_MODE_RM1:
-      toggleModeRM1(ev_pen, fd_touch, rmVersion);
+      toggleModeRM1(&ev_pen, fd_touch, rmVersion);
       break;
     case PRESS_MODE_RM1:
-      pressModeRM1(ev_pen, fd_touch, rmVersion);
+      pressModeRM1(&ev_pen, fd_touch, rmVersion);
       break;
     default:
       printf("Somehow a mode wasn't set? Exiting...\n");

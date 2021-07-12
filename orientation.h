@@ -13,7 +13,7 @@ typedef struct {
   int orientation;
 } toolbarOrientation;
 
-int getOpenFileUUID(char *UUID);
+int getOpenFileUUID(char* UUID);
 toolbarOrientation getToolbarOrientation();
 int getRmVersion();
 

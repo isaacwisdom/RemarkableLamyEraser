@@ -62,15 +62,15 @@ static const struct input_event tool_rubber_off = {.type = EV_KEY, .code = BTN_T
 
 void writeEvent(int fd_touch, struct input_event event);
 void writeTapWithTouch(int fd_touch, const int location[2]);
-int  writeOrientedTapSequence(int fd_touch, toolbarOrientation *orientation, int RMversion, int numLocations, ...);
+int  writeOrientedTapSequence(int fd_touch, toolbarOrientation* orientation, int RMversion, int numLocations, ...);
 
-bool doublePressHandler(struct input_event ev_pen);
+bool doublePressHandler(struct input_event* ev_pen);
 
-void toggleModeRM2(struct input_event ev_pen, int fd_pen);
-void pressModeRM2(struct input_event ev_pen, int fd_pen);
+void toggleModeRM2(struct input_event* ev_pen, int fd_pen);
+void pressModeRM2(struct input_event* ev_pen, int fd_pen);
 
-void toggleModeRM1(struct input_event ev_pen, int fd_touch, int RMversion);
-void pressModeRM1(struct input_event ev_pen, int fd_touch, int RMversion);
+void toggleModeRM1(struct input_event* ev_pen, int fd_touch, int RMversion);
+void pressModeRM1(struct input_event* ev_pen, int fd_touch, int RMversion);
 
 
 void actionToolbar(int fd_touch, int RMversion);

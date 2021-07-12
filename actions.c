@@ -79,34 +79,34 @@ int writeOrientedTapSequence(int fd_touch, toolbarOrientation *orientation, int 
 //writeOrientedTapSequence(fd_touch, &orientation, int RMversion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
 
 
-bool doublePressHandler(struct input_event ev_pen) {
+bool doublePressHandler(struct input_event* ev_pen) {
   // returns true if a double press has happened
   static struct timeval prevTime;
   const double maxDoublePressTime = .5; // 500ms seems to be the standard double press time
-  double elapsedTime = (ev_pen.time.tv_sec + ev_pen.time.tv_usec / 1000000.0) -
+  double elapsedTime = (ev_pen->time.tv_sec + ev_pen->time.tv_usec / 1000000.0) -
                        (prevTime.tv_sec + prevTime.tv_usec / 1000000.0);
-  if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) {
+  if (ev_pen->code == BTN_STYLUS && ev_pen->value == 1) {
     // printf("Current Time: %f | ", ev.time.tv_sec +
     // ev.time.tv_usec/1000000.0); printf("Prev Time: %f |", prevTime.tv_sec +
     // prevTime.tv_usec/1000000.0); printf("Elapsed Time: %f\n", elapsedTime);
     if (elapsedTime <= maxDoublePressTime) {
       return true;
     }
-    prevTime = ev_pen.time;
+    prevTime = ev_pen->time;
   }
   return false;
 }
 
-void toggleModeRM2(struct input_event ev_pen, int fd_pen) {
+void toggleModeRM2(struct input_event* ev_pen, int fd_pen) {
   static int toggle = 0;
-  if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) { // change state of toggle on button press
+  if (ev_pen->code == BTN_STYLUS && ev_pen->value == 1) { // change state of toggle on button press
     toggle = !toggle;
     printf("toggle: %d \n", toggle);
   }
   if (toggle)
-    if (ev_pen.code == BTN_TOOL_PEN) { // when toggle is on, we write these events
+    if (ev_pen->code == BTN_TOOL_PEN) { // when toggle is on, we write these events
                                    // following the pen state
-      if (ev_pen.value == 1) {
+      if (ev_pen->value == 1) {
         printf("writing eraser on\n");
         writeEvent(fd_pen, tool_rubber_on);
       } else {
@@ -116,20 +116,20 @@ void toggleModeRM2(struct input_event ev_pen, int fd_pen) {
     }
 }
 
-void pressModeRM2(struct input_event ev_pen, int fd_pen) {
-  if (ev_pen.code == BTN_STYLUS) {
-    ev_pen.code = BTN_TOOL_RUBBER; // value will follow the button, so we can reuse
+void pressModeRM2(struct input_event* ev_pen, int fd_pen) {
+  if (ev_pen->code == BTN_STYLUS) {
+    ev_pen->code = BTN_TOOL_RUBBER; // value will follow the button, so we can reuse
                                // the message
-    writeEvent(fd_pen, ev_pen);
+    writeEvent(fd_pen, *ev_pen);
   }
 }
 
-void toggleModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
+void toggleModeRM1(struct input_event* ev_pen, int fd_touch, int RMversion) {
   static int toggle = 0;
   static int actionComplete = 0;
   static toolbarOrientation orientation;
 
-  if (ev_pen.code == BTN_STYLUS && ev_pen.value == 1) { // change state of toggle on button press
+  if (ev_pen->code == BTN_STYLUS && ev_pen->value == 1) { // change state of toggle on button press
     toggle = !toggle;
     orientation = getToolbarOrientation();
     actionComplete = 0;
@@ -147,12 +147,12 @@ void toggleModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
   }
 }
 
-void pressModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
+void pressModeRM1(struct input_event* ev_pen, int fd_touch, int RMversion) {
   static toolbarOrientation orientation;
   static int state = -1;
-  if (ev_pen.code == BTN_STYLUS) {
+  if (ev_pen->code == BTN_STYLUS) {
     orientation = getToolbarOrientation();
-    if(ev_pen.value == 1) {
+    if(ev_pen->value == 1) {
         printf("writing eraser tool...\n");
         writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, ERASER, TOOLBAR, ERASER, TOOLBAR);
         state = 1;
@@ -163,7 +163,7 @@ void pressModeRM1(struct input_event ev_pen, int fd_touch, int RMversion) {
         state = 0;
       }
     }
-  else if (ev_pen.code == BTN_TOOL_PEN && ev_pen.value == 1 && state != -1) {
+  else if (ev_pen->code == BTN_TOOL_PEN && ev_pen->value == 1 && state != -1) {
       if (state == 1) {
           printf("writing eraser tool...\n");
           writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, ERASER, TOOLBAR, ERASER, TOOLBAR);
