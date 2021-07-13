@@ -77,6 +77,7 @@ void actionToolbar(int fd_touch, int RMversion);
 void actionWriting(int fd_touch, int RMversion);
 void actionUndo(int fd_touch, int RMversion);
 void actionRedo(int fd_touch, int RMversion);
+void actionSelect(struct input_event* ev_pen, int fd_touch, int RMversion);
 
 
 

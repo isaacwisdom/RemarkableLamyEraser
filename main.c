@@ -84,6 +84,11 @@ int main(int argc, char *argv[]) {
         doublePressAction = REDO;
         i++; // manually increment i so we skip interpretting the double press action arg
       }
+    /* else if (!strncmp(argv[i + 1], "select", 6)) {
+        printf("DOUBLE CLICK ACTION: SELECT TOOL\n");
+        doublePressAction = SELECT;
+        i++; // manually increment i so we skip interpretting the double press action arg
+      } */
       else {
         printf("Unknown double press action <%s>. Using default.\n", argv[i + 1]);
         printf("DOUBLE CLICK ACTION: UNDO\n");
@@ -136,6 +141,10 @@ int main(int argc, char *argv[]) {
         printf("writing redo\n");
         actionRedo(fd_touch, rmVersion);
         break;
+    /* case SELECT:
+        printf("writing select\n");
+        actionSelect(&ev_pen, fd_touch, rmVersion);
+        break; */
       }
     }
 

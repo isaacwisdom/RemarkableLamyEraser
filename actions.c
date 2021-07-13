@@ -196,5 +196,34 @@ void actionRedo(int fd_touch, int RMversion) {
   writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, REDO, TOOLBAR, REDO, TOOLBAR);
 }
 
+void actionSelect(struct input_event* ev_pen, int fd_touch, int RMversion) {
+  static toolbarOrientation orientation;
+  static int state = -1;
+  if (ev_pen->code == BTN_STYLUS) {
+    orientation = getToolbarOrientation();
+    if(ev_pen->value == 1) {
+        printf("writing select tool...\n");
+        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
+        state = 1;
+      }
+    else {
+        printf("writing writing tool...\n");
+        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+        state = 0;
+      }
+    }
+  else if (ev_pen->code == BTN_TOOL_PEN && ev_pen->value == 1 && state != -1) {
+      if (state == 1) {
+          printf("writing select tool...\n");
+          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
+        }
+      else if (state == 0)
+        {
+          printf("writing writing tool...\n");
+          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+        }
+  }
+}
+
 
 
