@@ -8,7 +8,6 @@ INCLUDEPATH += /opt/codex/rm11x/2.5.2/sysroots/x86_64-codexsdk-linux/usr/lib/arm
 
 HEADERS += \
     actions.h \
-    screenlocations.h \
     orientation.h
 
 SOURCES += \

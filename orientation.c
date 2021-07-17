@@ -4,6 +4,7 @@
 
 #include "orientation.h"
 
+
 int getOpenFileUUID(char *UUID) {
   //returns  1 if success
   //returns  0 if no open file
@@ -60,9 +61,11 @@ int checkConf(const char *path, const char *param, const char *paramTrue) {
 toolbarOrientation getToolbarOrientation() {
   //returns panelOrientation struct with params:
   //{openNotebook | 1 for open notebook, 0 for no open notebook
-  // rightHanded  | 1 for right handedness, 0 for left, -1 if invalid
-  // portrait     | 1 for portrait orientation, 0 for landscape, -1 if invalid }
-  toolbarOrientation orientation = {-1,-1,-1};
+  // orientation  | 0 for RHP, 1 for RHL, 2 for LHP, 3 for LHL
+  //                the three letter acronyms are defined macros}
+  toolbarOrientation orientation = {-1,-1};
+  int rightHanded;
+  int portrait;
   // get portrait or landscape
   char UUID[BUFSIZE];
 
@@ -71,14 +74,21 @@ toolbarOrientation getToolbarOrientation() {
     strcat(UUID, ".content");
     strcat(openFilePath, UUID);
     // printf("%s\n", openFilePath);
-    orientation.portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
+    portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
   } else {
-    return orientation; // other params will be -1 to indicate they are invalid
+    return orientation; // other param will be -1 to indicate orientation is N/A
   }
 
   // get handedness
   const char *confPath = "/home/root/.config/remarkable/xochitl.conf";
-  orientation.rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true");
+  rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true");
+  orientation.orientation = !portrait + (!rightHanded << 1);
 
   return orientation;
+}
+
+int getRmVersion() {
+  const char *sysPath = "/sys/devices/soc0/machine";
+  int RM2 = checkConf(sysPath, "reMarkable 2.0", "reMarkable 2.0");
+  return RM2 + 1; //returns 1 for RM1, 2 for RM2
 }
