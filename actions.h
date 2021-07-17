@@ -5,57 +5,62 @@
 #include <stdbool.h>
 
 #include "orientation.h"
-//erase modes
-#define PRESS_MODE            1
-#define TOGGLE_MODE           2
 
-#define PRESS_MODE_RM1        3 //press and hold mode for RM1
-#define TOGGLE_MODE_RM1       4 //toggle mode for RM1
+#define NUM_EFFECTS     9
 
-#define PRESS_MODE_RM2        5 //press and hold mode
-#define TOGGLE_MODE_RM2       6 //toggle mode
+//effects:
+#define NULL_EFFECT     0 //null effect
+#define TOOLBAR         1 //action: toolbar
+#define WRITING         2 //action: writing
+#define ERASER_PANEL    3 //<eraser  (internal use only)>
+#define ERASER_ERASE    4 //tool:   eraser normal eraser button
+#define ERASER_SELECT    5 //tool:   erase-selection: erase selection button
+#define SELECT          6 //tool:   selection
+#define UNDO            7 //action: undo button
+#define REDO            8 //action: redo button
 
+#define HOLD_OFF_OFFSET      0x0ff
+#define ERASER_ERASE_OFF     (ERASER_ERASE +  HOLD_OFF_OFFSET)
+#define ERASER_SELECT_OFF     (ERASER_SELECT + HOLD_OFF_OFFSET)
+#define SELECT_OFF           (SELECT + HOLD_OFF_OFFSET)
 
-
-#define TOOLBAR         0
-//actions:
-#define WRITING         1 //writing button
-#define ERASER          2 //eraser button
-#define ERASER_ERASE    3 //eraser: normal eraser button
-#define ERASE_SELECT    4 //eraser: erase selection button
-#define SELECT          5 //select button
-#define UNDO            6 //undo button
-#define REDO            7 //redo button
+#define TOGGLE_OFFSET        0xfff
+#define ERASER_ERASE_TOGGLE  (ERASER_ERASE +  TOGGLE_OFFSET)
+#define ERASER_SELECT_TOGGLE  (ERASER_SELECT + TOGGLE_OFFSET)
+#define SELECT_TOGGLE        (SELECT + TOGGLE_OFFSET)
 
 //Touch Screen Coordinates:
 #define RM2_RHtoolX 60 //define one x coordinate for all panel tools
 #define RM2_RHtoolY 50 //define one y coordinate for panel tools
 #define RM2_LHtoolX 1360 //define one y coordinate for panel tools
 #define RM2_LHtoolY 1820 //define one y coordinate for panel tools
-static const int locationLookup[2][8][4][2] = {
+static const int locationLookup[2][NUM_EFFECTS][4][2] = {
   { /* RM1 */
     //RHP                  //RHL                //LHP                //LHL
-    { {RM2_RHtoolX, 1820}, {  40, RM2_RHtoolY}, {RM2_LHtoolX, 1820}, {  40, RM2_LHtoolY} }, //TOOLBAR        0
-    { {RM2_RHtoolX, 1680}, {  80, RM2_RHtoolY}, {RM2_LHtoolX, 1680}, {  80, RM2_LHtoolY} }, //WRITING        1
-    { {RM2_RHtoolX, 1450}, { 430, RM2_RHtoolY}, {RM2_LHtoolX, 1450}, { 430, RM2_LHtoolY} }, //ERASER         2
-    { {        280, 1450}, { 430,         270}, {       1140, 1450}, { 430,        1590} }, //ERASER_ERASE   3
-    { {        280, 1330}, { 550,         270}, {       1140, 1340}, { 550,        1590} }, //ERASE_SELECT   4
-    { {RM2_RHtoolX, 1330}, { 550, RM2_RHtoolY}, {RM2_LHtoolX, 1340}, { 550, RM2_LHtoolY} }, //SELECT         5
-    { {RM2_RHtoolX, 1220}, { 670, RM2_RHtoolY}, {RM2_LHtoolX, 1220}, { 670, RM2_LHtoolY} }, //UNDO           6
-    { {RM2_RHtoolX, 1090}, { 800, RM2_RHtoolY}, {RM2_LHtoolX, 1090}, { 800, RM2_LHtoolY} }, //REDO           7
+    { {          0,    0}, {   0,           0}, {          0,    0}, {   0,           0} }, //NO_EFFECT      0
+    { {RM2_RHtoolX, 1820}, {  40, RM2_RHtoolY}, {RM2_LHtoolX, 1820}, {  40, RM2_LHtoolY} }, //TOOLBAR        1
+    { {RM2_RHtoolX, 1680}, {  80, RM2_RHtoolY}, {RM2_LHtoolX, 1680}, {  80, RM2_LHtoolY} }, //WRITING        2
+    { {RM2_RHtoolX, 1450}, { 430, RM2_RHtoolY}, {RM2_LHtoolX, 1450}, { 430, RM2_LHtoolY} }, //ERASER         3
+    { {        280, 1450}, { 430,         270}, {       1140, 1450}, { 430,        1590} }, //ERASER_ERASE   4
+    { {        280, 1330}, { 550,         270}, {       1140, 1340}, { 550,        1590} }, //ERASE_SELECT   5
+    { {RM2_RHtoolX, 1330}, { 550, RM2_RHtoolY}, {RM2_LHtoolX, 1340}, { 550, RM2_LHtoolY} }, //SELECT         6
+    { {RM2_RHtoolX, 1220}, { 670, RM2_RHtoolY}, {RM2_LHtoolX, 1220}, { 670, RM2_LHtoolY} }, //UNDO           7
+    { {RM2_RHtoolX, 1090}, { 800, RM2_RHtoolY}, {RM2_LHtoolX, 1090}, { 800, RM2_LHtoolY} }, //REDO           8
   },
   { /* RM2 */
     //RHP                  //RHL                //LHP                //LHL
-    { {RM2_RHtoolX, 1820}, {  40, RM2_RHtoolY}, {RM2_LHtoolX, 1820}, {  40, RM2_LHtoolY} }, //TOOLBAR        0
-    { {RM2_RHtoolX, 1680}, {  80, RM2_RHtoolY}, {RM2_LHtoolX, 1680}, {  80, RM2_LHtoolY} }, //WRITING        1
-    { {RM2_RHtoolX, 1450}, { 430, RM2_RHtoolY}, {RM2_LHtoolX, 1450}, { 430, RM2_LHtoolY} }, //ERASER         2
-    { {        280, 1450}, { 430,         270}, {       1140, 1450}, { 430,        1590} }, //ERASER_ERASE   3
-    { {        280, 1330}, { 550,         270}, {       1140, 1340}, { 550,        1590} }, //ERASE_SELECT   4
-    { {RM2_RHtoolX, 1330}, { 550, RM2_RHtoolY}, {RM2_LHtoolX, 1340}, { 550, RM2_LHtoolY} }, //SELECT         5
-    { {RM2_RHtoolX, 1220}, { 670, RM2_RHtoolY}, {RM2_LHtoolX, 1220}, { 670, RM2_LHtoolY} }, //UNDO           6
-    { {RM2_RHtoolX, 1090}, { 800, RM2_RHtoolY}, {RM2_LHtoolX, 1090}, { 800, RM2_LHtoolY} }, //REDO           7
+    { {          0,    0}, {   0,           0}, {          0,    0}, {   0,           0} }, //NO_EFFECT      0
+    { {RM2_RHtoolX, 1820}, {  40, RM2_RHtoolY}, {RM2_LHtoolX, 1820}, {  40, RM2_LHtoolY} }, //TOOLBAR        1
+    { {RM2_RHtoolX, 1680}, {  80, RM2_RHtoolY}, {RM2_LHtoolX, 1680}, {  80, RM2_LHtoolY} }, //WRITING        2
+    { {RM2_RHtoolX, 1450}, { 430, RM2_RHtoolY}, {RM2_LHtoolX, 1450}, { 430, RM2_LHtoolY} }, //ERASER         3
+    { {        280, 1450}, { 430,         270}, {       1140, 1450}, { 430,        1590} }, //ERASER_ERASE   4
+    { {        280, 1330}, { 550,         270}, {       1140, 1340}, { 550,        1590} }, //ERASE_SELECT   5
+    { {RM2_RHtoolX, 1330}, { 550, RM2_RHtoolY}, {RM2_LHtoolX, 1340}, { 550, RM2_LHtoolY} }, //SELECT         6
+    { {RM2_RHtoolX, 1220}, { 670, RM2_RHtoolY}, {RM2_LHtoolX, 1220}, { 670, RM2_LHtoolY} }, //UNDO           7
+    { {RM2_RHtoolX, 1090}, { 800, RM2_RHtoolY}, {RM2_LHtoolX, 1090}, { 800, RM2_LHtoolY} }, //REDO           8
   }
 };
+
 
 
 //static const struct input_event tool_touch_off = { .type = EV_KEY, .code =BTN_TOUCH, .value = 0}; //these might be used in the future to improve press and hold mode
@@ -79,9 +84,9 @@ void activateToolEraserRM1(int fd_touch, int rmVersion);
 void deactivateToolEraserRM1(int fd_touch, int rmVersion);
 void toggleToolEraserRM1(int fd_touch, int rmVersion);
 
-void activateToolEraseSelection(int fd_touch, int rmVersion);
-void deactivateToolEraseSelection(int fd_touch, int rmVersion);
-void toggleToolEraseSelection(int fd_touch, int rmVersion);
+void activateToolEraseSelect(int fd_touch, int rmVersion);
+void deactivateToolEraseSelect(int fd_touch, int rmVersion);
+void toggleToolEraseSelect(int fd_touch, int rmVersion);
 
 void activateToolSelect(int fd_touch, int rmVersion);
 void deactivateToolSelect(int fd_touch, int rmVersion);

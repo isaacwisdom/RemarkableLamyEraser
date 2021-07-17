@@ -10,8 +10,7 @@ double getTimeDelta(struct timeval* current, struct timeval* prev) {
 }
 
 
-#define MAX_CLICK_TIME         0.15  //seconds
-#define MAX_DOUBLE_CLICK_TIME  0.4  //seconds
+
 int getTrigger(struct input_event* ev_pen) {
   //triggers:
   //Click        || Press&Hold
@@ -22,7 +21,7 @@ int getTrigger(struct input_event* ev_pen) {
   //Bits 0-5 encodes the number ie. (click, double click, press and hold, double press and hold)
 
   static double elapsedTime; //time between presses of button
-  static int trigger = TRIGGER_NULL;
+  static int trigger = NULL_TRIGGER;
   static int clicks = 0;
   static bool clickDetected;
   static bool sent = 0;
@@ -32,7 +31,7 @@ int getTrigger(struct input_event* ev_pen) {
 if(ev_pen->code == BTN_STYLUS && ev_pen->value == 1) {
     prevTime = ev_pen->time; //update most recent time
     clicks += 1 ;
-    trigger = TRIGGER_NULL; //set the trigger to NULL as we don't have enough info to ascertain the state yet.
+    trigger = NULL_TRIGGER; //set the trigger to NULL as we don't have enough info to ascertain the state yet.
     clickDetected = false;
     }
 
@@ -60,7 +59,7 @@ if (clicks > 0) {
             sent = true;
           }
           else
-            trigger = TRIGGER_NULL;
+            trigger = NULL_TRIGGER;
 
           if (ev_pen->code == BTN_STYLUS && ev_pen->value == 0) {
               /*printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n"
@@ -95,7 +94,7 @@ if (clicks > 0) {
       }
   }
 else
-  trigger = TRIGGER_NULL;
+  trigger = NULL_TRIGGER;
 
 return trigger;
 }

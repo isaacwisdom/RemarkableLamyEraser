@@ -50,8 +50,6 @@ int checkConf(const char *path, const char *param, const char *paramTrue) {
       // printf("%s", line);
       int value = !strncmp(line, paramTrue, strlen(paramTrue));
       fclose(fp);
-      if (line)
-        free(line);
       return value;
     }
   }

@@ -144,7 +144,7 @@ static int toolEraserRM1 = 0;
 void activateToolEraserRM1(int fd_touch, int rmVersion) {
   printf("Deactivating ToolEraserRM1: writing eraser tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(fd_touch, &orientation, rmVersion, 6, ERASER, ERASER_ERASE, TOOLBAR, ERASER, ERASER_ERASE, TOOLBAR);
+  writeOrientedTapSequence(fd_touch, &orientation, rmVersion, 6, ERASER_PANEL, ERASER_ERASE, TOOLBAR, ERASER_PANEL, ERASER_ERASE, TOOLBAR);
   toolEraserRM1 = 1;
 }
 void deactivateToolEraserRM1(int fd_touch, int rmVersion) {
@@ -164,7 +164,7 @@ static int toolEraseSelect = 0;
 void activateToolEraseSelect(int fd_touch, int rmVersion) {
   printf("Deactivating ToolEraserRM1: writing eraser tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(fd_touch, &orientation, rmVersion, 6, ERASER, ERASE_SELECT, TOOLBAR, ERASER, ERASE_SELECT, TOOLBAR);
+  writeOrientedTapSequence(fd_touch, &orientation, rmVersion, 6, ERASER_PANEL, ERASER_SELECT, TOOLBAR, ERASER_PANEL, ERASER_SELECT, TOOLBAR);
   toolEraseSelect = 1;
 }
 void deactivateToolEraseSelect(int fd_touch, int rmVersion) {
@@ -199,35 +199,5 @@ void toggleToolSelect(int fd_touch, int rmVersion) {
   else
     activateToolSelect(fd_touch, rmVersion);
 }
-
-void actionSelect(struct input_event* ev_pen, int fd_touch, int RMversion) {
-  static toolbarOrientation orientation;
-  static int state = -1;
-  if (ev_pen->code == BTN_STYLUS) {
-    orientation = getToolbarOrientation();
-    if(ev_pen->value == 1) {
-        printf("writing select tool...\n");
-        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
-        state = 1;
-      }
-    else {
-        printf("writing writing tool...\n");
-        writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
-        state = 0;
-      }
-    }
-  else if (ev_pen->code == BTN_TOOL_PEN && ev_pen->value == 1 && state != -1) {
-      if (state == 1) {
-          printf("writing select tool...\n");
-          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
-        }
-      else if (state == 0)
-        {
-          printf("writing writing tool...\n");
-          writeOrientedTapSequence(fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
-        }
-  }
-}
-
 
 

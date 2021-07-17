@@ -8,10 +8,12 @@ INCLUDEPATH += /opt/codex/rm11x/2.5.2/sysroots/x86_64-codexsdk-linux/usr/lib/arm
 
 HEADERS += \
     actions.h \
+    configuration.h \
     orientation.h \
     triggers.h \
 
 SOURCES += \
+    configuration.c \
     orientation.c \
     actions.c \
     triggers.c \
@@ -19,18 +21,23 @@ SOURCES += \
 
 
 OTHER_FILES += \
+    RemarkableLamyEraser.conf\
     RemarkableLamyEraser/LamyEraser.service \
     README.md \
-    triggers_struct.h \
-    triggers_struct.c \
 
+conf.files = RemarkableLamyEraser/LamyEraser.conf
+conf.path = /home/root/.config/LamyEraser
 
 service.files = RemarkableLamyEraser/LamyEraser.service
-
+service.path = /home/root/RemarkableLamyEraser
 
 target.path = /home/root/RemarkableLamyEraser
-service.path = /home/root/RemarkableLamyEraser
+
 
 INSTALLS += \
         target \
-        service
+        service \
+        conf \
+
+DISTFILES += \
+    RemarkableLamyEraser/LamyEraser.conf

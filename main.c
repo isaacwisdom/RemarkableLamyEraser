@@ -10,6 +10,7 @@
 #include "triggers.h"
 #include "actions.h"
 #include "orientation.h"
+#include "configuration.h"
 
 #define PEN_DEVICE_RM2   "/dev/input/event1"
 #define TOUCH_DEVICE_RM2 "/dev/input/event2"
@@ -17,16 +18,33 @@
 #define TOUCH_DEVICE_RM1 "/dev/input/event1"
 
 int main(int argc, char *argv[]) {
-  printf("RemarkableLamyEraser 1.1\n");
+  printf("RemarkableLamyEraser 2.0\n");
   printf("----------------------------------\n");
-
-  int forceRM1 = 0, mode = 0, doubleClickAction = 0;
-  int trigger;
+  struct configuration config;
+  char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
+  int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
   struct input_event ev_pen;
   const size_t input_event_size = sizeof(struct input_event);
   int fd_pen, fd_touch;
   char name[256] = "Unknown";
+  int forceRM1Style = 0;
   int rmVersion = getRmVersion();
+
+  // check our input args
+  if (argc > 2) {
+      printf("Unknown arguments supplied. Exiting...\n");
+    }
+  else if (argc == 2)
+    if ( !strcmp(argv[1], "--config-file") ) {
+      confPath = argv[2];
+    }
+
+  printf("Using configuration file at %s\n", confPath);
+  if ( getTriggerConfig(confPath, &config)  == -1)
+      printf("Reading configuration file failed. Using default settings...\n");
+  printf("----------------------------------\n");
+
+
 
   /* Open Input Devices */
   if (rmVersion == 2) {
@@ -65,67 +83,25 @@ int main(int argc, char *argv[]) {
   printf("   device name = %s\n", name);
   printf("----------------------------------\n");
 
+  int temp;
+  temp = config.click1Effect;
+  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+    config.click1Effect += TOGGLE_OFFSET;
+  temp = config.click2Effect;
+  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+    config.click2Effect += TOGGLE_OFFSET;
+  temp = config.click3Effect;
+  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+    config.click3Effect += TOGGLE_OFFSET;
+  temp = config.click4Effect;
+  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+    config.click4Effect += TOGGLE_OFFSET;
+  temp = config.click5Effect;
+  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+    config.click5Effect += TOGGLE_OFFSET;
 
-  // check our input args
-  for (int i = 1; i < argc; i++) {
-    if (!strncmp(argv[i], "--press", 7)) {
-      printf("MODE: PRESS AND HOLD\n");
-      mode = PRESS_MODE;
-    }
-    else if (!strncmp(argv[i], "--toggle", 8)) {
-      printf("MODE: TOGGLE\n");
-      mode = TOGGLE_MODE;
-    }
-    else if (!strncmp(argv[i], "--double-press", 14)) {
-      if (!strncmp(argv[i + 1], "undo", 4)) {
-        printf("DOUBLE CLICK ACTION: UNDO\n");
-        doubleClickAction = UNDO;
-        i++; // manually increment i so we skip interpretting the double press action arg
-      }
-      else if (!strncmp(argv[i + 1], "redo", 4)) {
-        printf("DOUBLE CLICK ACTION: REDO\n");
-        doubleClickAction = REDO;
-        i++; // manually increment i so we skip interpretting the double press action arg
-      }
-    else if (!strncmp(argv[i + 1], "select", 6)) {
-        printf("DOUBLE CLICK ACTION: SELECT TOOL\n");
-        doubleClickAction = SELECT;
-        i++; // manually increment i so we skip interpretting the double press action arg
-      }
-      else {
-        printf("Unknown double press action <%s>. Using default.\n", argv[i + 1]);
-        printf("DOUBLE CLICK ACTION: UNDO\n");
-        doubleClickAction = UNDO;
-      }
-    }
-    else if (!strncmp(argv[i], "--force-RM1", 11)) {
-      printf("Debug: FORCING RM1-STYLE ACTIONS\n");
-      forceRM1 = 1;
-      }
-    else {
-      printf("Unknown argument %s\nExiting...\n", argv[i]);
-      exit(EXIT_FAILURE);
-    }
-  }
+  printConfig(&config);
 
-  //select appropraite mode based on RM version
-  switch (mode) {
-    case 0: //unset
-      printf("No mode specified! Using default.\nMODE: PRESS AND HOLD\n");
-      /* FALL-THROUGH */
-    case PRESS_MODE:
-      mode = (rmVersion == 2 && !forceRM1) ? PRESS_MODE_RM2 : PRESS_MODE_RM1;
-      break;
-    case TOGGLE_MODE:
-      mode = (rmVersion == 2 && !forceRM1) ? TOGGLE_MODE_RM2 : TOGGLE_MODE_RM1;
-      break;
-  }
-
-  if (!doubleClickAction) {
-    printf("No double click action specified! Using default.\nDOUBLE CLICK ACTION: UNDO\n");
-    doubleClickAction = UNDO;
-  }
-  int tripleClickAction = REDO;
 
   //main loop body
   for (;;) {
@@ -134,29 +110,66 @@ int main(int argc, char *argv[]) {
 
     printTriggers(trigger, false);
 
-    if (trigger == TRIPLE_CLICK) { //currently hardcoded to be REDO
-        switch (tripleClickAction) {
-        case WRITING:
-          printf("writing write\n");
-          actionWriting(fd_touch, rmVersion);
-            break;
-        case UNDO:
-          printf("writing undo\n");
-          actionUndo(fd_touch, rmVersion);
-          break;
-        case REDO:
-          printf("writing redo\n");
-          actionRedo(fd_touch, rmVersion);
-          break;
-        case SELECT:
-          printf("writing select\n");
-          toggleToolSelect(fd_touch, rmVersion);
-          break;
-        }
+    switch(trigger) {
+      case CLICK_1 :
+      effect = config.click1Effect;
+      break;
+      case CLICK_2 :
+      effect = config.click2Effect;
+      break;
+      case CLICK_3 :
+      effect = config.click3Effect;
+      break;
+      case CLICK_4 :
+      effect = config.click4Effect;
+      break;
+      case CLICK_5 :
+      effect = config.click5Effect;
+      break;
+
+      case HOLD_1_ON :
+      effect = config.hold1Effect;
+      break;
+      case HOLD_2_ON :
+      effect = config.hold2Effect;
+      break;
+      case HOLD_3_ON :
+      effect = config.hold3Effect;
+      break;
+      case HOLD_4_ON :
+      effect = config.hold4Effect;
+      break;
+      case HOLD_5_ON :
+      effect = config.hold5Effect;
+      break;
+
+      case HOLD_1_OFF :
+      effect = config.hold1Effect + HOLD_OFF_OFFSET;
+      break;
+      case HOLD_2_OFF :
+      effect = config.hold2Effect + HOLD_OFF_OFFSET;
+      break;
+      case HOLD_3_OFF :
+      effect = config.hold3Effect + HOLD_OFF_OFFSET;
+      break;
+      case HOLD_4_OFF :
+      effect = config.hold4Effect + HOLD_OFF_OFFSET;
+      break;
+      case HOLD_5_OFF :
+      effect = config.hold5Effect + HOLD_OFF_OFFSET;
+      break;
+      default :
+        effect = NULL_EFFECT;
       }
 
-    if (trigger == DOUBLE_CLICK) {
-      switch (doubleClickAction) {
+
+
+
+    switch (effect) {
+      case TOOLBAR:
+        printf("writing toolbar\n");
+        actionToolbar(fd_touch, rmVersion);
+          break;
       case WRITING:
         printf("writing write\n");
         actionWriting(fd_touch, rmVersion);
@@ -169,57 +182,61 @@ int main(int argc, char *argv[]) {
         printf("writing redo\n");
         actionRedo(fd_touch, rmVersion);
         break;
+
+
+      case ERASER_ERASE:
+        printf("writing eraser\n");
+        if (rmVersion == 1 || forceRM1Style) {
+            activateToolEraserRM1(fd_touch, rmVersion);
+          }
+        else
+            activateToolEraserRM2(fd_pen);
+        break;
+      case ERASER_ERASE_OFF:
+        printf("writing eraser\n");
+        if (rmVersion == 1 || forceRM1Style) {
+            activateToolEraserRM1(fd_touch, rmVersion);
+          }
+        else
+            deactivateToolEraserRM2(fd_pen);
+        break;
+      case ERASER_ERASE_TOGGLE:
+        printf("writing eraser\n");
+        if (rmVersion == 1 || forceRM1Style) {
+            toggleToolEraserRM1(fd_touch, rmVersion);
+          }
+        else
+            toggleToolEraserRM2(fd_pen);
+        break;
+      case ERASER_SELECT:
+        printf("writing erase selection\n");
+        activateToolEraseSelect(fd_touch, rmVersion);
+        break;
+      case ERASER_SELECT_OFF:
+        printf("writing erase selection off\n");
+        deactivateToolEraseSelect(fd_touch, rmVersion);
+        break;
+      case ERASER_SELECT_TOGGLE:
+        printf("writing erase selection off\n");
+        toggleToolEraseSelect(fd_touch, rmVersion);
+        break;
+
       case SELECT:
+        printf("writing select\n");
+        activateToolSelect(fd_touch, rmVersion);
+        break;
+      case SELECT_OFF:
+        printf("writing select\n");
+        deactivateToolSelect(fd_touch, rmVersion);
+        break;
+      case SELECT_TOGGLE:
         printf("writing select\n");
         toggleToolSelect(fd_touch, rmVersion);
         break;
       }
-    }
 
-  switch(mode) {
-    case PRESS_MODE_RM2:
-      switch(trigger) {
-        case PRESS_HOLD_ON :
-          activateToolEraserRM2(fd_pen);
-          break;
-        case PRESS_HOLD_OFF :
-          deactivateToolEraserRM2(fd_pen);
-          break;
-        }
-      break;
-    case PRESS_MODE_RM1:
-      switch(trigger) {
-        case PRESS_HOLD_ON :
-          activateToolEraserRM1(fd_touch, rmVersion);
-          break;
-        case PRESS_HOLD_OFF :
-          deactivateToolEraserRM1(fd_touch, rmVersion);
-          break;
-        }
-      break;
-    case TOGGLE_MODE_RM2:
-      if (trigger == CLICK)
-          toggleToolEraserRM2(fd_pen);
-      break;
-    case TOGGLE_MODE_RM1:
-      if (trigger == CLICK)
-          toggleToolEraserRM1(fd_touch, rmVersion);
-      break;
-    }
-
-
-
+  if (rmVersion == 2)
     actionToolEraserRM2(&ev_pen, fd_pen);
-
-    // (these groupings for future use)
-    //RUN ONCE TYPE ACTIONS: code can run exactly once to perform action.
-    //MARKER, UNDO, REDO
-
-    //LOOP TYPE ACTIONS: code must loop to perform action
-    //ERASE, ERASE-SELECT
-
-
-
 
   }
   return EXIT_SUCCESS;
