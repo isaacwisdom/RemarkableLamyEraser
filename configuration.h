@@ -14,6 +14,9 @@ struct configuration {
   int hold5Effect;
 } configuration;
 
+
+
+#define NUM_TRIGGERS  11
 //triggers:
 #define TRIGGER_CLICK_1   1
 #define TRIGGER_CLICK_2   2
@@ -26,9 +29,11 @@ struct configuration {
 #define TRIGGER_HOLD_4    9
 #define TRIGGER_HOLD_5    10
 
+int configurationArray[NUM_TRIGGERS];
+
 #define NULL_EFFECT       0
 
-#define NUM_TRIGGERS  11
+
 #define NUM_EFFECTS   9
 //recognized words in configuration file. make sure these stay up to date with actions.h!
 static const char *triggers[NUM_TRIGGERS] = {

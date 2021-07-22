@@ -73,9 +73,10 @@ toolbarOrientation getToolbarOrientation() {
     strcat(openFilePath, UUID);
     // printf("%s\n", openFilePath);
     portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
-  } else {
+    }
+  else {
     return orientation; // other param will be -1 to indicate orientation is N/A
-  }
+    }
 
   // get handedness
   const char *confPath = "/home/root/.config/remarkable/xochitl.conf";
