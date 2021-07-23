@@ -96,34 +96,12 @@ static const int locationLookupTouch[2][NUM_EFFECTS+1][4][2] = {
   }
 };
 
-#define W_RM1_RHY 680
-#define W_RM1_RHX 710
-#define W_RM1_LHY 15050
-#define W_RM1_LHX 20260
-
 #define W_RM2_RHY 730
 #define W_RM2_RHX 530
 #define W_RM2_LHY 15210
 #define W_RM2_LHX 20260
 //                       [rmVersion][EFFECT][ORIENTATION][x/y]
 static const int locationLookupWacom[NUM_EFFECTS+1][4][2] = {
- /* { //RM1
-    //RHP                  //RHL                //LHP                //LHL
-    { {     0,          0}, {         0,    0}, {     0,          0}, {         0,    0} }, //NO_EFFECT      0
-    { { 20280,  W_RM1_RHY}, { W_RM1_RHX,  670}, { 20220,  W_RM1_LHY}, { W_RM1_LHX,  700} }, //TOOLBAR        1
-    { { 19030,  W_RM1_RHY}, { W_RM1_RHX, 1950}, { 18990,  W_RM1_LHY}, { W_RM1_LHX, 2090} }, //WRITING        2
-    { {      ,  W_RM1_RHY}, { W_RM1_RHX,     }, {      ,  W_RM1_LHY}, { W_RM1_LHX,     } }, //STROKE         3
-    { {      ,           }, {          ,     }, {      ,           }, {          ,     } }, //COLOR_BLACK    4
-    { {      ,           }, {          ,     }, {      ,           }, {          ,     } }, //COLOR_GREY     5
-    { {      ,           }, {          ,     }, {      ,           }, {          ,     } }, //COLOR_WHITE    6
-    { { 16220,  W_RM1_RHY}, { W_RM1_RHX, 4660}, { 16220,  W_RM1_LHY}, { W_RM1_LHX, 4610} }, //ERASER_PANEL   7
-    { { 16150,       2860}, {      3110, 4730}, { 16240,      12650}, {     18050, 4820} }, //ERASER_ERASE   8
-    { { 14890,       2860}, {      3110, 4730}, { 14920,      12650}, {     18050, 6150} }, //ERASE_SELECT   9
-    { { 14820,  W_RM1_RHY}, { W_RM1_RHX, 5860}, { 14880,  W_RM1_LHY}, { W_RM1_LHX, 6110} }, //SELECT        10
-    { { 13440,  W_RM1_RHY}, { W_RM1_RHX, 5860}, { 14880,  W_RM1_LHY}, { W_RM1_LHX, 7330} }, //UNDO          11
-    { { 12280,  W_RM1_RHY}, { W_RM1_RHX, 5860}, { 12150,  W_RM1_LHY}, { W_RM1_LHX, 8810} }, //REDO          12
-  }, */
-//{ //RM2
     //RHP                  //RHL                //LHP                //LHL
     { {     0,          0}, {         0,     0}, {     0,          0}, {   0,           0} }, //NO_EFFECT      0
     { { 20290,  W_RM2_RHY}, { W_RM2_RHX,   700}, { 20300,  W_RM2_LHY}, { W_RM2_LHX,   680} }, //TOOLBAR        1
