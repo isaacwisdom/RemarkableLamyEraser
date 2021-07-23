@@ -105,7 +105,7 @@ void writeTapWithWacom(int fd_wacom, const int location[2]) {
   writeEvent(fd_wacom, event);
 }
 
-int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation, int RMversion, int numLocations, ...) {
+int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation, int rmVersion, int numLocations, ...) {
   //give the fd to use, a pointer to a toolbarOrientation struct, the RMversion, and a list of action locations
   //returns 0 on success, -1 on failure
   int actionLocation[2];
@@ -113,19 +113,21 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
   va_list actionType;
   va_start (actionType, numLocations);
   printf("Orientation: %d | ", orientation->orientation);
-  RMversion--; //RMversion is either 1 or 2, decrement it to be 0 or 1 to work with array.
+  rmVersion--; //RMversion is either 1 or 2, decrement it to be 0 or 1 to work with array.
   if(orientation->openNotebook) {
       for (int i = 0; i < numLocations; i++)  {
           action = va_arg(actionType, int);
-          for(int j = 0; j < 2; j++)
-              actionLocation[j] =  locationLookup[RMversion][action][orientation->orientation][j];
           if(device == WACOM) {
-            printf("Resolved Location for RM%d wacom digitizer: {%d,%d}\n", RMversion+1, actionLocation[0], actionLocation[1]);
-            writeTapWithWacom(fd, locationLookupWacom[RMversion][action][orientation->orientation]);
+            actionLocation[0] = locationLookupWacom[action][orientation->orientation][0];
+            actionLocation[1] = locationLookupWacom[action][orientation->orientation][1];
+            printf("Resolved Location for wacom digitizer: {%d,%d}\n", actionLocation[0], actionLocation[1]);
+            writeTapWithWacom(fd, actionLocation);
             }
-          else{
-            printf("Resolved Location for RM%d touchscreen: {%d,%d}\n", RMversion+1, actionLocation[0], actionLocation[1]);
-            writeTapWithTouch(fd, locationLookup[RMversion][action][orientation->orientation]);
+          else { //Touch
+            actionLocation[0] = locationLookupTouch[rmVersion][action][orientation->orientation][0];
+            actionLocation[1] = locationLookupTouch[rmVersion][action][orientation->orientation][1];
+            printf("Resolved Location for RM%d touchscreen: {%d,%d}\n", rmVersion+1, actionLocation[0], actionLocation[1]);
+            writeTapWithTouch(fd, actionLocation);
             }
         }
       va_end(actionType);
