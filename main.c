@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #include "triggers.h"
-#include "actions.h"
+#include "effects.h"
 #include "orientation.h"
 #include "configuration.h"
 
@@ -166,6 +166,7 @@ int main(int argc, char *argv[]) {
 
 
     switch (effect) {
+      //actions here
       case TOOLBAR:
         printf("writing toolbar\n");
         actionToolbar(fd_touch, rmVersion);
@@ -174,6 +175,18 @@ int main(int argc, char *argv[]) {
         printf("writing write\n");
         actionWriting(fd_touch, rmVersion);
           break;
+      case COLOR_BLACK:
+        printf("writing color black\n");
+        actionColorBlack(fd_pen, rmVersion);
+        break;
+      case COLOR_GREY:
+        printf("writing color grey\n");
+        actionColorGrey(fd_pen, rmVersion);
+        break;
+      case COLOR_WHITE:
+        printf("writing color white\n");
+        actionColorWhite(fd_pen, rmVersion);
+        break;
       case UNDO:
         printf("writing undo\n");
         actionUndo(fd_touch, rmVersion);
@@ -183,7 +196,7 @@ int main(int argc, char *argv[]) {
         actionRedo(fd_touch, rmVersion);
         break;
 
-
+      //tools here
       case ERASER_ERASE:
         printf("writing eraser\n");
         if (rmVersion == 1 || forceRM1Style) {
@@ -208,6 +221,7 @@ int main(int argc, char *argv[]) {
         else
             toggleToolEraserRM2(fd_pen);
         break;
+
       case ERASER_SELECT:
         printf("writing erase selection\n");
         activateToolEraseSelect(fd_touch, rmVersion);

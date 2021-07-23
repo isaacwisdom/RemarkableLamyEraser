@@ -7,15 +7,16 @@ CONFIG -= qt
 INCLUDEPATH += /opt/codex/rm11x/2.5.2/sysroots/x86_64-codexsdk-linux/usr/lib/arm-remarkable-linux-gnueabi/gcc/arm-remarkable-linux-gnueabi/7.3.0/include
 
 HEADERS += \
-    actions.h \
     configuration.h \
+    effects.h \
+    effects_data.h \
     orientation.h \
     triggers.h \
 
 SOURCES += \
     configuration.c \
+    effects.c \
     orientation.c \
-    actions.c \
     triggers.c \
     main.c \
 

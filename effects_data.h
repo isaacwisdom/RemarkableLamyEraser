@@ -1,15 +1,10 @@
-#ifndef ACTIONS_H
-#define ACTIONS_H
-
-#include <linux/input.h>
-#include <stdbool.h>
-
-#include "orientation.h"
+#ifndef EFFECTS_DATA_H
+#define EFFECTS_DATA_H
 
 #define WACOM   0
 #define TOUCH   1
 
-#define NUM_EFFECTS     12
+#define NUM_EFFECTS     13
 //effects:
 #define NULL_EFFECT     0 //null effect
 #define TOOLBAR         1 //action: toolbar
@@ -25,43 +20,34 @@
 #define UNDO           11 //action: undo button
 #define REDO           12 //action: redo button
 
-#define HOLD_OFF_OFFSET      0x0ff
-#define ERASER_ERASE_OFF     (ERASER_ERASE +  HOLD_OFF_OFFSET)
-#define ERASER_SELECT_OFF    (ERASER_SELECT + HOLD_OFF_OFFSET)
-#define SELECT_OFF           (SELECT + HOLD_OFF_OFFSET)
+//recognized words in config file
+static const char* effects[NUM_EFFECTS] = {
+  "null",               //null effect      0
+  "toolbar",            //TOOLBAR          1
+  "writing",            //WRITING          2
+  "stroke-panel",       //STROKE           3
+  "color-black",        //COLOR_BLACK      4
+  "color-grey",         //COLOR_GREY       5
+  "color-white",        //COLOR_WHITE      6
+  "erase-panel",        //ERASER           7
+  "eraser",             //ERASER_ERASE     8
+  "erase-selection",    //ERASE_SELECTION  9
+  "select",             //SELECT          10
+  "undo",               //UNDO            11
+  "redo",               //REDO            12
+};
 
-#define TOGGLE_OFFSET        0xfff
-#define ERASER_ERASE_TOGGLE  (ERASER_ERASE +  TOGGLE_OFFSET)
-#define ERASER_SELECT_TOGGLE  (ERASER_SELECT + TOGGLE_OFFSET)
-#define SELECT_TOGGLE        (SELECT + TOGGLE_OFFSET)
 
-//     event1                    event2
-//RM2: Pen (0,0) in Bottom Left, Touchscreen (0,0) in Bottom Left
-//     event0                    event2
-//RM1: Pen (0,0) in Bottom Left, Touchscreen (0,0) in Bottom Right
-
-//Touch Screen Coordinates:
-#define RM1_RHtoolX 720 //define one x coordinate for all panel tools
-#define RM1_RHtoolY 35 //define one y coordinate for panel tools
-#define RM1_LHtoolX 20 //define one y coordinate for panel tools
-#define RM1_LHtoolY 990 //define one y coordinate for panel tools
-
-#define RM2_RHtoolX 60 //define one x coordinate for all panel tools
-#define RM2_RHtoolY 50 //define one y coordinate for panel tools
-#define RM2_LHtoolX 1360 //define one y coordinate for panel tools
-#define RM2_LHtoolY 1820 //define one y coordinate for panel tools
-
-#define T_RM1_RHY 670
+#define T_RM1_RHY 670 //define RM1 toolbar column touchscreen location
 #define T_RM1_RHX 530
 #define T_RM1_LHY 780
 #define T_RM1_LHX 520
-
-#define T_RM2_RHX 60
+#define T_RM2_RHX 60  //define RM2 toolbar column touchscreen location
 #define T_RM2_RHY 50
 #define T_RM2_LHX 1360
 #define T_RM2_LHY 1820
-
-static const int locationLookupTouch[2][NUM_EFFECTS+1][4][2] = {
+//                                  [rmVersion][EFFECT][ORIENTATION][x/y]
+static const int locationLookupTouch[2][NUM_EFFECTS][4][2] = {
   { //RM1
     //RHP                //RHL              //LHP              //LHL
     { {        0,    0}, {   0,         0}, {        0,    0}, {   0,         0} }, //NO_EFFECT      0
@@ -96,12 +82,12 @@ static const int locationLookupTouch[2][NUM_EFFECTS+1][4][2] = {
   }
 };
 
-#define W_RM2_RHY 730
+#define W_RM2_RHY 730 //define toolbar column wacom location
 #define W_RM2_RHX 530
 #define W_RM2_LHY 15210
 #define W_RM2_LHX 20260
-//                       [rmVersion][EFFECT][ORIENTATION][x/y]
-static const int locationLookupWacom[NUM_EFFECTS+1][4][2] = {
+//                                  [EFFECT][ORIENTATION][x/y]
+static const int locationLookupWacom[NUM_EFFECTS][4][2] = {
     //RHP                  //RHL                //LHP                //LHL
     { {     0,          0}, {         0,     0}, {     0,          0}, {   0,           0} }, //NO_EFFECT      0
     { { 20290,  W_RM2_RHY}, { W_RM2_RHX,   700}, { 20300,  W_RM2_LHY}, { W_RM2_LHX,   680} }, //TOOLBAR        1
@@ -121,43 +107,17 @@ static const int locationLookupWacom[NUM_EFFECTS+1][4][2] = {
 
 
 
-//static const struct input_event tool_touch_off = { .type = EV_KEY, .code =BTN_TOUCH, .value = 0}; //these might be used in the future to improve press and hold mode
-static const struct input_event tool_pen_on = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value = 1}; //used when pen approaches the screen
-static const struct input_event tool_pen_off = { .type = EV_KEY, .code = BTN_TOOL_PEN, .value =0};
-static const struct input_event tool_rubber_on = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 1}; // used when rubber approaches the screen
-static const struct input_event tool_rubber_off = {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 0};
+//define offsets for the effect functions
+#define HOLD_OFF_OFFSET      0x0ff
+#define TOGGLE_OFFSET        0xfff
 
-void writeEvent(int fd_touch, struct input_event event);
-void writeTapWithTouch(int fd_touch, const int location[2]);
-void writeTapWithPen(int fd_touch, const int location[2]);
-int  writeOrientedTapSequence(int device, int fd_touch, toolbarOrientation* orientation, int RMversion, int numLocations, ...);
+//effects that require a deactivate/toggle function
+#define ERASER_ERASE_OFF     (ERASER_ERASE +  HOLD_OFF_OFFSET)
+#define ERASER_SELECT_OFF    (ERASER_SELECT + HOLD_OFF_OFFSET)
+#define SELECT_OFF           (SELECT + HOLD_OFF_OFFSET)
 
+#define ERASER_ERASE_TOGGLE  (ERASER_ERASE +  TOGGLE_OFFSET)
+#define ERASER_SELECT_TOGGLE (ERASER_SELECT + TOGGLE_OFFSET)
+#define SELECT_TOGGLE        (SELECT + TOGGLE_OFFSET)
 
-
-void activateToolEraserRM2(int fd_pen);
-void deactivateToolEraserRM2(int fd_pen);
-void toggleToolEraserRM2(int fd_pen);
-void actionToolEraserRM2(struct input_event* ev_pen, int fd_pen);
-
-void activateToolEraserRM1(int fd_touch, int rmVersion);
-void deactivateToolEraserRM1(int fd_touch, int rmVersion);
-void toggleToolEraserRM1(int fd_touch, int rmVersion);
-
-void activateToolEraseSelect(int fd_touch, int rmVersion);
-void deactivateToolEraseSelect(int fd_touch, int rmVersion);
-void toggleToolEraseSelect(int fd_touch, int rmVersion);
-
-void activateToolSelect(int fd_touch, int rmVersion);
-void deactivateToolSelect(int fd_touch, int rmVersion);
-void toggleToolSelect(int fd_touch, int rmVersion);
-
-
-void actionToolbar(int fd_touch, int rmVersion);
-void actionWriting(int fd_touch, int rmVersion);
-void actionUndo(int fd_touch, int rmVersion);
-void actionRedo(int fd_touch, int rmVersion);
-
-
-
-
-#endif // ACTIONS_H
+#endif //EFFECTS_DATA_H

@@ -7,7 +7,8 @@
 
 #include "orientation.h"
 #include "triggers.h"
-#include "actions.h"
+#include "effects.h"
+
 
 void writeEvent(int fd, struct input_event event) {
   struct timeval tv;
@@ -142,24 +143,39 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
  * Single shot actions: compatible with clicks
  * -----------------------------------------------------------------*/
 
-void actionToolbar(int fd_touch, int RMversion) {
+void actionToolbar(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, RMversion, 1, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 1, TOOLBAR);
 }
 
-void actionWriting(int fd_touch, int RMversion) {
+void actionColorBlack(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, RMversion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_BLACK, STROKE, COLOR_BLACK, TOOLBAR, STROKE, COLOR_BLACK, TOOLBAR);
 }
 
-void actionUndo(int fd_touch, int RMversion) {
+void actionColorGrey(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, RMversion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
+  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_GREY, STROKE, COLOR_GREY, TOOLBAR, STROKE, COLOR_GREY, TOOLBAR);
 }
 
-void actionRedo(int fd_touch, int RMversion) {
+void actionColorWhite(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, RMversion, 4, REDO, TOOLBAR, REDO, TOOLBAR);
+  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_WHITE, STROKE, COLOR_WHITE, TOOLBAR, STROKE, COLOR_WHITE, TOOLBAR);
+}
+
+void actionWriting(int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+}
+
+void actionUndo(int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
+}
+
+void actionRedo(int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, REDO, TOOLBAR, REDO, TOOLBAR);
 }
 
 
