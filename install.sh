@@ -3,6 +3,9 @@
 clear
 cd ~
 
+systemctl stop LamyEraser.service
+systemctl disable LamyEraser.service > /dev/null/
+
 echo "Downloading RemarkableLamyEraser Executable..."
 rm -f RemarkableLamyEraser
 wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/RemarkableLamyEraser
