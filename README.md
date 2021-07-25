@@ -6,87 +6,50 @@ Also confirmed to work with these other styli:
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
-SSH into your reMarkable and make a directory to store our files:
-```Shell
-cd
-mkdir RemarkableLamyEraser
-```
-Download the binary from the release page, and the .service file from the project page:
-```Shell
-cd ~/RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/releases/latest/download/RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/main/RemarkableLamyEraser/LamyEraser.service
-```
-Make the binary exectuable, copy the .service file to systemd file, enable, and start it. This means the tool will automatically start on boot:
-```Shell
-chmod +x RemarkableLamyEraser
-cp LamyEraser.service /lib/systemd/system/
-systemctl daemon-reload
-systemctl enable LamyEraser.service
-systemctl start LamyEraser.service
-```
-
+`cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/install.sh; chmod +x install.sh; ./install.sh`
 # Uninstall Instrucions
-```Shell
-systemctl stop LamyEraser.service
-systemctl disable LamyEraser.service
-rm -rf ~/RemarkableLamyEraser
-rm /lib/systemd/system/LamyEraser.service
-systemctl daemon-reload
-systemctl reset-failed
-```
+`cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh`
+
 
 
 # Usage 
-Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait
-documents in right handed orientation.
+The default configuration has the trigger "press and hold" mapped to the effect "erase", and the trigger "double click"
+mapped to the effect "undo".
+However, you configuration can be customized by changing the configuration file at ~/.config/LamyEraser/LamyEraser.conf
+(for example, by running nano ~.config/LamyEraser/LamyEraser.conf).
+In this file, you can freely assign effects to different triggers.
 
-Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano ~/RemarkableLamyEraser/LamyEraser.service`.
-The supported arguments are:  
-`--press`   Press and hold to erase, release to use as a normal pen. *This is the default behavior.*  
-`--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
-`--double-press undo` Double click the button to undo. *This is the default behavior.*  
-`--double-press redo` Double click the button to redo.
-`--force-RM1` Debug option that forces the code to use RM1 style erase events so I can test on mr RM2.
-For example, this line would use the toggle mode and redo on a double click:  
-`ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
+The recognized triggers are:
+click                | click the button once
+double-click         | click the button twice
+triple-click         | click the button three times
+quadruple-click      | and so on...
+quintuple-click      |
+press&hold           | press the button and hold
+double-press&hold    | press the button once and hold
+triple-press&hold    | and so on...
+quadruple-press&hold |
+quintuple-press&hold |
+
+Effects are divided into tools and actions :
+Actions are compatible with click-type actions. The available actions are:
+  toolbar         : Presses the toolbar panel button
+  writing         : Presses the writing utensil button
+  undo            : Presses the undo button
+  redo            : Presses the redo button
+
+Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:
+  eraser          : Changes to eraser tool. on deactivation, changes back to writing utensil
+                    note that on the RM2, this mode uses special features available from the marker plus.
+  erase-selection : Changes to erase selection tool. On deactivation, changes back to writing utensil
+  select          : Changes to select tool. On deactivation, changes back to writing utensil
 
 
-To apply your config, run these commands:
+
+After making changes to the config, run these command to restart the :
 ``` Shell
-cd ~/RemarkableLamyEraser
-cp LamyEraser.service /lib/systemd/system/
-systemctl stop LamyEraser.service
-systemctl daemon-reload
-systemctl start LamyEraser.service
+systemctl restart LamyEraser.service
 ```
 
-# How it works
-When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
-thinking you are using the eraser side of the Marker Plus.
-
 # TODO:
-- [ ] RM1 support (testers needed)
-- [ ] Left handed and landscape support for actions
-- [ ] Nice install script
 - [ ] toltec package
-- [ ] config file (as opposed to current command line argument system)
-- [ ] expand "How it works" section.
-- [ ] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.)
-- [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
-      some significant code restructuring)*
-
-# RM1 Branch
-The RM1 branch is being used to test RM1 support. Currently, the RM1 code runs, **but not on an actual RM1 device.**
-While the screens on the RM1 and the RM2 are physically the same size, they have different ranges of outputs. While the code
-will run on an RM1, it will have unexpected effects until I can add a screenlocations.h file that is specific to the RM1's
-screen.
-
-Currently, the RM1-style erase doesn't always work. It's the same issue as #7, but more noticeable with the RM1-style erase.
-
-The actions currently being implemented are:
-- [X] undo
-- [X] redo
-- [ ] erase (needed for RM1 support, since it can't use the Marker Plus style rubber events)
-- [ ] erase selection
-- [ ] select
