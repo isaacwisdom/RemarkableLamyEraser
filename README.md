@@ -6,10 +6,13 @@ Also confirmed to work with these other styli:
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
-`cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/install.sh; chmod +x install.sh; ./install.sh`
+```shell
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/install.sh; chmod +x install.sh; ./install.sh`
+```
 # Uninstall Instrucions
-`cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh`
-
+```shell
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh`
+```
 
 
 # Usage 
@@ -40,7 +43,7 @@ Actions are compatible with click-type actions. The available actions are:
 
 Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:
   eraser          : Changes to eraser tool. on deactivation, changes back to writing utensil
-                    note that on the RM2, this mode uses special features available from the marker plus.
+                    note that on the RM2, this mode uses special features available from the marker plusw.
   erase-selection : Changes to erase selection tool. On deactivation, changes back to writing utensil
   select          : Changes to select tool. On deactivation, changes back to writing utensil
 
