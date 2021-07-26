@@ -88,6 +88,6 @@ toolbarOrientation getToolbarOrientation() {
 
 int getRmVersion() {
   const char *sysPath = "/sys/devices/soc0/machine";
-  int RM2 = checkConf(sysPath, "reMarkable 2.0", "reMarkable 2.0");
+  int RM2 = checkConf(sysPath, "reMarkable", "reMarkable 2.0");
   return RM2 + 1; //returns 1 for RM1, 2 for RM2
 }

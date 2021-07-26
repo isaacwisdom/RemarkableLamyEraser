@@ -12,14 +12,12 @@
 #include "orientation.h"
 #include "configuration.h"
 
-#define PEN_DEVICE_RM2   "/dev/input/event1"
-#define TOUCH_DEVICE_RM2 "/dev/input/event2"
-#define PEN_DEVICE_RM1   "/dev/input/event0"
-#define TOUCH_DEVICE_RM1 "/dev/input/event1"
+#define WACOM_DEVICE_RM2   "/dev/input/event1"
+#define TOUCH_DEVICE_RM2   "/dev/input/event2"
+#define WACOM_DEVICE_RM1   "/dev/input/event0"
+#define TOUCH_DEVICE_RM1   "/dev/input/event2"
 
 int main(int argc, char *argv[]) {
-  printf("RemarkableLamyEraser 2.0\n");
-  printf("----------------------------------\n");
   struct configuration config;
   char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
   int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
@@ -27,59 +25,71 @@ int main(int argc, char *argv[]) {
   const size_t input_event_size = sizeof(struct input_event);
   int fd_pen, fd_touch;
   char name[256] = "Unknown";
-  int forceRM1Style = 0;
+  char wacomDevicePath[18], touchDevicePath[18];
+  int forceRM1Style;
   int rmVersion = getRmVersion();
+
+  printf("RemarkableLamyEraser 2.0\n");
+  printf("----------------------------------\n");
 
   // check our input args
   if (argc > 2) {
       printf("Unknown arguments supplied. Exiting...\n");
     }
-  else if (argc == 2)
+  else if (argc == 2) {
     if ( !strcmp(argv[1], "--config-file") ) {
-      confPath = argv[2];
+        confPath = argv[2];
+      }
+    else {
+        printf("Unknown argument %s. Exiting.../n", argv[1]);
+        exit(EXIT_FAILURE);
+       }
     }
 
   printf("Using configuration file at %s\n", confPath);
-  if ( getTriggerConfig(confPath, &config)  == -1)
-      printf("Reading configuration file failed. Using default settings...\n");
+  if ( getTriggerConfig(confPath, &config) != 0) {
+      printf("Reading configuration file failed. Exiting...\n");
+      exit(EXIT_FAILURE);
+    }
   printf("----------------------------------\n");
+  forceRM1Style =  getForceRM1Style(confPath);
 
+
+  if (rmVersion == 2) {
+      strcpy(wacomDevicePath, WACOM_DEVICE_RM2);
+      strcpy(touchDevicePath, TOUCH_DEVICE_RM2);
+    }
+  else if (rmVersion == 1) {
+      strcpy(wacomDevicePath, WACOM_DEVICE_RM1);
+      strcpy(touchDevicePath, TOUCH_DEVICE_RM1);
+    }
+  else {
+      printf("Invalid reMarkable Version: %d. Exiting...\n", rmVersion);
+      exit(EXIT_FAILURE);
+    }
 
 
   /* Open Input Devices */
-  if (rmVersion == 2) {
-      fd_pen = open(PEN_DEVICE_RM2, O_RDWR);
-      fd_touch = open(TOUCH_DEVICE_RM2, O_WRONLY);
-      if (fd_pen == -1) {
-          fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM2);
-          exit(EXIT_FAILURE);
-        }
-      if (fd_pen == -1) {
-          fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM2);
-          exit(EXIT_FAILURE);
-        }
+  fd_pen = open(wacomDevicePath, O_RDWR);
+  fd_touch = open(touchDevicePath, O_WRONLY);
+  if (fd_pen == -1) {
+      fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacomDevicePath);
+      exit(EXIT_FAILURE);
     }
-  else {
-      fd_pen = open(PEN_DEVICE_RM1, O_RDWR);
-      fd_touch = open(TOUCH_DEVICE_RM1, O_WRONLY);
-      if (fd_pen == -1) {
-        fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM1);
-        exit(EXIT_FAILURE);
-      }
-      if (fd_touch == -1) {
-        fprintf(stderr, "%s is not a vaild device\n", PEN_DEVICE_RM1);
-        exit(EXIT_FAILURE);
+  if (fd_pen == -1) {
+      fprintf(stderr, "%s is not a vaild device. Exiting...\n", touchDevicePath);
+      exit(EXIT_FAILURE);
     }
-  }
+
 
   /* Print Device Names */
   printf("Detected ReMarkable %d. ", rmVersion);
   ioctl(fd_pen, EVIOCGNAME(sizeof(name)), name);
   printf("Using Devices:\n");
-  printf("1. device file = %s\n", PEN_DEVICE_RM2);
+  printf("1. device file = %s\n", wacomDevicePath);
   printf("   device name = %s\n", name);
   ioctl(fd_touch, EVIOCGNAME(sizeof(name)), name);
-  printf("2. device file = %s\n", TOUCH_DEVICE_RM2);
+  printf("2. device file = %s\n", touchDevicePath);
   printf("   device name = %s\n", name);
   printf("----------------------------------\n");
 
@@ -199,17 +209,15 @@ int main(int argc, char *argv[]) {
       //tools here
       case ERASER_ERASE:
         printf("writing eraser\n");
-        if (rmVersion == 1 || forceRM1Style) {
+        if (rmVersion == 1 || forceRM1Style)
             activateToolEraserRM1(fd_touch, rmVersion);
-          }
         else
             activateToolEraserRM2(fd_pen);
         break;
       case ERASER_ERASE_OFF:
         printf("writing eraser\n");
-        if (rmVersion == 1 || forceRM1Style) {
-            activateToolEraserRM1(fd_touch, rmVersion);
-          }
+        if (rmVersion == 1 || forceRM1Style)
+            deactivateToolEraserRM1(fd_touch, rmVersion);
         else
             deactivateToolEraserRM2(fd_pen);
         break;

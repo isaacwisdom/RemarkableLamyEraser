@@ -217,7 +217,7 @@ void actionToolEraserRM2(struct input_event* ev_pen, int fd_pen) {
 
 static int toolEraserRM1 = 0;
 void activateToolEraserRM1(int fd_touch, int rmVersion) {
-  printf("Deactivating ToolEraserRM1: writing eraser tool on\n");
+  printf("Activating ToolEraserRM1: writing eraser tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 6, ERASER_PANEL, ERASER_ERASE, TOOLBAR, ERASER_PANEL, ERASER_ERASE, TOOLBAR);
   toolEraserRM1 = 1;
