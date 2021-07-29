@@ -1,6 +1,7 @@
 #include <linux/input.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
 #include <unistd.h>
@@ -55,6 +56,7 @@ void writeTapWithTouch(int fd_touch, const int location[2]) {
 
 void writeTapWithWacom(int fd_wacom, const int location[2]) {
   struct input_event event;
+  struct timeval tv;
 
   // this is the minimum (probably) seqeunce of events that must be sent to tap
   // the screen in a location.
@@ -64,46 +66,44 @@ void writeTapWithWacom(int fd_wacom, const int location[2]) {
   // touch on
   // touch off
   // SYN
+  gettimeofday(&tv, NULL);
+  event.time = tv;
 
   event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; //SYN
-  printf("Writing SYN Report\n");
-  writeEvent(fd_wacom, event);
+  //printf("Writing SYN Report\n");
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 0}; //TOUCH OFF
-  printf("Writing BTN_TOUCH: %d\n", event.value);
-  writeEvent(fd_wacom, event);
+  //printf("Writing BTN_TOUCH: %d\n", event.value);
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; //SYN
-  printf("Writing SYN Report\n");
-  writeEvent(fd_wacom, event);
+  //printf("Writing SYN Report\n");
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_ABS, .code = ABS_X, .value = location[0]}; //X
-  printf("Writing Pen X: %d\n", event.value);
-  writeEvent(fd_wacom, event);
+  //printf("Writing Pen X: %d\n", event.value);
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_ABS, .code = ABS_Y, .value = location[1]}; //Y
-  printf("Writing Pen Y: %d\n", event.value);
-  writeEvent(fd_wacom, event);
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; //SYN
-  printf("Writing SYN Report\n");
-  writeEvent(fd_wacom, event);
+  //printf("Writing Pen Y: %d\n", event.value);
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 1}; //TOUCH ON
-  printf("Writing BTN_TOUCH: %d\n", event.value);
-  writeEvent(fd_wacom, event);
+  //printf("Writing BTN_TOUCH: %d\n", event.value);
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; //SYN
-  printf("Writing SYN Report\n");
-  writeEvent(fd_wacom, event);
+  //printf("Writing SYN Report\n");
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 0}; //TOUCH OFF
-  printf("Writing BTN_TOUCH: %d\n", event.value);
-  writeEvent(fd_wacom, event);
+  //printf("Writing BTN_TOUCH: %d\n", event.value);
+  write(fd_wacom, &event, sizeof(struct input_event));
 
   event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; //SYN
-  printf("Writing SYN Report\n");
-  writeEvent(fd_wacom, event);
+  //printf("Writing SYN Report\n");
+  write(fd_wacom, &event, sizeof(struct input_event));
 }
 
 int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation, int rmVersion, int numLocations, ...) {
@@ -275,4 +275,59 @@ void toggleToolSelect(int fd_touch, int rmVersion) {
     activateToolSelect(fd_touch, rmVersion);
 }
 
+//test stored locations in effects_data.h
+void testLocations(int device, int fd, int rmVersion) {
+  const char* str[4];
+  str[0] = "Right Hand Portrait";
+  str[1] = "Right Hand Landscape";
+  str[2] = "Left Hand Portrait";
+  str[3] = "Left Hand Landscape";
+
+  for(int i = 0; i < 4; i++) {
+      printf("Please set notebook to %s orientation. If necessary, close the tool bar and draw a large circle.\n"
+             "When ready, press enter\n", str[i]);
+      getchar(); //pauses until user presses enter
+
+
+      toolbarOrientation orientation = getToolbarOrientation();
+      printf("opening Toolbar...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, TOOLBAR);
+      sleep(2);
+
+      printf("tapping writing utensil...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, WRITING);
+      sleep(2);
+
+      printf("tapping eraser panel...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
+      sleep(2);
+
+      printf("tapping erase selection...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_SELECT);
+      sleep(2);
+
+      printf("tapping eraser panel...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
+      sleep(2);
+
+      printf("tapping eraser...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_ERASE);
+      sleep(2);
+
+      printf("tapping select tool...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, SELECT);
+      sleep(2);
+
+      printf("tapping undo...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, UNDO);
+      sleep(2);
+
+      printf("tapping redo...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, REDO);
+
+      printf("Completed %s.\n", str[i]);
+    }
+  printf("Completed all orientations.\n");
+  exit(EXIT_SUCCESS);
+}
 

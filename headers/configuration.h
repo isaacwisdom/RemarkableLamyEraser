@@ -48,7 +48,6 @@ static const char* triggers[NUM_TRIGGERS] = {
 
 
 int getTriggerConfig(const char *path, struct configuration* config);
-int getForceRM1Style(const char *path);
 void printConfig(struct configuration* config);
 
 #endif

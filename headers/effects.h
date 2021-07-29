@@ -49,6 +49,7 @@ void actionColorWhite(int fd_pen, int rmVersion);
 void actionUndo(int fd_touch, int rmVersion);
 void actionRedo(int fd_touch, int rmVersion);
 
+void testLocations(int device, int fd, int rmVersion);
 
 
 

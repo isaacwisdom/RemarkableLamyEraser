@@ -1,41 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
+//#include <stdlib.h>
+//#include <fcntl.h>
 #include <string.h>
 
 #include <configuration.h>
 
-int checkConfig(const char *path, const char *param, const char *paramTrue) {
-  //returns 1 if param matches paramTrue
-  //returns 0 if param doesn't match paramTrue
-  //returns -1 if failure
-  FILE *fp;
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  fp = fopen(path, "r");
-  if (fp == NULL) {
-    printf("checkConf: File %s doesn't exist\n", path);
-    return -1;
-  }
-  while ((read = getline(&line, &len, fp)) != -1) {
-    // int i = 1;
-    // printf("line: %d", i++);
-    // printf("%s", line);
-    if (!strncmp(line, param, strlen(param))) {
-      // printf("%s", line);
-      int value = !strncmp(line, paramTrue, strlen(paramTrue));
-      fclose(fp);
-      return value;
-    }
-  }
-  return -1;
-}
 
-
-int getForceRM1Style(const char *path) {
-  return checkConfig(path, "forceRM1", "forceRM1=true");
-}
 int getTriggerConfig(const char *path, struct configuration *config) {
   //returns 0 on success
   //returns 1 if error in configuration file
@@ -54,11 +24,7 @@ int getTriggerConfig(const char *path, struct configuration *config) {
     return -1;
   while ((read = getline(&line, &len, fp)) != -1) {
       lineNum++;
-      if(!strncmp(line,"#DEBUG SETTINGS", 14)) {
-          fclose(fp);
-          return 0;
-        }
-      else if (line[0] == '#' || line[0] == '\n') {
+      if (line[0] == '#' || line[0] == '\n') {
           continue;
         }
 
