@@ -3,7 +3,7 @@ Description=Lamy Pen Button as Eraser
 After=home.mount
 
 [Service]
-ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser
+ExecStart=/usr/sbin/RemarkableLamyEraser
 Restart=on-failure
 
 [Install]

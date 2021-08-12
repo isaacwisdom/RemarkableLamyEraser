@@ -1,16 +1,18 @@
 #!/bin/sh
 
 clear
-cd ~/RemarkableLamyEraser
+cd ~
 
 systemctl stop LamyEraser.service
 systemctl disable LamyEraser.service > /dev/null/
 
 echo "Downloading RemarkableLamyEraser Executable..."
+cd /usr/sbin
 rm -f RemarkableLamyEraser
 wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/RemarkableLamyEraser
 echo "Adding execute privleges..."
 chmod +x RemarkableLamyEraser
+cd ~
 
 echo "Downloading configuration file.."
 rm -f LamyEraser.conf
@@ -22,8 +24,8 @@ mkdir -p ~/.config/LamyEraser
 if [ -f ~/.config/LamyEraser/LamyEraser.conf ]
  then
    echo "Previous .conf file found... preserving as LamyEraser.conf.old"
-   rm -f ~/.config/LamyEraser/LamyEraser.conf.old
-   mv ~/.config/LamyEraser/LamyEraser.conf ~/.config/LamyEraser/LamyEraser.conf.old
+   # ask before perhaps overwriting legacy config
+   mv -i ~/.config/LamyEraser/LamyEraser.conf ~/.config/LamyEraser/LamyEraser.conf.old
 fi
 
 echo "Placing configuration file... ~/.config/LamyEraser/LamyEraser.conf"
