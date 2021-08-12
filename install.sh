@@ -1,7 +1,7 @@
 #!/bin/sh
 
 clear
-cd ~
+cd ~/RemarkableLamyEraser
 
 systemctl stop LamyEraser.service
 systemctl disable LamyEraser.service > /dev/null/
