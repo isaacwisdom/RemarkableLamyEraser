@@ -6,7 +6,7 @@ echo "Deleting service file..."
 rm -f /lib/systemd/system/LamyEraser.service
 echo "Deleting Configuration folder..."
 # ask before deleting config
-rm -ri ~/.config/LamyEraser
+rm -rI ~/.config/LamyEraser
 systemctl daemon-reload
 systemctl reset-failed
 echo "RemarkableLamyEraser uninstalled."
