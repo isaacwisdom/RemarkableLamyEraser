@@ -48,6 +48,7 @@ The supported arguments are:
 `--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
 `--double-press undo` Double click the button to undo. *This is the default behavior.*  
 `--double-press redo` Double click the button to redo.  
+`--left-handed` Use this option if you are using left handed mode.  
 For example, this line would use the toggle mode and redo on a double click:  
 `ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
 

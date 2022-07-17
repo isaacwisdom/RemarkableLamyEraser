@@ -7,7 +7,7 @@
 #include <linux/input.h>
 #include <time.h>
 
-#include <screenlocations.h>
+#include "screenlocations.h"
 
 #define PEN_DEVICE      "/dev/input/event1"
 #define TOUCH_DEVICE    "/dev/input/event2"
@@ -29,7 +29,7 @@ void writeEvent(int fd, struct input_event event)
   write(fd, &event, sizeof(struct input_event));
 }
 
-void writeTapWithTouch(int fd, int location[2]) {
+void writeTapWithTouch(int fd, int location[2], bool left_handed) {
   struct input_event event;
 
   //this is the minimum (probably) seqeunce of events that must be sent to tap the screen in a location.
@@ -41,7 +41,11 @@ void writeTapWithTouch(int fd, int location[2]) {
   //printf("Writing Tracking ID: %d\n", event.value);
   writeEvent(fd, event);
 
-  event = (struct input_event) {.type = EV_ABS, .code = ABS_MT_POSITION_X, .value = location[0]};
+  int x = location[0];
+  if (left_handed) {
+      x = WIDTH - x;
+  }
+  event = (struct input_event) {.type = EV_ABS, .code = ABS_MT_POSITION_X, .value = x};
   //printf("Writing Touch X: %d\n", event.value);
   writeEvent(fd, event);
 
@@ -108,6 +112,7 @@ int main(int argc, char *argv[]) {
     int mode = 0, doublePressAction = 0;
     struct input_event ev_pen;
     int fd_pen, fd_touch;
+    bool left_handed = false;
 
     char name[256] = "Unknown";
 
@@ -123,6 +128,10 @@ int main(int argc, char *argv[]) {
             printf("MODE: PRESS AND HOLD\n");
             mode = PRESS_MODE;
           }
+        else if (!strncmp(argv[i], "--left-handed", 13)) {
+            printf("LEFT HANDED ACTIVATED\n");
+            left_handed = true;
+        }
         else if (!strncmp(argv[i], "--double-press", 14)) {
             if (!strncmp(argv[i+1], "undo", 4)) {
                 printf("DOUBLE CLICK ACTION: UNDO\n");
@@ -185,17 +194,17 @@ int main(int argc, char *argv[]) {
           switch(doublePressAction) {
             case UNDO :
               printf("writing undo\n");
-              writeTapWithTouch(fd_touch, undoTouch);
-              writeTapWithTouch(fd_touch, panelTouch);
-              writeTapWithTouch(fd_touch, undoTouch);
-              writeTapWithTouch(fd_touch, panelTouch);  //doing it like this ensures that the panel returns to it's starting state
+              writeTapWithTouch(fd_touch, undoTouch, left_handed);
+              writeTapWithTouch(fd_touch, panelTouch, left_handed);
+              writeTapWithTouch(fd_touch, undoTouch, left_handed);
+              writeTapWithTouch(fd_touch, panelTouch, left_handed);  //doing it like this ensures that the panel returns to it's starting state
               break;
             case REDO :
               printf("writing redo\n");
-              writeTapWithTouch(fd_touch, redoTouch);
-              writeTapWithTouch(fd_touch, panelTouch);
-              writeTapWithTouch(fd_touch, redoTouch);
-              writeTapWithTouch(fd_touch, panelTouch);
+              writeTapWithTouch(fd_touch, redoTouch, left_handed);
+              writeTapWithTouch(fd_touch, panelTouch, left_handed);
+              writeTapWithTouch(fd_touch, redoTouch, left_handed);
+              writeTapWithTouch(fd_touch, panelTouch, left_handed);
               break;
             }
           }

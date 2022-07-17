@@ -10,6 +10,9 @@
 #define UNDO                  1 //undo button
 #define REDO                  2 //redo button
 
+#define WIDTH 1404
+#define HEIGHT 1872
+
 //portrait locations
 #define toolX 63 //define one x coordinate for all panel tools
 int panelTouch[2]   = {toolX, 1820};
