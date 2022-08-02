@@ -56,4 +56,5 @@ systemctl restart LamyEraser.service
 ```
 
 # TODO:
+- [ ] figure out why gestures are broken in release 2.14
 - [ ] toltec package
