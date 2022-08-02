@@ -44,8 +44,7 @@ Actions are compatible with click-type actions. The available actions are:
   
 Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:  
 *  eraser          : Changes to eraser tool. on deactivation, changes back to writing utensil  
-                    note that on the RM2, this mode uses special features available from the marker plus.  
-*  erase-selection : Changes to erase selection tool. On deactivation, changes back to writing utensil  
+                    note that on the RM2, this mode uses special features available from the marker plus.
 *  select          : Changes to select tool. On deactivation, changes back to writing utensil  
 
 
@@ -56,4 +55,5 @@ systemctl restart LamyEraser.service
 ```
 
 # TODO:
+- [ ] nested panel items can't be pressed. Investigation is needed
 - [ ] toltec package
