@@ -11,6 +11,7 @@ SOURCES += \
 
 OTHER_FILES += \
     RemarkableLamyEraser/LamyEraser.service \
+    RemarkableLamyEraser/RemarkableLamyEraser \
     README.md
 
 service.files = RemarkableLamyEraser/LamyEraser.service
@@ -21,7 +22,7 @@ service.path = /home/root/RemarkableLamyEraser
 
 INSTALLS += \
         target \
-        service
+        service \
 
 HEADERS += \
     screenlocations.h
