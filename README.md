@@ -56,5 +56,4 @@ systemctl restart LamyEraser.service
 ```
 
 # TODO:
-- [ ] nested panel items can't be pressed. Investigation is needed
 - [ ] toltec package
