@@ -128,27 +128,27 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
   int action;
   va_list actionType;
   va_start (actionType, numLocations);
-  printf("Orientation: %d | ", orientation->orientation);
+  //printf("Orientation: %d | ", orientation->orientation);
   rmVersion--; //RMversion is either 1 or 2, decrement it to be 0 or 1 to work with array.
   if(orientation->openNotebook) {
-      printf("Resolved Location(s) for RM%d ", rmVersion+1);
+      //printf("Resolved Location(s) for RM%d ", rmVersion+1);
       if(device == WACOM) {
           printf("wacom digitizer: ");
           for (int i = 0; i < numLocations; i++)  {
               action = va_arg(actionType, int);
               actionLocation[0] = locationLookupWacom[action][orientation->orientation][0];
               actionLocation[1] = locationLookupWacom[action][orientation->orientation][1];
-              printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
+              //printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
               writeTapWithWacom(fd, actionLocation);
             }
         }
       else { //Touch
-        printf("touch screen: ");
+        //printf("touch screen: ");
         for (int i = 0; i < numLocations; i++)  {
             action = va_arg(actionType, int);
             actionLocation[0] = locationLookupTouch[rmVersion][action][orientation->orientation][0];
             actionLocation[1] = locationLookupTouch[rmVersion][action][orientation->orientation][1];
-            printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
+            //printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
             writeTapWithTouch(fd, actionLocation);
          }
        }
@@ -172,17 +172,17 @@ void actionToolbar(int fd_touch, int rmVersion) {
 
 void actionColorBlack(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_BLACK, STROKE, COLOR_BLACK, TOOLBAR, STROKE, COLOR_BLACK, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_BLACK, STROKE, COLOR_BLACK, TOOLBAR, STROKE, COLOR_BLACK, TOOLBAR);
 }
 
 void actionColorGrey(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_GREY, STROKE, COLOR_GREY, TOOLBAR, STROKE, COLOR_GREY, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_GREY, STROKE, COLOR_GREY, TOOLBAR, STROKE, COLOR_GREY, TOOLBAR);
 }
 
 void actionColorWhite(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(WACOM, fd_touch, &orientation, rmVersion, 7, COLOR_WHITE, STROKE, COLOR_WHITE, TOOLBAR, STROKE, COLOR_WHITE, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_WHITE, STROKE, COLOR_WHITE, TOOLBAR, STROKE, COLOR_WHITE, TOOLBAR);
 }
 
 void actionWriting(int fd_touch, int rmVersion) {
@@ -261,7 +261,7 @@ static int toolEraseSelect = 0;
 void activateToolEraseSelect(int fd_touch, int rmVersion) {
   printf("Deactivating ToolEraserRM1: writing eraser tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 6, ERASER_PANEL, ERASER_SELECT, TOOLBAR, ERASER_PANEL, ERASER_SELECT, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR);
   toolEraseSelect = 1;
 }
 void deactivateToolEraseSelect(int fd_touch, int rmVersion) {
@@ -306,7 +306,7 @@ void testLocations(int device, int fd, int rmVersion) {
   str[3] = "Left Hand Landscape";
 
   for(int i = 0; i < 4; i++) {
-      printf("Please set notebook to %s orientation. If necessary, close the tool bar and draw a large circle.\n"
+      printf("Please set notebook to %s orientation. Close the tool bar and draw a large circle.\n"
              "When ready, press enter\n", str[i]);
       getchar(); //pauses until user presses enter
 

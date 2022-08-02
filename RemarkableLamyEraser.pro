@@ -34,9 +34,9 @@ conf.files = LamyEraser.conf
 conf.path = /home/root/.config/LamyEraser
 
 service.files = LamyEraser.service
-service.path = /home/root
+service.path = /lib/systemd/system
 
-target.path = /home/root
+target.path = /usr/sbin
 
 
 INSTALLS += \

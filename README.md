@@ -16,6 +16,7 @@ cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-dev/uninstal
 ```
 
 
+
 # Usage 
 The default configuration has the trigger "press and hold" mapped to the effect "erase", and the trigger "double click"
 mapped to the effect "undo".
@@ -38,8 +39,8 @@ The recognized triggers are:
 Effects are divided into tools and actions :  
 Actions are compatible with click-type actions. The available actions are:  
 *  toolbar : Presses the toolbar panel button  
-*  writing : Presses the writing utensil button  
-*  undo : Presses the undo button  
+*  writing : Presses the writing utensil button  
+*  undo : Presses the undo button  
 *  redo : Presses the redo button  
   
 Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:  

@@ -126,13 +126,10 @@ int main(int argc, char *argv[]) {
 
   //main loop body
   for (;;) {
-    if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
-      handleCurrentTrackingID(&ev_touch);
+    //if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
+    //  handleCurrentTrackingID(&ev_touch);
     read(fd_wacom, &ev_wacom, input_event_size); // note: read pauses until there is data
     trigger = getTrigger(&ev_wacom);
-
-
-    printTriggers(trigger, false);
 
     switch(trigger) {
       case CLICK_1 :
@@ -201,15 +198,15 @@ int main(int argc, char *argv[]) {
           break;
       case COLOR_BLACK:
         printf("writing color black\n");
-        actionColorBlack(fd_wacom, rmVersion);
+        actionColorBlack(fd_touch, rmVersion);
         break;
       case COLOR_GREY:
         printf("writing color grey\n");
-        actionColorGrey(fd_wacom, rmVersion);
+        actionColorGrey(fd_touch, rmVersion);
         break;
       case COLOR_WHITE:
         printf("writing color white\n");
-        actionColorWhite(fd_wacom, rmVersion);
+        actionColorWhite(fd_touch, rmVersion);
         break;
       case UNDO:
         printf("writing undo\n");
