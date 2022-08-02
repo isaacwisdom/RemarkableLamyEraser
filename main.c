@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     char name[256] = "Unknown";
 
 
-    printf("RemarkableLamyEraser 1.1\n");
+    printf("RemarkableLamyEraser 1.2\n");
     //check our input args
     for(int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "--toggle", 8)) {
