@@ -3,7 +3,7 @@ Description=Lamy Pen Button as Eraser
 After=home.mount
 
 [Service]
-#configure by adding arguments to the line below. supported arguments are: --press, --toggle, --double-press undo, --double-press redo
+#configure by adding arguments to the line below. supported arguments are: --press, --toggle, --double-press undo, --double-press redo, --left-handed
 #running the command with no arguments is equivalent to using: --press --double-press undo
 ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser
 Restart=on-failure
