@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   struct configuration config;
   char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
   int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
-  struct input_event ev_pen;
+  struct input_event ev_wacom, ev_touch;
   const size_t input_event_size = sizeof(struct input_event);
   int fd_wacom, fd_touch;
   char name[256] = "Unknown";
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
   fd_wacom = open(wacomDevicePath, O_RDWR);
-  fd_touch = open(touchDevicePath, O_WRONLY);
+  fd_touch = open(touchDevicePath, O_RDWR);
   if (fd_wacom == -1) {
       fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacomDevicePath);
       exit(EXIT_FAILURE);
@@ -121,13 +121,16 @@ int main(int argc, char *argv[]) {
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click5Effect += TOGGLE_OFFSET;
 
-  printConfig(&config);
-
+  int flags = fcntl(fd_touch, F_GETFL, 0);
+  fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
 
   //main loop body
   for (;;) {
-    read(fd_wacom, &ev_pen, input_event_size); // note: read pauses until there is data
-    trigger = getTrigger(&ev_pen);
+    if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
+      handleCurrentTrackingID(&ev_touch);
+    read(fd_wacom, &ev_wacom, input_event_size); // note: read pauses until there is data
+    trigger = getTrigger(&ev_wacom);
+
 
     printTriggers(trigger, false);
 
@@ -268,8 +271,8 @@ int main(int argc, char *argv[]) {
         break;
       }
 
-  if (rmVersion == 2)
-    actionToolEraserRM2(&ev_pen, fd_wacom);
+  if (rmVersion == 2 && !forceRM1Style)
+    actionToolEraserRM2(&ev_wacom, fd_wacom);
 
   }
   return EXIT_SUCCESS;

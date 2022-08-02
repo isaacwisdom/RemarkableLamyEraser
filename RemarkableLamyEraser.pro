@@ -27,16 +27,16 @@ DISTFILES += \
     install.sh \
     LamyEraser.conf\
     LamyEraser.service \
-    README.md \ \
-    uninstall.sh
+    README.md \
+    uninstall.sh \
 
 conf.files = LamyEraser.conf
 conf.path = /home/root/.config/LamyEraser
 
 service.files = LamyEraser.service
-service.path = /home/root/
+service.path = /home/root
 
-target.path = /home/root/
+target.path = /home/root
 
 
 INSTALLS += \
