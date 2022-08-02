@@ -39,8 +39,7 @@ systemctl reset-failed
 
 
 # Usage 
-Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait
-documents in right handed orientation.
+Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait orientation documents.
 
 Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano ~/RemarkableLamyEraser/LamyEraser.service`.
 The supported arguments are:  
@@ -76,7 +75,6 @@ thinking you are using the eraser side of the Marker Plus.
 
 # TODO:
 - [ ] RM1 support (testers needed)
-- [ ] Left handed and landscape support for actions
 - [ ] Nice install script
 - [ ] toltec package
 - [ ] config file (as opposed to current command line argument system)
@@ -85,16 +83,3 @@ thinking you are using the eraser side of the Marker Plus.
 - [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
       some significant code restructuring)*
 
-# Testing Branch
-The testing branch is used for code that builds towards the items on the TODO list above, but isn't yet in a format that is
-ready to be committed to the main branch. Essentially, any commits to the main branch should be stable and relatively clean,
-while the testing branch code will be "stable", but messy.
-Currently, the testing branch is being used to test:
- - [ ] Double click actions
-
-The actions currently being implemented are:
-- [X] undo *(working only for portrait view with right hand orientation)*
-- [X] redo *(working only for portrait view with right hand orientation)*
-- [ ] erase (needed for RM1 support, since it can't use the Marker Plus style rubber events)
-- [ ] erase selection
-- [ ] select
