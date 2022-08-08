@@ -1,6 +1,6 @@
 [Unit]
 Description=Lamy Pen Button as Eraser
-After=home.mount
+After=xochitl.service
 
 [Service]
 #configure by adding arguments to the line below. supported arguments are: --press, --toggle, --double-press undo, --double-press redo, --left-handed
