@@ -19,7 +19,7 @@ cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/uninstall.sh
 # Usage 
 Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait orientation documents.
 
-Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano ~/RemarkableLamyEraser/LamyEraser.service`.
+Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano /lib/systemd/system/LamyEraser.service`.
 The supported arguments are:  
 `--press`   Press and hold to erase, release to use as a normal pen. *This is the default behavior.*  
 `--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
