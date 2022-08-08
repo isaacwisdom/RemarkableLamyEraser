@@ -7,41 +7,19 @@ Also confirmed to work with these other styli:
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
-SSH into your reMarkable and make a directory to store our files:
-```Shell
-cd
-mkdir RemarkableLamyEraser
+```shell
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/install.sh; chmod +x install.sh; ./install.sh
 ```
-Download the binary from the release page, and the .service file from the project page:
-```Shell
-cd ~/RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/releases/latest/download/RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/LamyEraser.service
-```
-Make the binary exectuable, copy the .service file to systemd file, enable, and start it. This means the tool will automatically start on boot:
-```Shell
-chmod +x RemarkableLamyEraser
-cp LamyEraser.service /lib/systemd/system/
-systemctl daemon-reload
-systemctl enable LamyEraser.service
-systemctl start LamyEraser.service
-```
-
 # Uninstall Instrucions
-```Shell
-systemctl stop LamyEraser.service
-systemctl disable LamyEraser.service
-rm -rf ~/RemarkableLamyEraser
-rm /lib/systemd/system/LamyEraser.service
-systemctl daemon-reload
-systemctl reset-failed
+```shell
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh
 ```
 
 
 # Usage 
 Press and hold to erase, release to use as a normal pen. Double click the button to undo. Note that at the moment, double pressing to undo only works for portrait orientation documents.
 
-Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano ~/RemarkableLamyEraser/LamyEraser.service`.
+Further customization can be done by adding arguments to ExecStart line of the LamyEraser.service file. This can be opened with `nano /lib/systemd/system/LamyEraser.service`.
 The supported arguments are:  
 `--press`   Press and hold to erase, release to use as a normal pen. *This is the default behavior.*  
 `--toggle`  Press the button to erase, press the button again to swtich back to a normal pen.  
