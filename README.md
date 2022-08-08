@@ -16,7 +16,7 @@ Download the binary from the release page, and the .service file from the projec
 ```Shell
 cd ~/RemarkableLamyEraser
 wget https://github.com/isaacwisdom/RemarkableLamyEraser/releases/latest/download/RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/main/RemarkableLamyEraser/LamyEraser.service
+wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/LamyEraser.service
 ```
 Make the binary exectuable, copy the .service file to systemd file, enable, and start it. This means the tool will automatically start on boot:
 ```Shell
