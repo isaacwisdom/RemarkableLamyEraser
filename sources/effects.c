@@ -25,7 +25,7 @@ void handleCurrentTrackingID(struct input_event* event)  {
   if (event->type == EV_ABS && event->code == ABS_MT_TRACKING_ID) {
     if(event->value != -1) {
         currentTrackingID = event->value;
-        printf("Grabbing tracking ID: %d\n", currentTrackingID);
+        //printf("Grabbing tracking ID: %d\n", currentTrackingID);
       }
     }
 }
@@ -259,13 +259,13 @@ void toggleToolEraserRM1(int fd_touch, int rmVersion) {
 
 static int toolEraseSelect = 0;
 void activateToolEraseSelect(int fd_touch, int rmVersion) {
-  printf("Deactivating ToolEraserRM1: writing eraser tool on\n");
+  //printf("Activating ToolEraseSelect: writing erase_select tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR);
   toolEraseSelect = 1;
 }
 void deactivateToolEraseSelect(int fd_touch, int rmVersion) {
-  printf("Deactivating ToolEraserRM1: writing writing tool on\n");
+  //printf("Deactivating ToolEraseSelect: writing writing_tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
   toolEraseSelect = 0;
@@ -279,13 +279,13 @@ void toggleToolEraseSelect(int fd_touch, int rmVersion) {
 
 static int toolSelect = 0;
 void activateToolSelect(int fd_touch, int rmVersion) {
-  printf("Activating ToolSelect: writing select tool on\n");
+  //printf("Activating ToolSelect: writing select tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
   toolSelect = 1;
 }
 void deactivateToolSelect(int fd_touch, int rmVersion){
-  printf("Deactivating ToolSelect: writing writing tool on\n");
+  //printf("Deactivating ToolSelect: writing writing tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
   toolSelect = 0;

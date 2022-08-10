@@ -108,15 +108,19 @@ int main(int argc, char *argv[]) {
   temp = config.click1Effect;
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click1Effect += TOGGLE_OFFSET;
+
   temp = config.click2Effect;
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click2Effect += TOGGLE_OFFSET;
+
   temp = config.click3Effect;
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click3Effect += TOGGLE_OFFSET;
+
   temp = config.click4Effect;
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click4Effect += TOGGLE_OFFSET;
+
   temp = config.click5Effect;
   if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
     config.click5Effect += TOGGLE_OFFSET;
@@ -126,10 +130,11 @@ int main(int argc, char *argv[]) {
 
   //main loop body
   for (;;) {
-    //if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
-    //  handleCurrentTrackingID(&ev_touch);
+    if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
+      handleCurrentTrackingID(&ev_touch);
     read(fd_wacom, &ev_wacom, input_event_size); // note: read pauses until there is data
     trigger = getTrigger(&ev_wacom);
+    //printTriggers(trigger, false);
 
     switch(trigger) {
       case CLICK_1 :
@@ -184,7 +189,9 @@ int main(int argc, char *argv[]) {
       }
 
 
-
+    /*if(effect != 0)
+      printf("effect: %x\n", effect);
+    */
 
     switch (effect) {
       //actions here
