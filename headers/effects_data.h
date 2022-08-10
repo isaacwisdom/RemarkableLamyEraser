@@ -20,6 +20,20 @@
 #define UNDO           11 //action: undo button
 #define REDO           12 //action: redo button
 
+//define offsets for the effect functions
+#define HOLD_OFF_OFFSET      0x0ff
+#define TOGGLE_OFFSET        0xfff
+
+//effects that require a deactivate/toggle function
+#define ERASER_ERASE_OFF     (ERASER_ERASE  + HOLD_OFF_OFFSET)
+#define ERASER_SELECT_OFF    (ERASER_SELECT + HOLD_OFF_OFFSET)
+#define SELECT_OFF           (SELECT        + HOLD_OFF_OFFSET)
+
+#define ERASER_ERASE_TOGGLE  (ERASER_ERASE  + TOGGLE_OFFSET)
+#define ERASER_SELECT_TOGGLE (ERASER_SELECT + TOGGLE_OFFSET)
+#define SELECT_TOGGLE        (SELECT        + TOGGLE_OFFSET)
+
+
 //recognized words in config file
 static const char* effects[NUM_EFFECTS] = {
   "null",               //null effect      0
@@ -105,19 +119,5 @@ static const int locationLookupWacom[NUM_EFFECTS][4][2] = {
 //}
 };
 
-
-
-//define offsets for the effect functions
-#define HOLD_OFF_OFFSET      0x0ff
-#define TOGGLE_OFFSET        0xfff
-
-//effects that require a deactivate/toggle function
-#define ERASER_ERASE_OFF     (ERASER_ERASE +  HOLD_OFF_OFFSET)
-#define ERASER_SELECT_OFF    (ERASER_SELECT + HOLD_OFF_OFFSET)
-#define SELECT_OFF           (SELECT + HOLD_OFF_OFFSET)
-
-#define ERASER_ERASE_TOGGLE  (ERASER_ERASE +  TOGGLE_OFFSET)
-#define ERASER_SELECT_TOGGLE (ERASER_SELECT + TOGGLE_OFFSET)
-#define SELECT_TOGGLE        (SELECT + TOGGLE_OFFSET)
 
 #endif //EFFECTS_DATA_H

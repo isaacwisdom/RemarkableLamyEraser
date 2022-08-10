@@ -24,13 +24,17 @@ SOURCES += \
 
 
 DISTFILES += \
+    LamyEraser.conf \
+    LamyEraser_TestConfig.conf \
     install.sh \
-    LamyEraser.conf\
     LamyEraser.service \
     README.md \
     uninstall.sh \
 
-conf.files = LamyEraser.conf
+conf.files += \
+    LamyEraser.conf \
+    LamyEraser_TestConfig.conf \
+
 conf.path = /home/root/.config/LamyEraser
 
 service.files = LamyEraser.service
