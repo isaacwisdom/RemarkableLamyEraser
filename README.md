@@ -8,11 +8,11 @@ Also confirmed to work with these other styli:
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-stable/install.sh; chmod +x install.sh; ./install.sh
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/install.sh; chmod +x install.sh; ./install.sh
 ```
 # Uninstall Instrucions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-stable/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh
 ```
 
 
