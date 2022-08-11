@@ -1,6 +1,6 @@
 [Unit]
 Description=Lamy Pen Button as Eraser
-After=home.mount
+After=xochitl.service
 
 [Service]
 ExecStart=/usr/sbin/RemarkableLamyEraser
