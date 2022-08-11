@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   int forceRM1Style = false;
   int rmVersion = getRmVersion();
 
-  printf("RemarkableLamyEraser 2.0\n");
+  printf("RemarkableLamyEraser 2.0.0\n");
   printf("----------------------------------\n");
 
   /* Open Input Devices */
