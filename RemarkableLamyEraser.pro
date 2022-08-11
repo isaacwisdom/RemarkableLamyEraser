@@ -26,10 +26,11 @@ SOURCES += \
 DISTFILES += \
     LamyEraser.conf \
     LamyEraser_TestConfig.conf \
-    install.sh \
+    LamyInstall.sh \
+    LamyUninstall.sh \
     LamyEraser.service \
     README.md \
-    uninstall.sh \
+    RemarkableLamyEraser \
 
 conf.files += \
     LamyEraser.conf \
