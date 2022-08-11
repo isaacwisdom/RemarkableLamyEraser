@@ -8,11 +8,11 @@ Also confirmed to work with these other styli:
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/install.sh; chmod +x install.sh; ./install.sh
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyInstall.sh; chmod +x LamyInstall.sh; ./LamyInstall.sh; rm ~/LamyInstall.sh;
 ```
 # Uninstall Instrucions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/uninstall.sh; chmod +x uninstall.sh; ./uninstall.sh
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh; chmod +x LamyUninstall.sh; ./LamyUninstall.sh; rm ~/LamyUninstall.sh;
 ```
 
 
@@ -27,13 +27,11 @@ The supported arguments are:
 `--double-press redo` Double click the button to redo.  
 `--left-handed` Use this option if you are using left handed mode.  
 For example, this line would use the toggle mode and redo on a double click:  
-`ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
+`ExecStart=RemarkableLamyEraser --toggle --double-press redo`
 
 
 To apply your config, run these commands:
 ``` Shell
-cd ~/RemarkableLamyEraser
-cp LamyEraser.service /lib/systemd/system/
 systemctl stop LamyEraser.service
 systemctl daemon-reload
 systemctl start LamyEraser.service
