@@ -27,13 +27,11 @@ The supported arguments are:
 `--double-press redo` Double click the button to redo.  
 `--left-handed` Use this option if you are using left handed mode.  
 For example, this line would use the toggle mode and redo on a double click:  
-`ExecStart=/home/root/RemarkableLamyEraser/RemarkableLamyEraser --toggle --double-press redo`
+`ExecStart=RemarkableLamyEraser --toggle --double-press redo`
 
 
 To apply your config, run these commands:
 ``` Shell
-cd ~/RemarkableLamyEraser
-cp LamyEraser.service /lib/systemd/system/
 systemctl stop LamyEraser.service
 systemctl daemon-reload
 systemctl start LamyEraser.service
