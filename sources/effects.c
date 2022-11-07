@@ -271,7 +271,7 @@ void deactivateToolEraseSelect(int fd_touch, int rmVersion) {
   toolEraseSelect = 0;
 }
 void toggleToolEraseSelect(int fd_touch, int rmVersion) {
-  if (toolEraserRM1)
+  if (toolEraseSelect)
     deactivateToolEraseSelect(fd_touch, rmVersion);
   else
     activateToolEraseSelect(fd_touch, rmVersion);
