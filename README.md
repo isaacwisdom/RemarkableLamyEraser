@@ -5,7 +5,7 @@ Also confirmed to work with these other styli:
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
 
-As an alternative, consider using this. (If you're already using ddvk-hacks, I'd defintely reccomend this route. This tool is for people who are looking for a less invasive option, and prefer the unaltered look of the reMarkable interface.)
+*As an alternative, consider using this. (If you're already using ddvk-hacks, I'd defintely reccomend this route. This tool is for people who are looking for a less invasive option, and prefer the unaltered look of the reMarkable interface.)*
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
