@@ -36,6 +36,10 @@ systemctl stop LamyEraser.service
 systemctl daemon-reload
 systemctl start LamyEraser.service
 ```
+# V2 (beta)
+The V2 branch of this project offers a ton of customization options, such as being able to select other tools, and configure exactly how you'd like to trigger erasing, undoing, among other things. It also knows what orientation your document is in, meaning that it works for portrait and landscape documents, regardless of your handedness. If you'd like to give it a try, uninstall this version, and reinstall from the V2 branch.
+
+However, all this customization comes at a slight cost. The way that I've implemented the extra customization also means that basic actions of erasing and undoing aren't quite as "snappy" as version 1. Keep in mind that V2 is still in beta, and some things might not be as reliable.
 
 # How it works
 When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
@@ -51,11 +55,9 @@ thinking you are using the eraser side of the Marker Plus.
 
 # TODO:
 - [ ] RM1 support (testers needed)
-- [ ] Nice install script
+- [x] Nice install script
 - [ ] toltec package
-- [ ] config file (as opposed to current command line argument system)
-- [ ] expand "How it works" section.
-- [ ] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.)
-- [ ] freely assignable actions (as listed below, able to assign to any trigger above) *(these last two will require
-      some significant code restructuring)*
+- [x] config file (as opposed to current command line argument system) -''V2''
+- [x] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.) -''V2''
+- [x] freely assignable actions (as listed below, able to assign to any trigger above) -''V2''
 
