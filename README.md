@@ -57,7 +57,7 @@ thinking you are using the eraser side of the Marker Plus.
 - [ ] RM1 support (testers needed)
 - [x] Nice install script
 - [ ] toltec package
-- [x] config file (as opposed to current command line argument system) -''V2''
-- [x] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.) -''V2''
-- [x] freely assignable actions (as listed below, able to assign to any trigger above) -''V2''
+- [x] config file (as opposed to current command line argument system) -__V2__
+- [x] flexible triggers (such as "click", "press and hold", "double click", "double click and hold", etc.) -__V2__
+- [x] freely assignable actions (as listed below, able to assign to any trigger above) -__V2__
 
