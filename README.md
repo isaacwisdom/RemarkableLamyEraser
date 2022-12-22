@@ -45,6 +45,8 @@ The V2 branch of this project offers a ton of customization options, such as bei
 
 However, all this customization comes at a slight cost. The way that I've implemented the extra customization also means that basic actions of erasing and undoing aren't quite as "snappy" as version 1. Keep in mind that V2 is still in beta, and some things might not be as reliable.
 
+It also (mostly) works with the RM1!
+
 # How it works
 When you press the button on the Lamy Pen, an input event with code BTN_TOOL_RUBBER is sent into dev/input/event1. Essentially, this tricks the reMarkable into
 thinking you are using the eraser side of the Marker Plus.
@@ -58,7 +60,7 @@ thinking you are using the eraser side of the Marker Plus.
     * if there is an error like `no such file or directory`, copy the command and execute it directly instead of using `$CC`, e.g. `arm-remarkable-linux-gnueabi-gcc  -mfpu=neon -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/codex/rm11x/3.1.15/sysroots/cortexa7hf-neon-remarkable-linux-gnueabi -O2 main.c`)
 
 # TODO:
-- [ ] RM1 support (testers needed)
+- [x] RM1 support (testers needed)
 - [x] Nice install script
 - [ ] toltec package
 - [x] config file (as opposed to current command line argument system) -__V2__
