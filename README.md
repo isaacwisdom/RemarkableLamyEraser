@@ -1,9 +1,13 @@
 # RemarkableLamyEraser
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
+
+
 Also confirmed to work with these other styli:
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
+ 
+*As an alternative, consider using [this](https://github.com/ddvk/remarkable-stylus). (If you're already using ddvk-hacks, I'd defintely reccomend this route. This tool is for people who are looking for a less invasive option, and prefer the unaltered look of the reMarkable interface.)*
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
