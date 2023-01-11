@@ -44,9 +44,9 @@ void toggleToolSelect(int fd_touch, int rmVersion);
 
 void actionToolbar(int fd_touch, int rmVersion);
 void actionWriting(int fd_touch, int rmVersion);
-void actionColorBlack(int fd_pen, int rmVersion);
-void actionColorGrey(int fd_pen, int mVersion);
-void actionColorWhite(int fd_pen, int rmVersion);
+void actionColorBlack(int fd_touch, int rmVersion);
+void actionColorGrey(int fd_touch, int mVersion);
+void actionColorWhite(int fd_touch, int rmVersion);
 void actionUndo(int fd_touch, int rmVersion);
 void actionRedo(int fd_touch, int rmVersion);
 

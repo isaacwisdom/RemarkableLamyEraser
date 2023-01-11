@@ -5,14 +5,24 @@ Also confirmed to work with these other styli:
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
 
+*As an alternative, consider using [this](https://github.com/ddvk/remarkable-stylus). (If you're already using ddvk-hacks, I'd defintely reccomend this route. This tool is for people who are looking for a less invasive option, and prefer the unaltered look of the reMarkable interface.)*
+
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
 ```shell
+<<<<<<< HEAD
 cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/LamyInstall.sh; chmod +x LamyInstall.sh; ./LamyInstall.sh; rm ~/LamyInstall.sh
 ```
 # Uninstall Instrucions
 ```shell
 cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/LamyUninstall.sh; chmod +x LamyUninstall.sh; ./LamyUninstall.sh; rm ~/LamyUninstall.sh
+=======
+sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/LamyInstall.sh -O-)"
+```
+# Uninstall Instrucions
+```shell
+sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh -O-)"
+>>>>>>> 080091613fc309edc7201875b27b9166e6d5842c
 ```
 
 
@@ -21,7 +31,7 @@ cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/Lamy
 The default configuration has the trigger "press and hold" mapped to the effect "erase", and the trigger "double click"
 mapped to the effect "undo".
 However, you configuration can be customized by changing the configuration file at ~/.config/LamyEraser/LamyEraser.conf
-(for example, by running nano ~.config/LamyEraser/LamyEraser.conf).
+(for example, by running nano ~/.config/LamyEraser/LamyEraser.conf).
 In this file, you can freely assign effects to different triggers.  
   
 The recognized triggers are:  
@@ -50,9 +60,15 @@ Tools are compatible with press and hold type triggers, or with click type trigg
 
 
 
-After making changes to the config, run these command to restart the program:
+After making changes to the config, run this command to restart the program:
 ``` Shell
 systemctl restart LamyEraser.service
+```
+
+You can also check your current config by running the program directly 
+``` Shell
+systemctl stop LamyEraser.service
+RemarkableLamyEraser
 ```
 
 # TODO:

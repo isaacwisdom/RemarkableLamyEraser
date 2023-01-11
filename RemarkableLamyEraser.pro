@@ -7,7 +7,6 @@ CONFIG -= qt
 INCLUDEPATH += \
     /opt/codex/rm11x/3.1.15/sysroots/x86_64-codexsdk-linux/usr/include \
     headers/
-
 HEADERS += \
     headers/configuration.h \
     headers/effects.h \
