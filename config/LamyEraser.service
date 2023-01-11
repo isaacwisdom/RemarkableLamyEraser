@@ -1,0 +1,10 @@
+[Unit]
+Description=Lamy Pen Button as Eraser
+After=xochitl.service
+
+[Service]
+ExecStart=/usr/sbin/RemarkableLamyEraser
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE QtCreatorDevices>
+<!-- Written by QtCreator 4.11.0, 2023-01-11T18:01:43. -->
+<qtcreator>
+ <data>
+  <variable>DeviceManager</variable>
+  <valuemap type="QVariantMap">
+   <valuemap type="QVariantMap" key="DefaultDevices">
+    <value type="QString" key="Desktop">Desktop Device</value>
+    <value type="QString" key="GenericLinuxOsType">{70365733-d436-4b2f-9f46-6d42f3a8bb35}</value>
+   </valuemap>
+   <valuelist type="QVariantList" key="DeviceList">
+    <valuemap type="QVariantMap">
+     <value type="int" key="Authentication">0</value>
+     <value type="QString" key="DebugServerKey"></value>
+     <valuemap type="QVariantMap" key="ExtraData"/>
+     <value type="QString" key="FreePortsSpec">30000-31000</value>
+     <value type="QString" key="Host"></value>
+     <value type="int" key="HostKeyChecking">2</value>
+     <value type="QString" key="InternalId">Desktop Device</value>
+     <value type="QString" key="KeyFile"></value>
+     <value type="int" key="Origin">1</value>
+     <value type="QString" key="OsType">Desktop</value>
+     <value type="QString" key="PeripheralDescriptionFileKey"></value>
+     <value type="QString" key="QmlsceneKey"></value>
+     <value type="int" key="SshPort">0</value>
+     <value type="int" key="Timeout">0</value>
+     <value type="int" key="Type">0</value>
+     <value type="QString" key="Uname"></value>
+     <value type="int" key="Version">0</value>
+    </valuemap>
+    <valuemap type="QVariantMap">
+     <value type="int" key="Authentication">1</value>
+     <value type="QString" key="DebugServerKey"></value>
+     <valuemap type="QVariantMap" key="ExtraData"/>
+     <value type="QString" key="FreePortsSpec">10000-10100</value>
+     <value type="QString" key="Host">10.11.99.1</value>
+     <value type="int" key="HostKeyChecking">2</value>
+     <value type="QString" key="InternalId">{70365733-d436-4b2f-9f46-6d42f3a8bb35}</value>
+     <value type="QString" key="KeyFile"></value>
+     <value type="QString" key="Name">ReMarkable 2 USB</value>
+     <value type="int" key="Origin">0</value>
+     <value type="QString" key="OsType">GenericLinuxOsType</value>
+     <value type="QString" key="PeripheralDescriptionFileKey"></value>
+     <value type="QString" key="QmlsceneKey"></value>
+     <value type="int" key="SshPort">22</value>
+     <value type="int" key="Timeout">10</value>
+     <value type="int" key="Type">0</value>
+     <value type="QString" key="Uname">root</value>
+     <value type="int" key="Version">0</value>
+    </valuemap>
+   </valuelist>
+  </valuemap>
+ </data>
+</qtcreator>

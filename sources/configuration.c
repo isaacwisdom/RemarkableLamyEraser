@@ -1,8 +1,11 @@
 #include <stdio.h>
-//#include <stdlib.h>
-//#include <fcntl.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <string.h>
 
+#include <effects.h>
+#include <effects_data.h>
 #include <configuration.h>
 
 

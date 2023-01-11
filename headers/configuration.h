@@ -2,7 +2,6 @@
 #define CONFIGURATION_H
 
 
-#include "effects_data.h"
 struct configuration {
   int click1Effect;
   int click2Effect;
