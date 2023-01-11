@@ -23,7 +23,7 @@ sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUni
 The default configuration has the trigger "press and hold" mapped to the effect "erase", and the trigger "double click"
 mapped to the effect "undo".
 However, you configuration can be customized by changing the configuration file at ~/.config/LamyEraser/LamyEraser.conf
-(for example, by running nano ~.config/LamyEraser/LamyEraser.conf).
+(for example, by running nano ~/.config/LamyEraser/LamyEraser.conf).
 In this file, you can freely assign effects to different triggers.  
   
 The recognized triggers are:  
@@ -52,9 +52,15 @@ Tools are compatible with press and hold type triggers, or with click type trigg
 
 
 
-After making changes to the config, run these command to restart the program:
+After making changes to the config, run this command to restart the program:
 ``` Shell
 systemctl restart LamyEraser.service
+```
+
+You can also check your current config by running the program directly 
+``` Shell
+systemctl stop LamyEraser.service
+RemarkableLamyEraser
 ```
 
 # TODO:
