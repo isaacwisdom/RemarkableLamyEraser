@@ -14,6 +14,8 @@ The tool will definitely break when the reMarkable updates. When that happens, j
 ```shell
 sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyInstall.sh -O-)"
 ```
+Need more help? Check [here](https://www.joshualowcock.com/guide/how-to-install-the-lamy-al-star-pen-button-eraser-hack-on-the-remarkable-2/).
+
 # Uninstall Instrucions
 ```shell
 sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh -O-)"
