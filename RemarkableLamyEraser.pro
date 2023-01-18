@@ -6,6 +6,7 @@ CONFIG -= qt
 
 INCLUDEPATH += \
     /opt/codex/rm11x/3.1.15/sysroots/x86_64-codexsdk-linux/usr/include \
+    /opt/codex/rm11x/3.1.15/sysroots/x86_64-codexsdk-linux/usr/lib/arm-remarkable-linux-gnueabi/gcc/arm-remarkable-linux-gnueabi/9.3.0/include \
     headers/
 HEADERS += \
     headers/configuration.h \

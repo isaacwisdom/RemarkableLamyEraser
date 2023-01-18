@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
   char wacomDevicePath[18], touchDevicePath[18];
   int forceRM1Style = false;
   int rmVersion = getRmVersion();
+  int swVersion[4] = {0,0,0,0}; getSoftwareVersion(swVersion);
+
 
   printf("RemarkableLamyEraser 2.0.0\n");
   printf("----------------------------------\n");
@@ -58,7 +60,7 @@ int main(int argc, char *argv[]) {
 
 
   /* Print Device Names */
-  printf("Detected ReMarkable %d. ", rmVersion);
+  printf("Detected ReMarkable %d, Software Version: %d.%d.%d.%d\n", rmVersion, swVersion[0],swVersion[1],swVersion[2],swVersion[3]);
   ioctl(fd_wacom, EVIOCGNAME(sizeof(name)), name);
   printf("Using Devices:\n");
   printf("1. device file = %s\n", wacomDevicePath);
