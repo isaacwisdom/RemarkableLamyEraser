@@ -11,12 +11,14 @@ Also confirmed to work with these other styli:
 
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
+Make sure your reMarkable is connected to the internet and then run the following command:
 ```shell
 sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyInstall.sh -O-)"
 ```
 Need more help? Check [here](https://www.joshualowcock.com/guide/how-to-install-the-lamy-al-star-pen-button-eraser-hack-on-the-remarkable-2/).
 
 # Uninstall Instrucions
+Make sure your reMarkable is connected to the internet and then run the following command:
 ```shell
 sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh -O-)"
 ```
