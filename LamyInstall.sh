@@ -9,7 +9,7 @@ systemctl disable LamyEraser.service 2&> /dev/null
 echo "Downloading RemarkableLamyEraser Executable to /usr/sbin..."
 cd /usr/sbin
 rm -f RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/RemarkableLamyEraser
+wget --no-check-certificate https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/RemarkableLamyEraser
 echo "Adding execute privleges..."
 chmod +x RemarkableLamyEraser
 cd ~
@@ -22,7 +22,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
   echo "Downloading service file to /lib/systemd/system..."
   cd /lib/systemd/system/
   rm -f LamyEraser.service
-  wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/LamyEraser.service
+  wget --no-check-certificate https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/RemarkableLamyEraser/LamyEraser.service
   read -p "Would you like to edit your configuration now? [y/n]" -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]
