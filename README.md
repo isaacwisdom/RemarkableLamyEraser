@@ -4,6 +4,7 @@ Standalone tool that turns the button on the Lamy Pen into an eraser on the reMa
 
 
 Also confirmed to work with these other styli:
+ * Kindle Scribe Pen
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
  
