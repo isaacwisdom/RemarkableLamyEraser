@@ -14,12 +14,6 @@ cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/Lamy
 ```
 # Uninstall Instrucions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/LamyUninstall.sh; chmod +x LamyUninstall.sh; ./LamyUninstall.sh; rm ~/LamyUninstall.sh
-=======
-sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/LamyInstall.sh -O-)"
-```
-# Uninstall Instrucions
-```shell
 sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh -O-)"
 ```
 
