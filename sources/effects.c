@@ -170,21 +170,6 @@ void actionToolbar(int fd_touch, int rmVersion) {
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 1, TOOLBAR);
 }
 
-void actionColorBlack(int fd_touch, int rmVersion) {
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_BLACK, STROKE, COLOR_BLACK, TOOLBAR, STROKE, COLOR_BLACK, TOOLBAR);
-}
-
-void actionColorGrey(int fd_touch, int rmVersion) {
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_GREY, STROKE, COLOR_GREY, TOOLBAR, STROKE, COLOR_GREY, TOOLBAR);
-}
-
-void actionColorWhite(int fd_touch, int rmVersion) {
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 7, COLOR_WHITE, STROKE, COLOR_WHITE, TOOLBAR, STROKE, COLOR_WHITE, TOOLBAR);
-}
-
 void actionWriting(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);

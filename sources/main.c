@@ -20,7 +20,7 @@
 int main(int argc, char *argv[]) {
   struct configuration config;
   char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
-  int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
+  int trigger = NULL_TRIGGER, effect = NULL;
   struct input_event ev_wacom, ev_touch;
   const size_t input_event_size = sizeof(struct input_event);
   int fd_wacom, fd_touch;
@@ -205,18 +205,6 @@ int main(int argc, char *argv[]) {
         printf("writing write\n");
         actionWriting(fd_touch, rmVersion);
           break;
-      case COLOR_BLACK:
-        printf("writing color black\n");
-        actionColorBlack(fd_touch, rmVersion);
-        break;
-      case COLOR_GREY:
-        printf("writing color grey\n");
-        actionColorGrey(fd_touch, rmVersion);
-        break;
-      case COLOR_WHITE:
-        printf("writing color white\n");
-        actionColorWhite(fd_touch, rmVersion);
-        break;
       case UNDO:
         printf("writing undo\n");
         actionUndo(fd_touch, rmVersion);

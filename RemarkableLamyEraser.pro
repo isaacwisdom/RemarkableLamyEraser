@@ -8,6 +8,7 @@ INCLUDEPATH += \
     /opt/codex/rm11x/3.1.15/sysroots/x86_64-codexsdk-linux/usr/include \
     /opt/codex/rm11x/3.1.15/sysroots/x86_64-codexsdk-linux/usr/lib/arm-remarkable-linux-gnueabi/gcc/arm-remarkable-linux-gnueabi/9.3.0/include \
     headers/
+
 HEADERS += \
     headers/configuration.h \
     headers/effects.h \
@@ -24,29 +25,29 @@ SOURCES += \
 
 
 DISTFILES += \
-    LamyEraser.conf \
-    LamyEraser_TestConfig.conf \
-    LamyInstall.sh \
-    LamyUninstall.sh \
-    LamyEraser.service \
+    config/LamyEraser.conf \
+    config/LamyEraser_TestConfig.conf \
+    config/LamyEraser.service \
+    scripts/LamyInstall.sh \
+    scripts/LamyUninstall.sh \
     README.md \
     RemarkableLamyEraser \
 
 conf.files += \
-    LamyEraser.conf \
-    LamyEraser_TestConfig.conf \
+    config/LamyEraser.conf \
+    config/LamyEraser_TestConfig.conf \
 
 conf.path = /home/root/.config/LamyEraser
 
-service.files = LamyEraser.service
+service.files = config/LamyEraser.service
 service.path = /lib/systemd/system
 
 target.path = /usr/sbin
 
 
 INSTALLS += \
-        target \
-        service \
         conf \
+        service \
+        target \
 
 
