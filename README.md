@@ -1,3 +1,5 @@
+*If you are running a software version >3.0.0.0, this branch will not work! Switch branches in the top left corner to the v2-3.0.0-fix branch. This is a beta branch with fixes for the new software versions.*
+
 # RemarkableLamyEraser
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
