@@ -17,7 +17,7 @@ cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/sc
 ```
 # Uninstall Instrucions
 ```shell
-sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/LamyUninstall.sh -O-)"
+sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/scripts/LamyUninstall.sh -O-)"
 ```
 
 
