@@ -20,7 +20,7 @@
 int main(int argc, char *argv[]) {
   struct configuration config;
   char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
-  int trigger = NULL_TRIGGER, effect = NULL;
+  int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
   struct input_event ev_wacom, ev_touch;
   const size_t input_event_size = sizeof(struct input_event);
   int fd_wacom, fd_touch;
@@ -33,6 +33,13 @@ int main(int argc, char *argv[]) {
 
   printf("RemarkableLamyEraser 2.0.0\n");
   printf("----------------------------------\n");
+
+  /* Quit if software version is less than 3.0 */
+  if (swVersion[0] < 3) {
+      printf("Invalid software version: %d.%d.%d.%d/n"
+             "This version of RemarkableLamyEraser must be run on devices running software version 3.0.0.0 or newer", swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
+      exit(EXIT_FAILURE);
+  }
 
   /* Open Input Devices */
   if (rmVersion == 2) {
@@ -108,23 +115,23 @@ int main(int argc, char *argv[]) {
 
   int temp;
   temp = config.click1Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
     config.click1Effect += TOGGLE_OFFSET;
 
   temp = config.click2Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
     config.click2Effect += TOGGLE_OFFSET;
 
   temp = config.click3Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
     config.click3Effect += TOGGLE_OFFSET;
 
   temp = config.click4Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
     config.click4Effect += TOGGLE_OFFSET;
 
   temp = config.click5Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECT || temp == SELECT)
+  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
     config.click5Effect += TOGGLE_OFFSET;
 
   int flags = fcntl(fd_touch, F_GETFL, 0);
@@ -204,7 +211,19 @@ int main(int argc, char *argv[]) {
       case WRITING:
         printf("writing write\n");
         actionWriting(fd_touch, rmVersion);
-          break;
+        break;
+      case STROKE_PANEL:
+        printf("writing stroke panel\n");
+        actionStrokePanel(fd_touch, rmVersion);
+        break;
+      case TEXT:
+        printf("writing text\n");
+        actionText(fd_touch, rmVersion);
+        break;
+      case ERASER_PANEL:
+        printf("writing eraser panel");
+        actionEraserPanel(fd_touch, rmVersion);
+        break;
       case UNDO:
         printf("writing undo\n");
         actionUndo(fd_touch, rmVersion);
@@ -238,17 +257,17 @@ int main(int argc, char *argv[]) {
             toggleToolEraserRM2(fd_wacom);
         break;
 
-      case ERASER_SELECT:
+      case ERASER_SELECTION:
         printf("writing erase selection\n");
-        activateToolEraseSelect(fd_touch, rmVersion);
+        activateToolEraserSelect(fd_touch, rmVersion);
         break;
-      case ERASER_SELECT_OFF:
+      case ERASER_SELECTION_OFF:
         printf("writing erase selection off\n");
-        deactivateToolEraseSelect(fd_touch, rmVersion);
+        deactivateToolEraserSelect(fd_touch, rmVersion);
         break;
       case ERASER_SELECT_TOGGLE:
         printf("writing erase selection off\n");
-        toggleToolEraseSelect(fd_touch, rmVersion);
+        toggleToolEraserSelect(fd_touch, rmVersion);
         break;
 
       case SELECT:

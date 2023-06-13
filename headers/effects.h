@@ -33,9 +33,9 @@ void activateToolEraserRM1(int fd_touch, int rmVersion);
 void deactivateToolEraserRM1(int fd_touch, int rmVersion);
 void toggleToolEraserRM1(int fd_touch, int rmVersion);
 
-void activateToolEraseSelect(int fd_touch, int rmVersion);
-void deactivateToolEraseSelect(int fd_touch, int rmVersion);
-void toggleToolEraseSelect(int fd_touch, int rmVersion);
+void activateToolEraserSelect(int fd_touch, int rmVersion);
+void deactivateToolEraserSelect(int fd_touch, int rmVersion);
+void toggleToolEraserSelect(int fd_touch, int rmVersion);
 
 void activateToolSelect(int fd_touch, int rmVersion);
 void deactivateToolSelect(int fd_touch, int rmVersion);
@@ -44,9 +44,9 @@ void toggleToolSelect(int fd_touch, int rmVersion);
 
 void actionToolbar(int fd_touch, int rmVersion);
 void actionWriting(int fd_touch, int rmVersion);
-void actionColorBlack(int fd_touch, int rmVersion);
-void actionColorGrey(int fd_touch, int mVersion);
-void actionColorWhite(int fd_touch, int rmVersion);
+void actionStrokePanel(int fd_touch, int rmVersion);
+void actionText(int fd_touch, int rmVersion);
+void actionEraserPanel(int fd_touch, int rmVersion);
 void actionUndo(int fd_touch, int rmVersion);
 void actionRedo(int fd_touch, int rmVersion);
 

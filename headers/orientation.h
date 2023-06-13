@@ -11,7 +11,7 @@
 typedef struct {
   int openNotebook;
   int orientation;
-  int isPDF;
+  int docType;
 } toolbarOrientation;
 
 int getOpenFileUUID(char* UUID);

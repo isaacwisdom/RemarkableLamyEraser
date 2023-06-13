@@ -37,7 +37,7 @@ int getTriggerConfig(const char *path, struct configuration *config) {
         }
       else {
         //printf("Line %2d: Read trigger <%s> has no effect.\n", lineNum, trigger);
-        strcpy(effect, "null");
+        strcpy(effect, "null-effect");
         }
 
       for (int i = 0; i < NUM_TRIGGERS; i++){

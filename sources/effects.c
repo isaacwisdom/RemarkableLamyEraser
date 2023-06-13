@@ -146,8 +146,8 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
         //printf("touch screen: ");
         for (int i = 0; i < numLocations; i++)  {
             action = va_arg(actionType, int);
-            actionLocation[0] = locationLookupTouch[rmVersion][action][orientation->orientation][0];
-            actionLocation[1] = locationLookupTouch[rmVersion][action][orientation->orientation][1];
+            actionLocation[0] = locationLookupTouch[rmVersion][orientation->docType][action][orientation->orientation][0];
+            actionLocation[1] = locationLookupTouch[rmVersion][orientation->docType][action][orientation->orientation][1];
             //printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
             writeTapWithTouch(fd, actionLocation);
          }
@@ -173,6 +173,21 @@ void actionToolbar(int fd_touch, int rmVersion) {
 void actionWriting(int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+}
+
+void actionStrokePanel(int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, STROKE_PANEL, TOOLBAR, STROKE_PANEL);
+}
+
+void actionText (int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, TEXT, TOOLBAR, TEXT);
+}
+
+void actionEraserPanel(int fd_touch, int rmVersion) {
+  toolbarOrientation orientation = getToolbarOrientation();
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, ERASER_PANEL, TOOLBAR, ERASER_PANEL);
 }
 
 void actionUndo(int fd_touch, int rmVersion) {
@@ -243,23 +258,23 @@ void toggleToolEraserRM1(int fd_touch, int rmVersion) {
 }
 
 static int toolEraseSelect = 0;
-void activateToolEraseSelect(int fd_touch, int rmVersion) {
+void activateToolEraserSelect(int fd_touch, int rmVersion) {
   //printf("Activating ToolEraseSelect: writing erase_select tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECT, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR);
   toolEraseSelect = 1;
 }
-void deactivateToolEraseSelect(int fd_touch, int rmVersion) {
+void deactivateToolEraserSelect(int fd_touch, int rmVersion) {
   //printf("Deactivating ToolEraseSelect: writing writing_tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
   toolEraseSelect = 0;
 }
-void toggleToolEraseSelect(int fd_touch, int rmVersion) {
+void toggleToolEraserSelect(int fd_touch, int rmVersion) {
   if (toolEraseSelect)
-    deactivateToolEraseSelect(fd_touch, rmVersion);
+    deactivateToolEraserSelect(fd_touch, rmVersion);
   else
-    activateToolEraseSelect(fd_touch, rmVersion);
+    activateToolEraserSelect(fd_touch, rmVersion);
 }
 
 static int toolSelect = 0;
@@ -310,7 +325,7 @@ void testLocations(int device, int fd, int rmVersion) {
       sleep(2);
 
       printf("tapping erase selection...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_SELECT);
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_SELECTION);
       sleep(2);
 
       printf("tapping eraser panel...\n");

@@ -21,7 +21,7 @@
 #define UNDO              7 //action: undo button
 #define REDO              8 //action: redo button
 #define ERASER_ERASE      9 //action: eraser
-#define ERASER_SELECT    10 //action: eraser-select
+#define ERASER_SELECTION 10 //action: eraser-select
 #define ERASER_ERASE_ALL 11 //action: eraser-eraser-all
 
 //define offsets for the effect functions
@@ -29,13 +29,13 @@
 #define TOGGLE_OFFSET        0xfff
 
 //effects that require a deactivate/toggle function
-#define ERASER_ERASE_OFF     (ERASER_ERASE  + HOLD_OFF_OFFSET)
-#define ERASER_SELECT_OFF    (ERASER_SELECT + HOLD_OFF_OFFSET)
-#define SELECT_OFF           (SELECT        + HOLD_OFF_OFFSET)
+#define ERASER_ERASE_OFF     (ERASER_ERASE     + HOLD_OFF_OFFSET)
+#define ERASER_SELECTION_OFF (ERASER_SELECTION + HOLD_OFF_OFFSET)
+#define SELECT_OFF           (SELECT           + HOLD_OFF_OFFSET)
 
-#define ERASER_ERASE_TOGGLE  (ERASER_ERASE  + TOGGLE_OFFSET)
-#define ERASER_SELECT_TOGGLE (ERASER_SELECT + TOGGLE_OFFSET)
-#define SELECT_TOGGLE        (SELECT        + TOGGLE_OFFSET)
+#define ERASER_ERASE_TOGGLE  (ERASER_ERASE     + TOGGLE_OFFSET)
+#define ERASER_SELECT_TOGGLE (ERASER_SELECTION + TOGGLE_OFFSET)
+#define SELECT_TOGGLE        (SELECT           + TOGGLE_OFFSET)
 
 
 //recognized words in config file
@@ -49,8 +49,8 @@ static const char* effects[NUM_EFFECTS] = {
   "select",             //SELECT             6
   "undo",               //UNDO               7
   "redo",               //REDO               8
-  "eraser-eraser",      //ERASER_ERASE       9
-  "eraser-select",      //ERASER_SELECT     10
+  "eraser-erase",       //ERASER_ERASE       9
+  "eraser-selection",   //ERASER_SELECT     10
   "eraser-erase-all"    //ERASER_ERASE_ALL  11
 };
 
@@ -108,10 +108,10 @@ static const int locationLookupTouch[2][2][NUM_EFFECTS][4][2] = {
       { {T_RM2_RHX, 1410}, { 450, T_RM2_RHY}, {T_RM2_LHX, 1400}, { 480, T_RM2_LHY} }, //ERASER_PANEL      5
       { {T_RM2_RHX, 1300}, { 570, T_RM2_RHY}, {T_RM2_LHX, 1230}, { 590, T_RM2_LHY} }, //SELECT            6
       { {T_RM2_RHX, 1190}, { 670, T_RM2_RHY}, {T_RM2_LHX, 1200}, { 690, T_RM2_LHY} }, //UNDO              7
-      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //REDO              8
-      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE      9
-      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_SELECT    10
-      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE_ALL 11
+      { {T_RM2_RHX,    0}, { 770, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //REDO              8
+      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_ERASE      9
+      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_SELECTION 10
+      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_ERASE_ALL 11
     },
     { //PDF
       //RHP              //RHL              //LHP             //LHL
@@ -125,7 +125,7 @@ static const int locationLookupTouch[2][2][NUM_EFFECTS][4][2] = {
       { {T_RM2_RHX, 1190}, { 670, T_RM2_RHY}, {T_RM2_LHX, 1200}, { 690, T_RM2_LHY} }, //UNDO              7
       { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //REDO              8
       { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE      9
-      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_SELECT    10
+      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_SELECTION 10
       { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE_ALL 11
     }
   }
