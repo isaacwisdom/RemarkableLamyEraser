@@ -10,11 +10,11 @@ Also confirmed to work with these other styli:
 The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
 # Install Instructions
 ```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/scripts/LamyInstall.sh; chmod +x LamyInstall.sh; ./LamyInstall.sh; rm ~/LamyInstall.sh
+cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/scripts/LamyInstall.sh; chmod +x LamyInstall.sh; ./LamyInstall.sh; rm ~/LamyInstall.sh
 ```
 # Uninstall Instrucions
 ```shell
-sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v1/LamyUninstall.sh -O-)"
+sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/LamyUninstall.sh -O-)"
 ```
 
 
