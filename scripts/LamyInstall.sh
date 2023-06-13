@@ -9,14 +9,14 @@ systemctl disable LamyEraser.service > /dev/null/
 echo "Downloading RemarkableLamyEraser Executable..."
 cd /usr/sbin
 rm -f RemarkableLamyEraser
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/RemarkableLamyEraser
+wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/RemarkableLamyEraser
 echo "Adding execute privleges..."
 chmod +x RemarkableLamyEraser
 cd ~
 
 echo "Downloading configuration file.."
 rm -f LamyEraser.conf
-wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/config/LamyEraser.conf
+wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/config/LamyEraser.conf
 
 echo "Creating directory for configuration file..."
 mkdir -p ~/.config/LamyEraser
@@ -44,7 +44,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
  then
   echo "Downloading service file..."
   rm -f LamyEraser.service
-  wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2/config/LamyEraser.service
+  wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/config/LamyEraser.service
   echo "Placing service file in /lib/systemd/system/"
   mv LamyEraser.service /lib/systemd/system/
   echo "Setting up RemarkableLamyEraser to start on boot..."
