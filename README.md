@@ -1,3 +1,6 @@
+*This is the beta branch to fix the changes introduced in the 3.0.0.0 software update. No guarantees on things working as expected!*
+*If you notice any bugs, feel free to create an issue!*
+
 # RemarkableLamyEraser
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
