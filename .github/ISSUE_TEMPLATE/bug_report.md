@@ -24,6 +24,8 @@ A clear and concise description of what you expected to happen.
  - reMarkable Version (eg. 1 or 2):
  - OS version (In Settings > General > Software):
  - Branch (eg. v1, v2, v2-3.0.0-fix):
+- Document Type (eg. PDF, Notebook):
+- Document Orientation: (eg. RH or LH, Portrait or Landscape):
 
 **Please include your config file (for example, by running `cat /home/root/.config/LamyEraser/LamyEraser.conf`) here:**
 
