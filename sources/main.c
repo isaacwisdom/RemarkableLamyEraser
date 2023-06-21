@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
   /* Quit if software version is less than 3.0 */
   if (swVersion[0] < 3) {
-      printf("Invalid software version: %d.%d.%d.%d/n"
+      printf("Invalid (prior) software version: %d.%d.%d.%d/n"
              "This version of RemarkableLamyEraser must be run on devices running software version 3.0.0.0 or newer", swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
       exit(EXIT_FAILURE);
   }
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
 
   /* Print Device Names */
-  printf("Detected ReMarkable %d, Software Version: %d.%d.%d.%d\n", rmVersion, swVersion[0],swVersion[1],swVersion[2],swVersion[3]);
+  printf("Detected ReMarkable %d, Software Version: %d.x.x.x\n", rmVersion, swVersion[0]);
   ioctl(fd_wacom, EVIOCGNAME(sizeof(name)), name);
   printf("Using Devices:\n");
   printf("1. device file = %s\n", wacomDevicePath);
