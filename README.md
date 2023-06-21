@@ -49,8 +49,8 @@ Actions are compatible with click-type actions. The available actions are:
 *  redo : Presses the redo button  
   
 Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:  
-*  eraser          : Changes to eraser tool. on deactivation, changes back to writing utensil  
-                    note that on the RM2, this mode uses special features available from the marker plus.
+*  eraser-erase    : Changes to eraser tool. on deactivation, changes back to writing utensil
+                     note that on the RM2, this mode uses special features available from the marker plus.
 *  select          : Changes to select tool. On deactivation, changes back to writing utensil  
 
 

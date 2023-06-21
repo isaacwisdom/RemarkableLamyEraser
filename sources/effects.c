@@ -352,4 +352,3 @@ void testLocations(int device, int fd, int rmVersion) {
   printf("Completed all orientations.\n");
   exit(EXIT_SUCCESS);
 }
-
