@@ -108,10 +108,10 @@ static const int locationLookupTouch[2][2][NUM_EFFECTS][4][2] = {
       { {T_RM2_RHX, 1410}, { 450, T_RM2_RHY}, {T_RM2_LHX, 1400}, { 480, T_RM2_LHY} }, //ERASER_PANEL      5
       { {T_RM2_RHX, 1300}, { 570, T_RM2_RHY}, {T_RM2_LHX, 1230}, { 590, T_RM2_LHY} }, //SELECT            6
       { {T_RM2_RHX, 1190}, { 670, T_RM2_RHY}, {T_RM2_LHX, 1200}, { 690, T_RM2_LHY} }, //UNDO              7
-      { {T_RM2_RHX,    0}, { 770, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //REDO              8
-      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_ERASE      9
-      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_SELECTION 10
-      { {T_RM2_RHX,    0}, {   0, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //ERASER_ERASE_ALL 11
+      { {T_RM2_RHX, 1090}, { 770, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //REDO              8
+      { {      280, 1400}, { 470,       220}, {     1140,    0}, { 480,      1600} }, //ERASER_ERASE      9
+      { {      280, 1300}, { 570,       220}, {     1140,    0}, { 580,      1600} }, //ERASER_SELECTION 10
+      { {      280, 1200}, { 660,       220}, {     1140,    0}, { 670,      1600} }, //ERASER_ERASE_ALL 11
     },
     { //PDF
       //RHP              //RHL              //LHP             //LHL
