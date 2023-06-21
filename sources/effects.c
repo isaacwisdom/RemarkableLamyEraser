@@ -152,7 +152,7 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
             writeTapWithTouch(fd, actionLocation);
          }
        }
-      printf("\n");
+      //printf("\n");
       va_end(actionType);
       return 0;
       }

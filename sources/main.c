@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
         actionText(fd_touch, rmVersion);
         break;
       case ERASER_PANEL:
-        printf("writing eraser panel");
+        printf("writing eraser panel\n");
         actionEraserPanel(fd_touch, rmVersion);
         break;
       case UNDO:
