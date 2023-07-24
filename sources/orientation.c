@@ -131,11 +131,11 @@ int getRmVersion() {
 
 int getSoftwareVersion (int softwareVersionArray[4]) {
   //returns -1 if failed to get software versions, 1 on success.
-  const char *sysPath = "/home/root/.config/remarkable/xochitl.conf";
+  const char *sysPath = "/usr/share/remarkable/update.conf";
   char softwareVersion[15];
   char *token;
 
-  if ( getConf(sysPath, "PreviousVersion=", softwareVersion, sizeof(softwareVersion)) == -1)
+  if ( getConf(sysPath, "REMARKABLE_RELEASE_VERSION=", softwareVersion, sizeof(softwareVersion)) == -1)
       return -1;
   //printf("string from conf file: %s\n", softwareVersion),
 
