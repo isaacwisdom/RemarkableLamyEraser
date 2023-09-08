@@ -1,18 +1,21 @@
 #!/bin/env bash
 
+# Check whether we are actually SSH'd into a reMarkable
+(uname -a | grep reMarkable) || (echo "Please SSH into your remarkable" && exit)
+
 clear
-cd ~
+cd ~/ || exit
 
 systemctl stop LamyEraser.service
 systemctl disable LamyEraser.service > /dev/null/
 
 echo "Downloading RemarkableLamyEraser Executable..."
-cd /usr/sbin
+cd /usr/sbin || exit
 rm -f RemarkableLamyEraser
 wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/RemarkableLamyEraser
 echo "Adding execute privleges..."
 chmod +x RemarkableLamyEraser
-cd ~
+cd ~/ || exit
 
 echo "Downloading configuration file.."
 rm -f LamyEraser.conf
