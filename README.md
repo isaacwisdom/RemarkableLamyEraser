@@ -21,13 +21,13 @@ The tool will definitely break when the reMarkable updates.
 When that happens, just reinstall!
 
 ``` console
-$ sh -c "$(wget https://github.com/slotThe/RemarkableLamyEraser/raw/v2/scripts/LamyInstall.sh -O-)"
+$ sh -c "$(wget https://raw.githubusercontent.com/slotThe/RemarkableLamyEraser/main/scripts/LamyInstall.sh -O-)"
 ```
 
 ## Uninstall
 
 ``` console
- $ sh -c "$(wget https://github.com/slotThe/RemarkableLamyEraser/raw/v2/scripts/LamyUninstall.sh -O-)"
+ $ sh -c "$(wget https://raw.githubusercontent.com/slotThe/RemarkableLamyEraser/main/scripts/LamyUninstall.sh -O-)"
 ```
 
 # Usage
