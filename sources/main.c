@@ -212,10 +212,6 @@ int main(int argc, char *argv[]) {
         printf("writing write\n");
         actionWriting(fd_touch, rmVersion);
         break;
-      case STROKE_PANEL:
-        printf("writing stroke panel\n");
-        actionStrokePanel(fd_touch, rmVersion);
-        break;
       case TEXT:
         printf("writing text\n");
         actionText(fd_touch, rmVersion);

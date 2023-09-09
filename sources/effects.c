@@ -175,11 +175,6 @@ void actionWriting(int fd_touch, int rmVersion) {
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
 }
 
-void actionStrokePanel(int fd_touch, int rmVersion) {
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, STROKE_PANEL, TOOLBAR, STROKE_PANEL);
-}
-
 void actionText (int fd_touch, int rmVersion) {
   toolbarOrientation orientation = getToolbarOrientation();
   writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, TEXT, TOOLBAR, TEXT);
