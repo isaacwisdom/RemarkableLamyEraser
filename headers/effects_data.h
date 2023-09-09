@@ -8,7 +8,6 @@
 #define NOTEBOOK        0
 #define PDF             1
 
-
 #define NUM_EFFECTS     11
 //[EFFECT]:
 #define NULL_EFFECT       0 //null effect
@@ -37,7 +36,7 @@
 #define SELECT_TOGGLE        (SELECT           + TOGGLE_OFFSET)
 
 //recognized words in config file
-static const char* effects[NUM_EFFECTS] = {
+static const char* effects[NUM()_EFFECTS] = {
   "null-effect",        //null effect        0
   "toolbar",            //TOOLBAR            1
   "writing",            //WRITING            2
@@ -103,6 +102,5 @@ static const int locationLookupWacom[NUM_EFFECTS][4][2] = {
     { { 13380,  W_RM2_RHY}, { W_RM2_RHX,  7610}, { 13350,  W_RM2_LHY}, { W_RM2_LHX,  7450} }, //UNDO           6
     { { 12220,  W_RM2_RHY}, { W_RM2_RHX,  8880}, { 12300,  W_RM2_LHY}, { W_RM2_LHX,  8780} }, //REDO           7
 };
-
 
 #endif //EFFECTS_DATA_H

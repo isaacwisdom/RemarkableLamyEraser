@@ -7,36 +7,38 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "triggers.h"
+#include "configuration.h"
 #include "effects.h"
 #include "orientation.h"
-#include "configuration.h"
+#include "triggers.h"
 
 #define WACOM_DEVICE "/dev/input/event1"
 #define TOUCH_DEVICE "/dev/input/event2"
 
 int main(int argc, char *argv[]) {
   struct configuration config;
-  char* confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; //default conf path
-  int trigger = NULL_TRIGGER, effect = NULL_EFFECT;
+  char *confPath = "/home/root/.config/LamyEraser/LamyEraser.conf"; // default conf path
+  int   trigger = NULL_TRIGGER, effect = NULL_EFFECT;
   struct input_event ev_wacom, ev_touch;
-  const size_t input_event_size = sizeof(struct input_event);
-  int fd_wacom, fd_touch;
-  char name[256] = "Unknown";
-  char wacomDevicePath[18], touchDevicePath[18];
-  int forceRM1Style = false;
-  int rmVersion = getRmVersion();
-  int swVersion[4] = {0,0,0,0}; getSoftwareVersion(swVersion);
-
+  const size_t       input_event_size = sizeof(struct input_event);
+  int                fd_wacom, fd_touch;
+  char               name[256] = "Unknown";
+  char               wacomDevicePath[18], touchDevicePath[18];
+  int                forceRM1Style = false;
+  int                rmVersion     = getRmVersion();
+  int                swVersion[4]  = {0, 0, 0, 0};
+  getSoftwareVersion(swVersion);
 
   printf("RemarkableLamyEraser 2.1.0\n");
   printf("----------------------------------\n");
 
   /* Quit if software version is less than 3.0 */
   if (swVersion[0] < 3) {
-      printf("Invalid (prior) software version: %d.%d.%d.%d/n"
-             "This version of RemarkableLamyEraser must be run on devices running software version 3.0.0.0 or newer", swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
-      exit(EXIT_FAILURE);
+    printf("Invalid (prior) software version: %d.%d.%d.%d/n"
+           "This version of RemarkableLamyEraser must be run on devices "
+           "running software version 3.0.0.0 or newer",
+           swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
+    exit(EXIT_FAILURE);
   }
 
   /* Open Input Devices */
@@ -50,14 +52,13 @@ int main(int argc, char *argv[]) {
   fd_wacom = open(wacomDevicePath, O_RDWR);
   fd_touch = open(touchDevicePath, O_RDWR);
   if (fd_wacom == -1) {
-      fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacomDevicePath);
-      exit(EXIT_FAILURE);
-    }
+    fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacomDevicePath);
+    exit(EXIT_FAILURE);
+  }
   if (fd_touch == -1) {
-      fprintf(stderr, "%s is not a vaild device. Exiting...\n", touchDevicePath);
-      exit(EXIT_FAILURE);
-    }
-
+    fprintf(stderr, "%s is not a vaild device. Exiting...\n", touchDevicePath);
+    exit(EXIT_FAILURE);
+  }
 
   /* Print Device Names */
   printf("Detected ReMarkable %d, Software Version: %d.x.x.x\n", rmVersion, swVersion[0]);
@@ -72,35 +73,32 @@ int main(int argc, char *argv[]) {
 
   // check our input args
   for (int i = 1; i < argc; i++) {
-      if ( !strcmp(argv[i], "--config-file") ) {
-              confPath = argv[++i];
-            }
-      else if ( !strcmp(argv[i], "--test-locations") ) {
-          if (!strcmp(argv[i+1], "WACOM")) {
-             testLocations(WACOM, fd_wacom, rmVersion); //program will exit
-             }
-          else if (!strcmp(argv[i+1], "TOUCH")) {
-             testLocations(TOUCH, fd_touch, rmVersion); //program will exit
-             }
-          else {
-             printf("Unknown device %s. Exiting...", argv[i+1]);
-             exit(EXIT_FAILURE);
-             }
-          }
-      else {
-         printf("Unknown argument %s. Valid options are:\n"
-                "--config-file </path/to/config>\n"
-                "--test-locations DEVICE (WACOM or TOUCH).\n"
-                "Exiting...\n", argv[i]);
-         exit(EXIT_FAILURE);
-        }
-    }
-
-  printf("Using configuration file at %s\n", confPath);
-  if ( getTriggerConfig(confPath, &config) != 0) {
-      printf("Reading configuration file failed. Exiting...\n");
+    if (!strcmp(argv[i], "--config-file")) {
+      confPath = argv[++i];
+    } else if (!strcmp(argv[i], "--test-locations")) {
+      if (!strcmp(argv[i + 1], "WACOM")) {
+        testLocations(WACOM, fd_wacom, rmVersion); // program will exit
+      } else if (!strcmp(argv[i + 1], "TOUCH")) {
+        testLocations(TOUCH, fd_touch, rmVersion); // program will exit
+      } else {
+        printf("Unknown device %s. Exiting...", argv[i + 1]);
+        exit(EXIT_FAILURE);
+      }
+    } else {
+      printf("Unknown argument %s. Valid options are:\n"
+             "--config-file </path/to/config>\n"
+             "--test-locations DEVICE (WACOM or TOUCH).\n"
+             "Exiting...\n",
+             argv[i]);
       exit(EXIT_FAILURE);
     }
+  }
+
+  printf("Using configuration file at %s\n", confPath);
+  if (getTriggerConfig(confPath, &config) != 0) {
+    printf("Reading configuration file failed. Exiting...\n");
+    exit(EXIT_FAILURE);
+  }
   printf("----------------------------------\n");
 
   int temp;
@@ -127,73 +125,43 @@ int main(int argc, char *argv[]) {
   int flags = fcntl(fd_touch, F_GETFL, 0);
   fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
 
-  //main loop body
+  // main loop body
   for (;;) {
-    if (read(fd_touch, &ev_touch, input_event_size)) //this one set unblocking
+    if (read(fd_touch, &ev_touch, input_event_size)) // this one set unblocking
       handleCurrentTrackingID(&ev_touch);
-    read(fd_wacom, &ev_wacom, input_event_size); // note: read pauses until there is data
+    read(fd_wacom, &ev_wacom,
+         input_event_size); // note: read pauses until there is data
     trigger = getTrigger(&ev_wacom);
-    //printTriggers(trigger, false);
+    // printTriggers(trigger, false);
 
-    switch(trigger) {
-      case CLICK_1 :
-      effect = config.click1Effect;
-      break;
-      case CLICK_2 :
-      effect = config.click2Effect;
-      break;
-      case CLICK_3 :
-      effect = config.click3Effect;
-      break;
-      case CLICK_4 :
-      effect = config.click4Effect;
-      break;
-      case CLICK_5 :
-      effect = config.click5Effect;
-      break;
+    switch (trigger) {
+      case CLICK_1: effect = config.click1Effect; break;
+      case CLICK_2: effect = config.click2Effect; break;
+      case CLICK_3: effect = config.click3Effect; break;
+      case CLICK_4: effect = config.click4Effect; break;
+      case CLICK_5: effect = config.click5Effect; break;
 
-      case HOLD_1_ON :
-      effect = config.hold1Effect;
-      break;
-      case HOLD_2_ON :
-      effect = config.hold2Effect;
-      break;
-      case HOLD_3_ON :
-      effect = config.hold3Effect;
-      break;
-      case HOLD_4_ON :
-      effect = config.hold4Effect;
-      break;
-      case HOLD_5_ON :
-      effect = config.hold5Effect;
-      break;
+      case HOLD_1_ON: effect = config.hold1Effect; break;
+      case HOLD_2_ON: effect = config.hold2Effect; break;
+      case HOLD_3_ON: effect = config.hold3Effect; break;
+      case HOLD_4_ON: effect = config.hold4Effect; break;
+      case HOLD_5_ON: effect = config.hold5Effect; break;
 
-      case HOLD_1_OFF :
-      effect = config.hold1Effect + HOLD_OFF_OFFSET;
-      break;
-      case HOLD_2_OFF :
-      effect = config.hold2Effect + HOLD_OFF_OFFSET;
-      break;
-      case HOLD_3_OFF :
-      effect = config.hold3Effect + HOLD_OFF_OFFSET;
-      break;
-      case HOLD_4_OFF :
-      effect = config.hold4Effect + HOLD_OFF_OFFSET;
-      break;
-      case HOLD_5_OFF :
-      effect = config.hold5Effect + HOLD_OFF_OFFSET;
-      break;
-      default :
+      case HOLD_1_OFF: effect = config.hold1Effect + HOLD_OFF_OFFSET; break;
+      case HOLD_2_OFF: effect = config.hold2Effect + HOLD_OFF_OFFSET; break;
+      case HOLD_3_OFF: effect = config.hold3Effect + HOLD_OFF_OFFSET; break;
+      case HOLD_4_OFF: effect = config.hold4Effect + HOLD_OFF_OFFSET; break;
+      case HOLD_5_OFF: effect = config.hold5Effect + HOLD_OFF_OFFSET; break;
+      default:
         effect = NULL_EFFECT;
-      }
-
+    }
 
     /*if(effect != 0)
       printf("effect: %x\n", effect);
     */
 
     switch (effect) {
-      //actions here
+      // actions here
       case TOOLBAR:
         printf("writing toolbar\n");
         actionToolbar(fd_touch);
@@ -219,7 +187,7 @@ int main(int argc, char *argv[]) {
         actionRedo(fd_touch);
         break;
 
-      //tools here
+      // tools here
       case ERASER_ERASE:
         printf("writing eraser\n");
         activateToolEraserRM2(fd_wacom);
@@ -258,11 +226,7 @@ int main(int argc, char *argv[]) {
         printf("writing select\n");
         toggleToolSelect(fd_touch);
         break;
-      }
-
-  if (rmVersion == 2)
-    actionToolEraserRM2(&ev_wacom, fd_wacom);
-
+    }
   }
   return EXIT_SUCCESS;
 }
