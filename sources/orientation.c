@@ -94,33 +94,32 @@ toolbarOrientation getToolbarOrientation() {
   // orientation  | 0 for RHP, 1 for RHL, 2 for LHP, 3 for LHL
   //                the three letter acronyms are defined macros}
   // docType      | 0 for notebook, 1 for pdf
-  toolbarOrientation orientation = {-1,-1,-1};
-  int rightHanded;
-  int portrait;
 
-  // get portrait or landscape
-  char UUID[BUFSIZE];
-
-  if ( (orientation.openNotebook = getOpenFileUUID(UUID)) == 1) {
-    char openFilePath[128] = "/home/root/.local/share/remarkable/xochitl/";
-    strcat(UUID, ".content");
-    strcat(openFilePath, UUID);
-    // printf("%s\n", openFilePath);
-    portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\"");
-    orientation.docType = checkConf(openFilePath, "    \"fileType\"", "    \"fileType\": \"pdf\"");
-    }
-  else {
-    return orientation; // other params will be -1 to indicate orientation and docType is N/A
-    }
-
-  // get handedness
-  const char *confPath = "/home/root/.config/remarkable/xochitl.conf";
-  rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true");
-  orientation.orientation = !portrait + (!rightHanded << 1);
-
-
-  //printf("Orientation: %d, docType:%d", orientation.orientation, orientation.docType);
+  // TODO: getOpenFileUUID is broken, so default some values for now.
+  toolbar_orientation orientation = {1, 0, 0};
   return orientation;
+
+  /* int rightHanded; */
+  /* int portrait; */
+  /* // get portrait or landscape */
+  /* char UUID[BUFSIZE]; */
+  /* if ( (orientation.openNotebook = getOpenFileUUID(UUID)) == 1) { */
+  /*   char openFilePath[128] = "/home/root/.local/share/remarkable/xochitl/"; */
+  /*   strcat(UUID, ".content"); */
+  /*   strcat(openFilePath, UUID); */
+  /*   // printf("%s\n", openFilePath); */
+  /*   portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\""); */
+  /*   orientation.docType = checkConf(openFilePath, "    \"fileType\"", "    \"fileType\": \"pdf\""); */
+  /*   } */
+  /* else { */
+  /*   return orientation; // other params will be -1 to indicate orientation and docType is N/A */
+  /*   } */
+  /* // get handedness */
+  /* const char *confPath = "/home/root/.config/remarkable/xochitl.conf"; */
+  /* rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true"); */
+  /* orientation.orientation = !portrait + (!rightHanded << 1); */
+  /* //printf("Orientation: %d, docType:%d", orientation.orientation, orientation.docType); */
+  /* return orientation; */
 }
 
 int getRmVersion() {
