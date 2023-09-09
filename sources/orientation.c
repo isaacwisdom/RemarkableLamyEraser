@@ -5,7 +5,7 @@
 
 #include "orientation.h"
 
-int getOpenFileUUID(char *UUID) {
+int get_open_file_from_uuid(char *uuid) {
   // returns  1 if success
   // returns  0 if no open file
   // returns -1 if failure
@@ -24,12 +24,12 @@ int getOpenFileUUID(char *UUID) {
   if (strlen(buf) == 0) {
     return 0; // return 0 if no open file
   }
-  strcpy(UUID, buf);
-  UUID[strcspn(UUID, "\n")] = 0; // trim off new line
+  strcpy(uuid, buf);
+  uuid[strcspn(uuid, "\n")] = 0; // trim off new line
   return 1;                      // return 1 if open file
 }
 
-int checkConf(const char *path, const char *param, const char *paramTrue) {
+int check_conf(const char *path, const char *param, const char *param_true) {
   // returns 1 if param matches paramTrue
   // returns 0 if param doesn't match paramTrue
   // returns -1 if failure
@@ -48,7 +48,7 @@ int checkConf(const char *path, const char *param, const char *paramTrue) {
     // printf("%s", line);
     if (!strncmp(line, param, strlen(param))) {
       // printf("%s", line);
-      int value = !strncmp(line, paramTrue, strlen(paramTrue));
+      int value = !strncmp(line, param_true, strlen(param_true));
       fclose(fp);
       return value;
     }
@@ -56,10 +56,10 @@ int checkConf(const char *path, const char *param, const char *paramTrue) {
   return -1;
 }
 
-int getConf(const char *path, const char *param, char *returnString, int bufferSize) {
+int get_conf(const char *path, const char *param, char *return_string, int buffer_size) {
   // puts text immeadiatetly after param into return array passed in.
   // if param can't be found, returns -1, 1 on success
-  if (!returnString || bufferSize < 1) {
+  if (!return_string || buffer_size < 1) {
     printf("getConf(): bad input\n");
     return -1; // bad input
   }
@@ -78,9 +78,9 @@ int getConf(const char *path, const char *param, char *returnString, int bufferS
     // printf("%s", line);
     if (!strncmp(line, param, strlen(param))) {
       // printf("%s", line);
-      strncpy(returnString, line + strlen(param),
-              bufferSize); // copy config line text after param
-      returnString[bufferSize - 1] = '\0';
+      strncpy(return_string, line + strlen(param),
+              buffer_size); // copy config line text after param
+      return_string[buffer_size - 1] = '\0';
       fclose(fp);
       return 1; // successfully put value of param into returnString
     }
@@ -88,7 +88,7 @@ int getConf(const char *path, const char *param, char *returnString, int bufferS
   return -1;
 }
 
-toolbarOrientation getToolbarOrientation() {
+toolbar_orientation get_toolbar_orientation() {
   // returns panelOrientation struct with params:
   // {openNotebook | 1 for open notebook, 0 for no open notebook
   //  orientation  | 0 for RHP, 1 for RHL, 2 for LHP, 3 for LHL
@@ -122,29 +122,27 @@ toolbarOrientation getToolbarOrientation() {
   /* return orientation; */
 }
 
-int getRmVersion() {
+int get_rm_version() {
   const char *sysPath = "/sys/devices/soc0/machine";
-  int         RM2     = checkConf(sysPath, "reMarkable", "reMarkable 2.0");
+  int         RM2     = check_conf(sysPath, "reMarkable", "reMarkable 2.0");
   return RM2 + 1; // returns 1 for RM1, 2 for RM2
 }
 
-int getSoftwareVersion(int softwareVersionArray[4]) {
+int get_software_version(int software_version_array[4]) {
   // returns -1 if failed to get software versions, 1 on success.
   const char *sysPath = "/usr/share/remarkable/update.conf";
-  char        softwareVersion[15];
+  char        software_version[15];
   char       *token;
 
-  if (getConf(sysPath, "REMARKABLE_RELEASE_VERSION=", softwareVersion, sizeof(softwareVersion))
-        == -1)
+  if (-1 == get_conf(sysPath, "REMARKABLE_RELEASE_VERSION=", software_version,
+                     sizeof(software_version))) {
     return -1;
-  // printf("string from conf file: %s\n", softwareVersion),
-
-  token = strtok(softwareVersion, ".");
-  for (int i = 0; i < 4; i++) {
-    softwareVersionArray[i] = atoi(token);
-    token                   = strtok(NULL, ".");
+  } else {
+    token = strtok(software_version, ".");
+    for (int i = 0; i < 4; i++) {
+      software_version_array[i] = atoi(token);
+      token                   = strtok(NULL, ".");
+    }
+    return 1;
   }
-  // printf("Version: %d.%d.%d.%d\n", softwareVersionArray[0],
-  // softwareVersionArray[1], softwareVersionArray[2], softwareVersionArray[3]);
-  return 1;
 }

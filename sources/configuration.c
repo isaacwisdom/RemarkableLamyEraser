@@ -8,7 +8,7 @@
 #include <effects.h>
 #include <effects_data.h>
 
-int getTriggerConfig(const char *path, struct configuration *config) {
+int get_trigger_config(const char *path, struct configuration *config) {
   // returns 0 on success
   // returns 1 if error in configuration file
   //  returns -1 if configuration file doesn't exist
@@ -19,7 +19,7 @@ int getTriggerConfig(const char *path, struct configuration *config) {
   ssize_t read;
   char    trigger[24] = "--";
   char    effect[24]  = "--";
-  int     readTrigger = -1, readEffect = -1;
+  int     read_trigger = -1, read_effect = -1;
 
   fp = fopen(path, "r");
   if (fp == NULL) return -1;
@@ -38,49 +38,49 @@ int getTriggerConfig(const char *path, struct configuration *config) {
 
     for (int i = 0; i < NUM_TRIGGERS; i++) {
       if (!strcmp(trigger, triggers[i])) {
-        readTrigger = i;
+        read_trigger = i;
         break;
       }
     }
     for (int j = 0; j < NUM_EFFECTS; j++) {
-      if (!strcmp(effect, effects[j])) {
-        readEffect = j;
+      if (!strcmp(effect, EFFECTS[j])) {
+        read_effect = j;
         break;
       }
     }
-    if (readTrigger == -1) {
+    if (read_trigger == -1) {
       printf("Invalid trigger %s in line %d of configuration file at %s\n", trigger,
              lineNum, path);
       return 1;
     }
-    if (readEffect == -1) {
+    if (read_effect == -1) {
       printf("Invalid effect %s in line %d of configuration file at %s\n", effect,
              lineNum, path);
       return 1;
     }
 
-    switch (readTrigger) {
-      case TRIGGER_CLICK_1: config->click1Effect = readEffect; break;
-      case TRIGGER_CLICK_2: config->click2Effect = readEffect; break;
-      case TRIGGER_CLICK_3: config->click3Effect = readEffect; break;
-      case TRIGGER_CLICK_4: config->click4Effect = readEffect; break;
-      case TRIGGER_CLICK_5: config->click5Effect = readEffect; break;
-      case TRIGGER_HOLD_1:  config->hold1Effect  = readEffect; break;
-      case TRIGGER_HOLD_2:  config->hold2Effect  = readEffect; break;
-      case TRIGGER_HOLD_3:  config->hold3Effect  = readEffect; break;
-      case TRIGGER_HOLD_4:  config->hold4Effect  = readEffect; break;
-      case TRIGGER_HOLD_5:  config->hold5Effect  = readEffect; break;
+    switch (read_trigger) {
+      case TRIGGER_CLICK_1: config->click1Effect = read_effect; break;
+      case TRIGGER_CLICK_2: config->click2Effect = read_effect; break;
+      case TRIGGER_CLICK_3: config->click3Effect = read_effect; break;
+      case TRIGGER_CLICK_4: config->click4Effect = read_effect; break;
+      case TRIGGER_CLICK_5: config->click5Effect = read_effect; break;
+      case TRIGGER_HOLD_1:  config->hold1Effect  = read_effect; break;
+      case TRIGGER_HOLD_2:  config->hold2Effect  = read_effect; break;
+      case TRIGGER_HOLD_3:  config->hold3Effect  = read_effect; break;
+      case TRIGGER_HOLD_4:  config->hold4Effect  = read_effect; break;
+      case TRIGGER_HOLD_5:  config->hold5Effect  = read_effect; break;
     }
     strcpy(trigger, "--");
     strcpy(effect, "--");
-    readTrigger = -1;
-    readEffect  = -1;
+    read_trigger = -1;
+    read_effect  = -1;
   }
   fclose(fp);
   return 0;
 }
 
-void printConfig(struct configuration *config) {
+void print_config(struct configuration *config) {
   printf("click1Effect: %x\n", config->click1Effect);
   printf("click2Effect: %x\n", config->click2Effect);
   printf("click3Effect: %x\n", config->click3Effect);

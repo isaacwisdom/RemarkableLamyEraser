@@ -39,8 +39,8 @@
 #define MAX_CLICK_TIME         0.2  //seconds
 #define MAX_DOUBLE_CLICK_TIME  0.4  //seconds
 
-int getTrigger(struct input_event *ev_pen);
+int get_triggger(struct input_event *ev_pen);
 
-void printTriggers(int trigger, bool includeNull);
+void print_triggers(int trigger, bool include_null);
 
 #endif // TRIGGERS_H

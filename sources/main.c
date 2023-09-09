@@ -23,51 +23,51 @@ int main(int argc, char *argv[]) {
   const size_t       input_event_size = sizeof(struct input_event);
   int                fd_wacom, fd_touch;
   char               name[256] = "Unknown";
-  char               wacomDevicePath[18], touchDevicePath[18];
-  int                forceRM1Style = false;
-  int                rmVersion     = getRmVersion();
-  int                swVersion[4]  = {0, 0, 0, 0};
-  getSoftwareVersion(swVersion);
+  char               wacom_device_path[18], touch_device_path[18];
+  int                rm_version    = get_rm_version();
+  int                sw_version[4] = {0, 0, 0, 0};
+  get_software_version(sw_version);
 
   printf("RemarkableLamyEraser 2.1.0\n");
   printf("----------------------------------\n");
 
   /* Quit if software version is less than 3.0 */
-  if (swVersion[0] < 3) {
+  if (sw_version[0] < 3) {
     printf("Invalid software version: %d.%d.%d.%d/n"
            "This version of RemarkableLamyEraser must be run on devices "
            "running software version 3.0.0.0 or newer",
-           swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
+           sw_version[0], sw_version[1], sw_version[2], sw_version[3]);
     exit(EXIT_FAILURE);
   }
 
   /* Open Input Devices */
-  if (rmVersion == 2) {
-    strcpy(wacomDevicePath, WACOM_DEVICE);
-    strcpy(touchDevicePath, TOUCH_DEVICE);
+  if (rm_version == 2) {
+    strcpy(wacom_device_path, WACOM_DEVICE);
+    strcpy(touch_device_path, TOUCH_DEVICE);
   } else {
-    printf("Invalid reMarkable Version: %d. Exiting...\n", rmVersion);
+    printf("Invalid reMarkable Version: %d. Exiting...\n", rm_version);
     exit(EXIT_FAILURE);
   }
-  fd_wacom = open(wacomDevicePath, O_RDWR);
-  fd_touch = open(touchDevicePath, O_RDWR);
+  fd_wacom = open(wacom_device_path, O_RDWR);
+  fd_touch = open(touch_device_path, O_RDWR);
   if (fd_wacom == -1) {
-    fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacomDevicePath);
+    fprintf(stderr, "%s is not a vaild device. Exiting...\n", wacom_device_path);
     exit(EXIT_FAILURE);
   }
   if (fd_touch == -1) {
-    fprintf(stderr, "%s is not a vaild device. Exiting...\n", touchDevicePath);
+    fprintf(stderr, "%s is not a vaild device. Exiting...\n", touch_device_path);
     exit(EXIT_FAILURE);
   }
 
   /* Print Device Names */
-  printf("Detected ReMarkable %d, Software Version: %d.x.x.x\n", rmVersion, swVersion[0]);
+  printf("Detected ReMarkable %d, Software Version: %d.x.x.x\n", rm_version,
+         sw_version[0]);
   ioctl(fd_wacom, EVIOCGNAME(sizeof(name)), name);
   printf("Using Devices:\n");
-  printf("1. device file = %s\n", wacomDevicePath);
+  printf("1. device file = %s\n", wacom_device_path);
   printf("   device name = %s\n", name);
   ioctl(fd_touch, EVIOCGNAME(sizeof(name)), name);
-  printf("2. device file = %s\n", touchDevicePath);
+  printf("2. device file = %s\n", touch_device_path);
   printf("   device name = %s\n", name);
   printf("----------------------------------\n");
 
@@ -77,9 +77,9 @@ int main(int argc, char *argv[]) {
       confPath = argv[++i];
     } else if (!strcmp(argv[i], "--test-locations")) {
       if (!strcmp(argv[i + 1], "WACOM")) {
-        testLocations(WACOM, fd_wacom, rmVersion); // program will exit
+        test_locations(WACOM, fd_wacom); // program will exit
       } else if (!strcmp(argv[i + 1], "TOUCH")) {
-        testLocations(TOUCH, fd_touch, rmVersion); // program will exit
+        test_locations(TOUCH, fd_touch); // program will exit
       } else {
         printf("Unknown device %s. Exiting...", argv[i + 1]);
         exit(EXIT_FAILURE);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
   }
 
   printf("Using configuration file at %s\n", confPath);
-  if (getTriggerConfig(confPath, &config) != 0) {
+  if (get_trigger_config(confPath, &config) != 0) {
     printf("Reading configuration file failed. Exiting...\n");
     exit(EXIT_FAILURE);
   }
@@ -125,13 +125,14 @@ int main(int argc, char *argv[]) {
   int flags = fcntl(fd_touch, F_GETFL, 0);
   fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
 
-  // main loop body
+  // Main loop body
   for (;;) {
-    if (read(fd_touch, &ev_touch, input_event_size)) // this one set unblocking
-      handleCurrentTrackingID(&ev_touch);
-    read(fd_wacom, &ev_wacom,
-         input_event_size); // note: read pauses until there is data
-    trigger = getTrigger(&ev_wacom);
+    if (read(fd_touch, &ev_touch, input_event_size)) { // non-blocking
+      handle_current_tracking_ID(&ev_touch);
+    }
+    // Note: read pauses until there is data
+    read(fd_wacom, &ev_wacom, input_event_size);
+    trigger = get_triggger(&ev_wacom);
     // printTriggers(trigger, false);
 
     switch (trigger) {
@@ -164,69 +165,70 @@ int main(int argc, char *argv[]) {
       // actions here
       case TOOLBAR:
         printf("writing toolbar\n");
-        actionToolbar(fd_touch);
+        action_toolbar(fd_touch);
         break;
       case WRITING:
         printf("writing write\n");
-        actionWriting(fd_touch);
+        action_writing(fd_touch);
         break;
       case TEXT:
         printf("writing text\n");
-        actionText(fd_touch);
+        action_text(fd_touch);
         break;
       case ERASER_PANEL:
         printf("writing eraser panel\n");
-        actionEraserPanel(fd_touch);
+        action_eraser_panel(fd_touch);
         break;
       case UNDO:
         printf("writing undo\n");
-        actionUndo(fd_touch);
+        action_undo(fd_touch);
         break;
       case REDO:
         printf("writing redo\n");
-        actionRedo(fd_touch);
+        action_redo(fd_touch);
         break;
 
       // tools here
       case ERASER_ERASE:
         printf("writing eraser\n");
-        activateToolEraserRM2(fd_wacom);
+        activate_tool_eraser(fd_wacom);
         break;
       case ERASER_ERASE_OFF:
         printf("writing eraser\n");
-        deactivateToolEraserRM2(fd_wacom);
+        deactivate_tool_eraser(fd_wacom);
         break;
       case ERASER_ERASE_TOGGLE:
         printf("writing eraser\n");
-        toggleToolEraserRM2(fd_wacom);
+        toggle_tool_eraser(fd_wacom);
         break;
 
       case ERASER_SELECTION:
         printf("writing erase selection\n");
-        activateToolEraserSelect(fd_touch);
+        activate_tool_eraser_select(fd_touch);
         break;
       case ERASER_SELECTION_OFF:
         printf("writing erase selection off\n");
-        deactivateToolEraserSelect(fd_touch);
+        deactivate_tool_eraser_select(fd_touch);
         break;
       case ERASER_SELECT_TOGGLE:
         printf("writing erase selection off\n");
-        toggleToolEraserSelect(fd_touch);
+        toggle_tool_eraser_select(fd_touch);
         break;
 
       case SELECT:
         printf("writing select\n");
-        activateToolSelect(fd_touch);
+        activate_tool_select(fd_touch);
         break;
       case SELECT_OFF:
         printf("writing select\n");
-        deactivateToolSelect(fd_touch);
+        deactivate_tool_select(fd_touch);
         break;
       case SELECT_TOGGLE:
         printf("writing select\n");
-        toggleToolSelect(fd_touch);
+        toggle_tool_select(fd_touch);
         break;
     }
+    action_tool_eraser(&ev_wacom, fd_wacom);
   }
   return EXIT_SUCCESS;
 }

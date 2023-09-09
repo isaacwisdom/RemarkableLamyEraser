@@ -42,8 +42,8 @@ static const char *triggers[NUM_TRIGGERS] = {
     "quintuple-press&hold", // TRIGGER_PRESS_5  10
 };
 
-int getTriggerConfig(const char *path, struct configuration *config);
+int get_trigger_config(const char *path, struct configuration *config);
 
-void printConfig(struct configuration *config);
+void print_config(struct configuration *config);
 
 #endif

@@ -8,7 +8,7 @@ inline double getTimeDelta(struct timeval *current, struct timeval *prev) {
          (prev->tv_sec + prev->tv_usec / 1000000.0);
 }
 
-int getTrigger(struct input_event *ev_pen) {
+int get_triggger(struct input_event *ev_pen) {
   // triggers:
   // Click        || Press&Hold
   // Double Click || DoublePress&Hold
@@ -77,7 +77,7 @@ int getTrigger(struct input_event *ev_pen) {
   return trigger;
 }
 
-void printTriggers(int trigger, bool includeNull) {
+void print_triggers(int trigger, bool include_null) {
   if (trigger) {
     printf("Hex: %x | ", trigger);
     if (trigger & 0b01000000)
@@ -89,7 +89,7 @@ void printTriggers(int trigger, bool includeNull) {
     else
       printf("OFF | ");
     printf("NUMBER: %d\n", trigger & 0b00111111);
-  } else if (includeNull) {
+  } else if (include_null) {
     printf("%x : NULL\n", trigger);
   }
 }

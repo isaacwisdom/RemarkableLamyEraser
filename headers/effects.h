@@ -13,36 +13,36 @@ static const struct input_event tool_pen_off =     {.type = EV_KEY, .code = BTN_
 static const struct input_event tool_rubber_on =   {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 1}; // used when rubber approaches the screen
 static const struct input_event tool_rubber_off =  {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 0};
 
-const char *effectStringFromInt(int effect);
+const char *EFFECT_STRING_FROM_INT(int effect);
 
-void writeEvent(int fd_touch, struct input_event event);
-void handleCurrentTrackingID(struct input_event *event);
-void writeTapWithTouch(int fd_touch, const int location[2]);
-void writeTapWithPen(int fd_touch, const int location[2]);
-int  writeOrientedTapSequence(int device, int fd_touch, toolbarOrientation *orientation,
-                              int RMversion, int numLocations, ...);
+void write_event(int fd_touch, struct input_event event);
+void handle_current_tracking_ID(struct input_event *event);
+void write_tap_with_touch(int fd_touch, const int location[2]);
+void write_tap_with_pen(int fd_touch, const int location[2]);
+int  write_oriented_tap_sequence(int device, int fd_touch,
+                                 toolbar_orientation *orientation, int num_locations, ...);
 
-void activateToolEraserRM2(int fd_pen);
-void deactivateToolEraserRM2(int fd_pen);
-void toggleToolEraserRM2(int fd_pen);
-void actionToolEraserRM2(struct input_event *ev_pen, int fd_pen);
+void activate_tool_eraser(int fd_pen);
+void deactivate_tool_eraser(int fd_pen);
+void toggle_tool_eraser(int fd_pen);
+void action_tool_eraser(struct input_event *ev_pen, int fd_pen);
 
-void activateToolEraserSelect(int fd_touch);
-void deactivateToolEraserSelect(int fd_touch);
-void toggleToolEraserSelect(int fd_touch);
+void activate_tool_eraser_select(int fd_touch);
+void deactivate_tool_eraser_select(int fd_touch);
+void toggle_tool_eraser_select(int fd_touch);
 
-void activateToolSelect(int fd_touch);
-void deactivateToolSelect(int fd_touch);
-void toggleToolSelect(int fd_touch);
+void activate_tool_select(int fd_touch);
+void deactivate_tool_select(int fd_touch);
+void toggle_tool_select(int fd_touch);
 
-void actionToolbar(int fd_touch);
-void actionWriting(int fd_touch);
-void actionStrokePanel(int fd_touch);
-void actionText(int fd_touch);
-void actionEraserPanel(int fd_touch);
-void actionUndo(int fd_touch);
-void actionRedo(int fd_touch);
+void action_toolbar(int fd_touch);
+void action_writing(int fd_touch);
+void action_stroke_panel(int fd_touch);
+void action_text(int fd_touch);
+void action_eraser_panel(int fd_touch);
+void action_undo(int fd_touch);
+void action_redo(int fd_touch);
 
-void testLocations(int device, int fd);
+void test_locations(int device, int fd);
 
 #endif // EFFECTS_H

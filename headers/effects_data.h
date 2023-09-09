@@ -36,7 +36,7 @@
 #define SELECT_TOGGLE        (SELECT           + TOGGLE_OFFSET)
 
 //recognized words in config file
-static const char* effects[NUM()_EFFECTS] = {
+static const char* EFFECTS[NUM_EFFECTS] = {
   "null-effect",        //null effect        0
   "toolbar",            //TOOLBAR            1
   "writing",            //WRITING            2
@@ -55,7 +55,7 @@ static const char* effects[NUM()_EFFECTS] = {
 #define T_RM2_LHX 1360
 #define T_RM2_LHY 1820
 
-static const int locationLookupTouch[2][NUM_EFFECTS][4][2] = {
+static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
   {//NOTEBOOK
    // RHP                RHL                LHP                LHL
     { {        0,    0}, {   0,         0}, {        0,    0}, {   0,         0} }, //NULL_EFFECT       0
@@ -91,7 +91,7 @@ static const int locationLookupTouch[2][NUM_EFFECTS][4][2] = {
 #define W_RM2_LHY 15210
 #define W_RM2_LHX 20260
                                   //[EFFECT][ORIENTATION][x/y]
-static const int locationLookupWacom[NUM_EFFECTS][4][2] = {
+static const int LOCATION_LOOKUP_WACOM[NUM_EFFECTS][4][2] = {
     //RHP                  //RHL                //LHP                //LHL
     { {     0,          0}, {         0,     0}, {     0,          0}, {   0,           0} }, //NO_EFFECT      0
     { { 20290,  W_RM2_RHY}, { W_RM2_RHX,   700}, { 20300,  W_RM2_LHY}, { W_RM2_LHX,   680} }, //TOOLBAR        1

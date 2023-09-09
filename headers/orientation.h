@@ -11,18 +11,18 @@ typedef struct {
   int openNotebook;
   int orientation;
   int docType;
-} toolbarOrientation;
+} toolbar_orientation;
 
-int getOpenFileUUID(char *UUID);
+int get_open_file_from_uuid(char *uuid);
 
-int checkConf(const char *path, const char *param, const char *paramTrue);
+int check_conf(const char *path, const char *param, const char *param_true);
 
-int getConf(const char *path, const char *param, char *returnString, int bufferSize);
+int get_conf(const char *path, const char *param, char *return_string, int buf_size);
 
-toolbarOrientation getToolbarOrientation();
+toolbar_orientation get_toolbar_orientation();
 
-int getRmVersion();
+int get_rm_version();
 
-int getSoftwareVersion();
+int get_software_version();
 
 #endif // ORIENTATION_H
