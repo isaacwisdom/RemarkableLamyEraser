@@ -121,7 +121,7 @@ void writeTapWithWacom(int fd_wacom, const int location[2]) {
   write(fd_wacom, &event, sizeof(struct input_event));
 }
 
-int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation, int rmVersion, int numLocations, ...) {
+int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation, int numLocations, ...) {
   //give the fd to use, a pointer to a toolbarOrientation struct, the RMversion, and a list of action locations
   //returns 0 on success, -1 on failure
   int actionLocation[2];
@@ -129,9 +129,7 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
   va_list actionType;
   va_start (actionType, numLocations);
   //printf("Orientation: %d | ", orientation->orientation);
-  rmVersion--; //RMversion is either 1 or 2, decrement it to be 0 or 1 to work with array.
   if(orientation->openNotebook) {
-      //printf("Resolved Location(s) for RM%d ", rmVersion+1);
       if(device == WACOM) {
           printf("wacom digitizer: ");
           for (int i = 0; i < numLocations; i++)  {
@@ -146,8 +144,8 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
         //printf("touch screen: ");
         for (int i = 0; i < numLocations; i++)  {
             action = va_arg(actionType, int);
-            actionLocation[0] = locationLookupTouch[rmVersion][orientation->docType][action][orientation->orientation][0];
-            actionLocation[1] = locationLookupTouch[rmVersion][orientation->docType][action][orientation->orientation][1];
+            actionLocation[0] = locationLookupTouch[orientation->docType][action][orientation->orientation][0];
+            actionLocation[1] = locationLookupTouch[orientation->docType][action][orientation->orientation][1];
             //printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
             writeTapWithTouch(fd, actionLocation);
          }
@@ -165,34 +163,34 @@ int writeOrientedTapSequence(int device, int fd, toolbarOrientation *orientation
  * Single shot actions: compatible with clicks
  * -----------------------------------------------------------------*/
 
-void actionToolbar(int fd_touch, int rmVersion) {
+void actionToolbar(int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 1, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 1, TOOLBAR);
 }
 
-void actionWriting(int fd_touch, int rmVersion) {
+void actionWriting(int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
 }
 
-void actionText (int fd_touch, int rmVersion) {
+void actionText (int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, TEXT, TOOLBAR, TEXT);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 3, TEXT, TOOLBAR, TEXT);
 }
 
-void actionEraserPanel(int fd_touch, int rmVersion) {
+void actionEraserPanel(int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 3, ERASER_PANEL, TOOLBAR, ERASER_PANEL);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 3, ERASER_PANEL, TOOLBAR, ERASER_PANEL);
 }
 
-void actionUndo(int fd_touch, int rmVersion) {
+void actionUndo(int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
 }
 
-void actionRedo(int fd_touch, int rmVersion) {
+void actionRedo(int fd_touch) {
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, REDO, TOOLBAR, REDO, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, REDO, TOOLBAR, REDO, TOOLBAR);
 }
 
 
@@ -230,70 +228,48 @@ void actionToolEraserRM2(struct input_event* ev_pen, int fd_pen) {
     }
 }
 
-
-
-static int toolEraserRM1 = 0;
-void activateToolEraserRM1(int fd_touch, int rmVersion) {
-  printf("Activating ToolEraserRM1: writing eraser tool on\n");
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 6, ERASER_PANEL, ERASER_ERASE, TOOLBAR, ERASER_PANEL, ERASER_ERASE, TOOLBAR);
-  toolEraserRM1 = 1;
-}
-void deactivateToolEraserRM1(int fd_touch, int rmVersion) {
-  printf("Deactivating ToolEraserRM1: writing writing tool on\n");
-  toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
-  toolEraserRM1 = 0;
-}
-void toggleToolEraserRM1(int fd_touch, int rmVersion) {
-  if (toolEraserRM1)
-    deactivateToolEraserRM1(fd_touch, rmVersion);
-  else
-    activateToolEraserRM1(fd_touch, rmVersion);
-}
-
 static int toolEraseSelect = 0;
-void activateToolEraserSelect(int fd_touch, int rmVersion) {
+void activateToolEraserSelect(int fd_touch) {
   //printf("Activating ToolEraseSelect: writing erase_select tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 8, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, TOOLBAR);
   toolEraseSelect = 1;
 }
-void deactivateToolEraserSelect(int fd_touch, int rmVersion) {
+void deactivateToolEraserSelect(int fd_touch) {
   //printf("Deactivating ToolEraseSelect: writing writing_tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
   toolEraseSelect = 0;
 }
-void toggleToolEraserSelect(int fd_touch, int rmVersion) {
+void toggleToolEraserSelect(int fd_touch) {
   if (toolEraseSelect)
-    deactivateToolEraserSelect(fd_touch, rmVersion);
+    deactivateToolEraserSelect(fd_touch);
   else
-    activateToolEraserSelect(fd_touch, rmVersion);
+    activateToolEraserSelect(fd_touch);
 }
 
 static int toolSelect = 0;
-void activateToolSelect(int fd_touch, int rmVersion) {
+void activateToolSelect(int fd_touch) {
   //printf("Activating ToolSelect: writing select tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, SELECT, TOOLBAR, SELECT, TOOLBAR);
   toolSelect = 1;
 }
-void deactivateToolSelect(int fd_touch, int rmVersion){
+void deactivateToolSelect(int fd_touch){
   //printf("Deactivating ToolSelect: writing writing tool on\n");
   toolbarOrientation orientation = getToolbarOrientation();
-  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, rmVersion, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
+  writeOrientedTapSequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING, TOOLBAR);
   toolSelect = 0;
 }
-void toggleToolSelect(int fd_touch, int rmVersion) {
+void toggleToolSelect(int fd_touch) {
   if (toolSelect)
-    deactivateToolSelect(fd_touch, rmVersion);
+    deactivateToolSelect(fd_touch);
   else
-    activateToolSelect(fd_touch, rmVersion);
+    activateToolSelect(fd_touch);
 }
 
 //test stored locations in effects_data.h
-void testLocations(int device, int fd, int rmVersion) {
+void testLocations(int device, int fd) {
   const char* str[4];
   str[0] = "Right Hand Portrait";
   str[1] = "Right Hand Landscape";
@@ -308,39 +284,39 @@ void testLocations(int device, int fd, int rmVersion) {
 
       toolbarOrientation orientation = getToolbarOrientation();
       printf("opening Toolbar...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, TOOLBAR);
+      writeOrientedTapSequence(device, fd, &orientation, 1, TOOLBAR);
       getchar();
 
       printf("tapping writing utensil...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, WRITING);
+      writeOrientedTapSequence(device, fd, &orientation, 1, WRITING);
       getchar();
 
       printf("tapping eraser panel...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
+      writeOrientedTapSequence(device, fd, &orientation, 1, ERASER_PANEL);
       getchar();
 
       printf("tapping eraser panel...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
+      writeOrientedTapSequence(device, fd, &orientation, 1, ERASER_PANEL);
       getchar();
 
       printf("tapping erase selection...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_SELECTION);
+      writeOrientedTapSequence(device, fd, &orientation, 1, ERASER_SELECTION);
       getchar();
 
       printf("tapping eraser...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_ERASE);
+      writeOrientedTapSequence(device, fd, &orientation, 1, ERASER_ERASE);
       getchar();
 
       printf("tapping select tool...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, SELECT);
+      writeOrientedTapSequence(device, fd, &orientation, 1, SELECT);
       getchar();
 
       printf("tapping undo...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, UNDO);
+      writeOrientedTapSequence(device, fd, &orientation, 1, UNDO);
       getchar();
 
       printf("tapping redo...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, REDO);
+      writeOrientedTapSequence(device, fd, &orientation, 1, REDO);
 
       printf("Completed %s.\n", str[i]);
     }

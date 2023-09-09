@@ -12,10 +12,8 @@
 #include "orientation.h"
 #include "configuration.h"
 
-#define WACOM_DEVICE_RM2   "/dev/input/event1"
-#define TOUCH_DEVICE_RM2   "/dev/input/event2"
-#define WACOM_DEVICE_RM1   "/dev/input/event0"
-#define TOUCH_DEVICE_RM1   "/dev/input/event2"
+#define WACOM_DEVICE "/dev/input/event1"
+#define TOUCH_DEVICE "/dev/input/event2"
 
 int main(int argc, char *argv[]) {
   struct configuration config;
@@ -43,17 +41,12 @@ int main(int argc, char *argv[]) {
 
   /* Open Input Devices */
   if (rmVersion == 2) {
-      strcpy(wacomDevicePath, WACOM_DEVICE_RM2);
-      strcpy(touchDevicePath, TOUCH_DEVICE_RM2);
-    }
-  else if (rmVersion == 1) {
-      strcpy(wacomDevicePath, WACOM_DEVICE_RM1);
-      strcpy(touchDevicePath, TOUCH_DEVICE_RM1);
-    }
-  else {
-      printf("Invalid reMarkable Version: %d. Exiting...\n", rmVersion);
-      exit(EXIT_FAILURE);
-    }
+    strcpy(wacomDevicePath, WACOM_DEVICE);
+    strcpy(touchDevicePath, TOUCH_DEVICE);
+  } else {
+    printf("Invalid reMarkable Version: %d. Exiting...\n", rmVersion);
+    exit(EXIT_FAILURE);
+  }
   fd_wacom = open(wacomDevicePath, O_RDWR);
   fd_touch = open(touchDevicePath, O_RDWR);
   if (fd_wacom == -1) {
@@ -82,8 +75,6 @@ int main(int argc, char *argv[]) {
       if ( !strcmp(argv[i], "--config-file") ) {
               confPath = argv[++i];
             }
-      else if (!strcmp(argv[i],"--force-RM1-style"))
-        forceRM1Style = true;
       else if ( !strcmp(argv[i], "--test-locations") ) {
           if (!strcmp(argv[i+1], "WACOM")) {
              testLocations(WACOM, fd_wacom, rmVersion); //program will exit
@@ -98,7 +89,6 @@ int main(int argc, char *argv[]) {
           }
       else {
          printf("Unknown argument %s. Valid options are:\n"
-                "--force-RM1-style\n"
                 "--config-file </path/to/config>\n"
                 "--test-locations DEVICE (WACOM or TOUCH).\n"
                 "Exiting...\n", argv[i]);
@@ -206,81 +196,71 @@ int main(int argc, char *argv[]) {
       //actions here
       case TOOLBAR:
         printf("writing toolbar\n");
-        actionToolbar(fd_touch, rmVersion);
-          break;
+        actionToolbar(fd_touch);
+        break;
       case WRITING:
         printf("writing write\n");
-        actionWriting(fd_touch, rmVersion);
+        actionWriting(fd_touch);
         break;
       case TEXT:
         printf("writing text\n");
-        actionText(fd_touch, rmVersion);
+        actionText(fd_touch);
         break;
       case ERASER_PANEL:
         printf("writing eraser panel\n");
-        actionEraserPanel(fd_touch, rmVersion);
+        actionEraserPanel(fd_touch);
         break;
       case UNDO:
         printf("writing undo\n");
-        actionUndo(fd_touch, rmVersion);
+        actionUndo(fd_touch);
         break;
       case REDO:
         printf("writing redo\n");
-        actionRedo(fd_touch, rmVersion);
+        actionRedo(fd_touch);
         break;
 
       //tools here
       case ERASER_ERASE:
         printf("writing eraser\n");
-        if (rmVersion == 1 || forceRM1Style)
-            activateToolEraserRM1(fd_touch, rmVersion);
-        else
-            activateToolEraserRM2(fd_wacom);
+        activateToolEraserRM2(fd_wacom);
         break;
       case ERASER_ERASE_OFF:
         printf("writing eraser\n");
-        if (rmVersion == 1 || forceRM1Style)
-            deactivateToolEraserRM1(fd_touch, rmVersion);
-        else
-            deactivateToolEraserRM2(fd_wacom);
+        deactivateToolEraserRM2(fd_wacom);
         break;
       case ERASER_ERASE_TOGGLE:
         printf("writing eraser\n");
-        if (rmVersion == 1 || forceRM1Style) {
-            toggleToolEraserRM1(fd_touch, rmVersion);
-          }
-        else
-            toggleToolEraserRM2(fd_wacom);
+        toggleToolEraserRM2(fd_wacom);
         break;
 
       case ERASER_SELECTION:
         printf("writing erase selection\n");
-        activateToolEraserSelect(fd_touch, rmVersion);
+        activateToolEraserSelect(fd_touch);
         break;
       case ERASER_SELECTION_OFF:
         printf("writing erase selection off\n");
-        deactivateToolEraserSelect(fd_touch, rmVersion);
+        deactivateToolEraserSelect(fd_touch);
         break;
       case ERASER_SELECT_TOGGLE:
         printf("writing erase selection off\n");
-        toggleToolEraserSelect(fd_touch, rmVersion);
+        toggleToolEraserSelect(fd_touch);
         break;
 
       case SELECT:
         printf("writing select\n");
-        activateToolSelect(fd_touch, rmVersion);
+        activateToolSelect(fd_touch);
         break;
       case SELECT_OFF:
         printf("writing select\n");
-        deactivateToolSelect(fd_touch, rmVersion);
+        deactivateToolSelect(fd_touch);
         break;
       case SELECT_TOGGLE:
         printf("writing select\n");
-        toggleToolSelect(fd_touch, rmVersion);
+        toggleToolSelect(fd_touch);
         break;
       }
 
-  if (rmVersion == 2 && !forceRM1Style)
+  if (rmVersion == 2)
     actionToolEraserRM2(&ev_wacom, fd_wacom);
 
   }

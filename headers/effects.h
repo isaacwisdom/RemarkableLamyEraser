@@ -29,29 +29,22 @@ void deactivateToolEraserRM2(int fd_pen);
 void toggleToolEraserRM2(int fd_pen);
 void actionToolEraserRM2(struct input_event* ev_pen, int fd_pen);
 
-void activateToolEraserRM1(int fd_touch, int rmVersion);
-void deactivateToolEraserRM1(int fd_touch, int rmVersion);
-void toggleToolEraserRM1(int fd_touch, int rmVersion);
+void activateToolEraserSelect(int fd_touch);
+void deactivateToolEraserSelect(int fd_touch);
+void toggleToolEraserSelect(int fd_touch);
 
-void activateToolEraserSelect(int fd_touch, int rmVersion);
-void deactivateToolEraserSelect(int fd_touch, int rmVersion);
-void toggleToolEraserSelect(int fd_touch, int rmVersion);
+void activateToolSelect(int fd_touch);
+void deactivateToolSelect(int fd_touch);
+void toggleToolSelect(int fd_touch);
 
-void activateToolSelect(int fd_touch, int rmVersion);
-void deactivateToolSelect(int fd_touch, int rmVersion);
-void toggleToolSelect(int fd_touch, int rmVersion);
+void actionToolbar(int fd_touch);
+void actionWriting(int fd_touch);
+void actionStrokePanel(int fd_touch);
+void actionText(int fd_touch);
+void actionEraserPanel(int fd_touch);
+void actionUndo(int fd_touch);
+void actionRedo(int fd_touch);
 
-
-void actionToolbar(int fd_touch, int rmVersion);
-void actionWriting(int fd_touch, int rmVersion);
-void actionStrokePanel(int fd_touch, int rmVersion);
-void actionText(int fd_touch, int rmVersion);
-void actionEraserPanel(int fd_touch, int rmVersion);
-void actionUndo(int fd_touch, int rmVersion);
-void actionRedo(int fd_touch, int rmVersion);
-
-void testLocations(int device, int fd, int rmVersion);
-
-
+void testLocations(int device, int fd);
 
 #endif // EFFECTS_H
