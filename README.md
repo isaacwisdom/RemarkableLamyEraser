@@ -13,7 +13,14 @@ Fully expect the executable to misbehave if
 (i) you are not running in right handed portrait mode,
 and (ii) you are editing a PDF instead of a notebook.
 Working on it.
-See also [Differences from the original repository][#differences-from-the-original-repository].
+
+Further, the original repository was altered in the following major ways:
+
+  - ReMarkable 1 support has been removed.
+
+If you object to any of these,
+and are willing to maintain the respective functionality,
+feel free to open a pull request.
 
 # Installation
 
@@ -87,16 +94,6 @@ $ RemarkableLamyEraser
 ```
 
 This will furthermore print some additional debugging information—great when opening an issue!
-
-# Differences from the original repository
-
-In order to make the code easier, the following changes have been made:
-
-  - ReMarkable 1 support has been removed.
-
-If you object to any of these,
-and are willing to maintain the respective functionality,
-feel free to open a pull request.
 
 # Developing
 
