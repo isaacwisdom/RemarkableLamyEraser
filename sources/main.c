@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
   /* Quit if software version is less than 3.0 */
   if (swVersion[0] < 3) {
-    printf("Invalid (prior) software version: %d.%d.%d.%d/n"
+    printf("Invalid software version: %d.%d.%d.%d/n"
            "This version of RemarkableLamyEraser must be run on devices "
            "running software version 3.0.0.0 or newer",
            swVersion[0], swVersion[1], swVersion[2], swVersion[3]);
