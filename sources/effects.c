@@ -309,35 +309,35 @@ void testLocations(int device, int fd, int rmVersion) {
       toolbarOrientation orientation = getToolbarOrientation();
       printf("opening Toolbar...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, TOOLBAR);
-      sleep(2);
+      getchar();
 
       printf("tapping writing utensil...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, WRITING);
-      sleep(2);
+      getchar();
 
       printf("tapping eraser panel...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
-      sleep(2);
+      getchar();
+
+      printf("tapping eraser panel...\n");
+      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
+      getchar();
 
       printf("tapping erase selection...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_SELECTION);
-      sleep(2);
-
-      printf("tapping eraser panel...\n");
-      writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_PANEL);
-      sleep(2);
+      getchar();
 
       printf("tapping eraser...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, ERASER_ERASE);
-      sleep(2);
+      getchar();
 
       printf("tapping select tool...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, SELECT);
-      sleep(2);
+      getchar();
 
       printf("tapping undo...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, UNDO);
-      sleep(2);
+      getchar();
 
       printf("tapping redo...\n");
       writeOrientedTapSequence(device, fd, &orientation, rmVersion, 1, REDO);
