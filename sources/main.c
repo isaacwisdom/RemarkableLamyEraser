@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   int                sw_version[4] = {0, 0, 0, 0};
   get_software_version(sw_version);
 
-  printf("RemarkableLamyEraser 2.1.0\n");
+  printf("RemarkableLamyEraser 2.2.0\n");
   printf("----------------------------------\n");
 
   /* Quit if software version is less than 3.0 */
