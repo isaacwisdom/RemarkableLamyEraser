@@ -1,70 +1,127 @@
-*This is the beta branch to fix the changes introduced in the 3.0.0.0 software update. No guarantees on things working as expected!*
-*If you notice any bugs, feel free to create an issue!*
-
 # RemarkableLamyEraser
+
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
-Also confirmed to work with these other styli:
+This is a continuation of
+[Isaac Wisdom's][ghub:isaac-wisdom]
+[repository][ghub:lamy:orig]
+(also see [here][ghub:lamy:orig:maintenance]),
+updated to work with the reMarkable 2 version 3.5.x.
+
+**NOTE:** This repository is in a very early stage.
+Fully expect the executable to misbehave if
+(i) you are not running in right handed portrait mode,
+and (ii) you are editing a PDF instead of a notebook.
+Working on it.
+See also [Differences from the original repository][#differences-from-the-original-repository].
+
+# Installation
+
+The tool will definitely break when the reMarkable updates.
+When that happens, just reinstall!
+
+``` console
+$ sh -c "$(wget https://github.com/slotThe/RemarkableLamyEraser/raw/v2/scripts/LamyInstall.sh -O-)"
+```
+
+## Uninstall
+
+``` console
+ $ sh -c "$(wget https://github.com/slotThe/RemarkableLamyEraser/raw/v2/scripts/LamyUninstall.sh -O-)"
+```
+
+# Usage
+
+The default configuration has the trigger "press and hold" mapped to the effect "erase",
+and the trigger "double click" mapped to the effect "undo".
+However, your configuration can be customised by changing the configuration file at
+`~/.config/LamyEraser/LamyEraser.conf`
+(for example, by running `nano ~/.config/LamyEraser/LamyEraser.conf`).
+In this file, you can freely assign effects to different triggers.
+
+The recognized triggers are:
+
+  * click
+  * double-click
+  * triple-click
+  * quadruple-click
+  * quintuple-click
+  * press&hold
+  * double-press&hold
+  * triple-press&hold
+  * quadruple-press&hold
+  * quintuple-press&hold
+
+Effects are divided into *tools* and *actions*;
+actions are compatible with click-type actions,
+while tools work with press-and-hold-type triggers,
+or with click-type triggers as toggles.
+
+The available actions are:
+
+  * toolbar: Presses the toolbar panel button.
+  * writing: Presses the writing utensil button.
+  * undo: Presses the undo button.
+  * redo: Presses the redo button.
+
+The available tools are:
+
+  * eraser-erase: Changes to eraser tool.
+    On deactivation, changes back to writing utensil;
+    note this mode uses special features available from the marker plus.
+  * select: Changes to select tool.
+    On deactivation, changes back to writing utensil
+
+After making changes to the configuration file,
+run this command to restart the program:
+
+``` console
+$ systemctl restart LamyEraser.service
+```
+
+You can also check your current config by running the program directly
+
+``` Shell
+$ systemctl stop LamyEraser.service
+$ RemarkableLamyEraser
+```
+
+This will furthermore print some additional debugging information—great when opening an issue!
+
+# Differences from the original repository
+
+In order to make the code easier, the following changes have been made:
+
+  - ReMarkable 1 support has been removed.
+
+If you object to any of these,
+and are willing to maintain the respective functionality,
+feel free to open a pull request.
+
+# Developing
+
+There is [Dockerfile](./Dockerfile) available,
+which builds the toolchain and comes equipped with `qtcreator`.
+To build, run
+
+``` console
+$ docker build -t remarkable .
+```
+
+Running this is a bit awkward, as it requires teaching docker about X forwarding:
+
+``` console
+$ docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --env="QT_X11_NO_MITSHM=1" remarkable
+```
+
+# Other Styli
+
+The original project was also confirmed to work with:
+
+ * Kindle Scribe Pen
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
 
-*As an alternative, consider using [this](https://github.com/ddvk/remarkable-stylus). (If you're already using ddvk-hacks, I'd defintely reccomend this route. This tool is for people who are looking for a less invasive option, and prefer the unaltered look of the reMarkable interface.)*
-
-The tool will definitely break when the reMarkable updates. When that happens, just reinstall!
-# Install Instructions
-```shell
-cd; wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/scripts/LamyInstall.sh; chmod +x LamyInstall.sh; ./LamyInstall.sh; rm ~/LamyInstall.sh
-```
-# Uninstall Instrucions
-```shell
-sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/v2-3.0.0-fix/scripts/LamyUninstall.sh -O-)"
-```
-
-
-
-# Usage 
-The default configuration has the trigger "press and hold" mapped to the effect "erase", and the trigger "double click"
-mapped to the effect "undo".
-However, you configuration can be customized by changing the configuration file at ~/.config/LamyEraser/LamyEraser.conf
-(for example, by running nano ~/.config/LamyEraser/LamyEraser.conf).
-In this file, you can freely assign effects to different triggers.  
-  
-The recognized triggers are:  
-* click 
-* double-click  
-* triple-click
-* quadruple-click  
-* quintuple-click
-* press&hold
-* double-press&hold 
-* triple-press&hold
-* quadruple-press&hold
-* quintuple-press&hold    
-  
-Effects are divided into tools and actions :  
-Actions are compatible with click-type actions. The available actions are:  
-*  toolbar : Presses the toolbar panel button  
-*  writing : Presses the writing utensil button  
-*  undo : Presses the undo button  
-*  redo : Presses the redo button  
-  
-Tools are compatible with press and hold type triggers, or with click type triggers as toggles. The available tools are:  
-*  eraser-erase    : Changes to eraser tool. on deactivation, changes back to writing utensil
-                     note that on the RM2, this mode uses special features available from the marker plus.
-*  select          : Changes to select tool. On deactivation, changes back to writing utensil  
-
-
-
-After making changes to the config, run this command to restart the program:
-``` Shell
-systemctl restart LamyEraser.service
-```
-
-You can also check your current config by running the program directly 
-``` Shell
-systemctl stop LamyEraser.service
-RemarkableLamyEraser
-```
-
-# TODO:
-- [ ] toltec package
+[ghub:isaac-wisdom]: https://github.com/isaacwisdom
+[ghub:lamy:orig]: https://github.com/isaacwisdom/RemarkableLamyEraser
+[ghub:lamy:orig:maintenance]: https://github.com/isaacwisdom/RemarkableLamyEraser/issues/70
