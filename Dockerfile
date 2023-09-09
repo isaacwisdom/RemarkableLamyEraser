@@ -19,7 +19,6 @@ COPY docker-qt-support/config /root/.config
 COPY docker-qt-support/start-qt.sh /root/start-qt.sh
 RUN chmod +x /root/start-qt.sh
 WORKDIR /mnt/RemarkableLamyEraser/
+COPY ./ ./
 
 CMD ["/root/start-qt.sh"]
-
-
