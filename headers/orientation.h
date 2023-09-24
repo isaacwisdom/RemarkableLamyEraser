@@ -2,15 +2,23 @@
 #define ORIENTATION_H
 
 #define BUFSIZE 48
-#define RHP 0 // Right Hand, Portrait
-#define RHL 1 // Right Hand, Landscape
-#define LHP 2 // Left Hand,  Portrait
-#define LHL 3 // Left Hand,  Landscape
+
+enum orientation {
+  RHP, // Right Hand, Portrait
+  RHL, // Right Hand, Landscape
+  LHP, // Left Hand,  Portrait
+  LHL, // Left Hand,  Landscape
+};
+
+enum doc_type {
+  notebook,
+  pdf,
+};
 
 typedef struct {
   int openNotebook;
-  int orientation;
-  int docType;
+  enum orientation orientation;
+  enum doc_type    doc_type;
 } toolbar_orientation;
 
 int get_open_file_from_uuid(char *uuid);
