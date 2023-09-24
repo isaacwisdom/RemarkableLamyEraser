@@ -5,28 +5,24 @@
 
 #include "orientation.h"
 
-int get_open_file_from_uuid(char *uuid) {
-  // returns  1 if success
-  // returns  0 if no open file
-  // returns -1 if failure
+enum doc_type get_open_file_uuid(char *out_uuid) {
   char  buf[BUFSIZE] = "";
-  char *command      = "PID=`pidof xochitl`; ls -l /proc/$PID/fd 2> /dev/null "
-                       "| grep lock | egrep -v 'rm|xochitl/xochitl' "
-                       "| egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o";
-  FILE *cmd          = popen(command, "r");
+  char *command      = "ls -l /proc/*/fd 2>/dev/null " // lsof ersatz
+                  "| grep pdf "                        // see if any PDF is open
+                  "| egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o"; // UUID format
+  FILE *cmd = popen(command, "r");
   if (cmd == NULL) {
-    printf("getOpenFileGUID: Failed to run command\n");
+    printf("get_open_file_uuid: Failed to run command\n");
     return -1;
   }
   fgets(buf, BUFSIZE, cmd);
   pclose(cmd);
-
   if (strlen(buf) == 0) {
-    return 0; // return 0 if no open file
+    return notebook; // No open file = notebook
   }
-  strcpy(uuid, buf);
-  uuid[strcspn(uuid, "\n")] = 0; // trim off new line
-  return 1;                      // return 1 if open file
+  strcpy(out_uuid, buf);
+  out_uuid[strcspn(out_uuid, "\n")] = 0; // Trim off new line
+  return pdf;
 }
 
 int check_conf(const char *path, const char *param, const char *param_true) {
@@ -89,37 +85,24 @@ int get_conf(const char *path, const char *param, char *return_string, int buffe
 }
 
 toolbar_orientation get_toolbar_orientation() {
-  // returns panelOrientation struct with params:
-  // {openNotebook | 1 for open notebook, 0 for no open notebook
-  //  orientation  | 0 for RHP, 1 for RHL, 2 for LHP, 3 for LHL
-  //                 the three letter acronyms are defined macros}
-  //  docType      | 0 for notebook, 1 for pdf
-
-  // TODO: getOpenFileUUID is broken, so default some values for now.
-  toolbar_orientation orientation = {1, 0, 0};
-  return orientation;
-
-  /* int rightHanded; */
-  /* int portrait; */
-  /* // get portrait or landscape */
-  /* char UUID[BUFSIZE]; */
-  /* if ( (orientation.openNotebook = getOpenFileUUID(UUID)) == 1) { */
-  /*   char openFilePath[128] = "/home/root/.local/share/remarkable/xochitl/"; */
-  /*   strcat(UUID, ".content"); */
-  /*   strcat(openFilePath, UUID); */
-  /*   // printf("%s\n", openFilePath); */
-  /*   portrait = checkConf(openFilePath, "    \"orientation\"", "    \"orientation\": \"portrait\""); */
-  /*   orientation.docType = checkConf(openFilePath, "    \"fileType\"", "    \"fileType\": \"pdf\""); */
-  /*   } */
-  /* else { */
-  /*   return orientation; // other params will be -1 to indicate orientation and docType is N/A */
-  /*   } */
-  /* // get handedness */
-  /* const char *confPath = "/home/root/.config/remarkable/xochitl.conf"; */
-  /* rightHanded = checkConf(confPath, "RightHanded", "RightHanded=true"); */
-  /* orientation.orientation = !portrait + (!rightHanded << 1); */
-  /* //printf("Orientation: %d, docType:%d", orientation.orientation, orientation.docType); */
-  /* return orientation; */
+  char                filename[BUFSIZE];
+  toolbar_orientation orientation = {RHP, get_open_file_uuid(filename)};
+  if (orientation.doc_type == pdf) {
+    char open_file_path[128] = "/home/root/.local/share/remarkable/xochitl/";
+    strcat(filename, ".content");
+    strcat(open_file_path, filename);
+    // Orientation
+    int portrait = check_conf(open_file_path, "    \"orientation\"",
+                              "    \"orientation\": \"portrait\"");
+    // Handedness
+    int right_handed        = check_conf("/home/root/.config/remarkable/xochitl.conf",
+                                         "RightHanded", "RightHanded=true");
+    orientation.orientation = !portrait + (!right_handed << 1);
+    return orientation;
+  } else {
+    // XXX: Default to right-handed notebook for now.
+    return orientation;
+  }
 }
 
 int get_rm_version() {
@@ -141,7 +124,7 @@ int get_software_version(int software_version_array[4]) {
     token = strtok(software_version, ".");
     for (int i = 0; i < 4; i++) {
       software_version_array[i] = atoi(token);
-      token                   = strtok(NULL, ".");
+      token                     = strtok(NULL, ".");
     }
     return 1;
   }
