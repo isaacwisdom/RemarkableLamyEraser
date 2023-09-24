@@ -10,8 +10,7 @@ updated to work with the reMarkable 2 version 3.5.x.
 
 **NOTE:** This repository is in a very early stage.
 Fully expect the executable to misbehave if
-(i) you are not running in right handed portrait mode,
-and (ii) you are editing a PDF instead of a notebook.
+you are not running in right handed portrait mode,
 Working on it.
 
 Further, the original repository was altered in the following major ways:
