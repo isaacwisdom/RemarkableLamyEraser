@@ -16,7 +16,6 @@ enum doc_type {
 };
 
 typedef struct {
-  int openNotebook;
   enum orientation orientation;
   enum doc_type    doc_type;
 } toolbar_orientation;

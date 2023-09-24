@@ -123,42 +123,32 @@ void writeTapWithWacom(int fd_wacom, const int location[2]) {
 
 int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orientation,
                                 int numLocations, ...) {
-  // give the fd to use, a pointer to a toolbarOrientation struct, the
-  // RMversion, and a list of action locations returns 0 on success, -1 on
+  // give the file descriptor to use, a pointer to a toolbar_orientation
+  // struct, and a list of action locations returns 0 on success, -1 on
   // failure
   int     actionLocation[2];
   int     action;
   va_list actionType;
   va_start(actionType, numLocations);
-  // printf("Orientation: %d | ", orientation->orientation);
-  if (orientation->openNotebook) {
-    if (device == WACOM) {
-      printf("wacom digitizer: ");
-      for (int i = 0; i < numLocations; i++) {
-        action            = va_arg(actionType, int);
-        actionLocation[0] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][0];
-        actionLocation[1] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][1];
-        // printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
-        writeTapWithWacom(fd, actionLocation);
-      }
-    } else { // Touch
-      // printf("touch screen: ");
-      for (int i = 0; i < numLocations; i++) {
-        action            = va_arg(actionType, int);
-        actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->docType][action]
-                                                 [orientation->orientation][0];
-        actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->docType][action]
-                                                 [orientation->orientation][1];
-        // printf("{%d,%d} ", actionLocation[0], actionLocation[1]);
-        write_tap_with_touch(fd, actionLocation);
-      }
+  if (device == WACOM) {
+    for (int i = 0; i < numLocations; i++) {
+      action            = va_arg(actionType, int);
+      actionLocation[0] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][0];
+      actionLocation[1] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][1];
+      writeTapWithWacom(fd, actionLocation);
     }
-    // printf("\n");
-    va_end(actionType);
-    return 0;
-  } else {
-    return -1; // no open notebook, didn't perform actions
+  } else { // Touch
+    for (int i = 0; i < numLocations; i++) {
+      action            = va_arg(actionType, int);
+      actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                               [orientation->orientation][0];
+      actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                               [orientation->orientation][1];
+      write_tap_with_touch(fd, actionLocation);
+    }
   }
+  va_end(actionType);
+  return 0;
 }
 
 /*-----------------------------------------------------------------
