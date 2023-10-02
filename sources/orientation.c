@@ -5,12 +5,16 @@
 
 #include "orientation.h"
 
-enum doc_type get_open_file_uuid(char *out_uuid) {
+// XXX: We should check—probably via another journalctl call looking for the
+// worker exiting—if the last mentioned document is actually open.
+int get_open_file_uuid(char *out_uuid) {
+  // Returns  1, if a file is open, and puts the respective UUID in out_uuid,
+  //         -1, otherwise.
   char  buf[BUFSIZE] = "";
-  char *command      = "ls -l /proc/*/fd 2>/dev/null " // lsof ersatz
-                  "| grep pdf "                        // see if any PDF is open
-                  "| egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o"; // UUID format
-  FILE *cmd = popen(command, "r");
+  char *command      = "journalctl -e | grep 'now running' "
+                       "| egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o"
+                       "| tail -n-1";
+  FILE *cmd          = popen(command, "r");
   if (cmd == NULL) {
     printf("get_open_file_uuid: Failed to run command\n");
     return -1;
@@ -18,11 +22,11 @@ enum doc_type get_open_file_uuid(char *out_uuid) {
   fgets(buf, BUFSIZE, cmd);
   pclose(cmd);
   if (strlen(buf) == 0) {
-    return notebook; // No open file = notebook
+    return -1;
   }
   strcpy(out_uuid, buf);
   out_uuid[strcspn(out_uuid, "\n")] = 0; // Trim off new line
-  return pdf;
+  return 1;
 }
 
 int check_conf(const char *path, const char *param, const char *param_true) {
@@ -86,23 +90,22 @@ int get_conf(const char *path, const char *param, char *return_string, int buffe
 
 toolbar_orientation get_toolbar_orientation() {
   char                filename[BUFSIZE];
-  toolbar_orientation orientation = {RHP, get_open_file_uuid(filename)};
-  if (orientation.doc_type == pdf) {
+  toolbar_orientation orientation = {RHP, no_open_document};
+  if (get_open_file_uuid(filename)) { // success
     char open_file_path[128] = "/home/root/.local/share/remarkable/xochitl/";
     strcat(filename, ".content");
     strcat(open_file_path, filename);
+    // Document type
+    orientation.doc_type =
+        check_conf(open_file_path, "    \"fileType\"", "    \"fileType\": \"pdf\"");
     // Orientation
-    int portrait = check_conf(open_file_path, "    \"orientation\"",
-                              "    \"orientation\": \"portrait\"");
-    // Handedness
+    int portrait            = check_conf(open_file_path, "    \"orientation\"",
+                                         "    \"orientation\": \"portrait\"");
     int right_handed        = check_conf("/home/root/.config/remarkable/xochitl.conf",
                                          "RightHanded", "RightHanded=true");
     orientation.orientation = !portrait + (!right_handed << 1);
-    return orientation;
-  } else {
-    // XXX: Default to right-handed notebook for now.
-    return orientation;
   }
+  return orientation;
 }
 
 int get_rm_version() {

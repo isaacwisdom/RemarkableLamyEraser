@@ -13,6 +13,7 @@ enum orientation {
 enum doc_type {
   notebook,
   pdf,
+  no_open_document,
 };
 
 typedef struct {
