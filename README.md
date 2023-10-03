@@ -8,10 +8,10 @@ This is a continuation of
 (also see [here][ghub:lamy:orig:maintenance]),
 updated to work with the reMarkable 2 version 3.5.x.
 
-**NOTE:** This repository is in a very early stage.
-Fully expect the executable to misbehave if
-you are not running in right handed portrait mode,
-Working on it.
+**NOTE:** This repository is in an early stage.
+Fully expect the executable to misbehave
+if you are not running in right handed mode.
+Issues regarding wrong coordinates are very welcome.
 
 Further, the original repository was altered in the following major ways:
 

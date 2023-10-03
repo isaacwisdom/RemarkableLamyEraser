@@ -61,14 +61,14 @@ static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
     { {        0,    0}, {   0,         0}, {        0,    0}, {   0,         0} }, //NULL_EFFECT       0
     { {T_RM2_RHX, 1850}, {  70, T_RM2_RHY}, {T_RM2_LHX, 1810}, {  80, T_RM2_LHY} }, //TOOLBAR           1
     { {T_RM2_RHX, 1720}, { 150, T_RM2_RHY}, {T_RM2_LHX, 1700}, { 160, T_RM2_LHY} }, //WRITING           2
-    { {T_RM2_RHX, 1620}, { 360, T_RM2_RHY}, {T_RM2_LHX, 1500}, { 370, T_RM2_LHY} }, //TEXT              3
-    { {T_RM2_RHX, 1510}, { 450, T_RM2_RHY}, {T_RM2_LHX, 1400}, { 480, T_RM2_LHY} }, //ERASER_PANEL      4
-    { {T_RM2_RHX, 1410}, { 570, T_RM2_RHY}, {T_RM2_LHX, 1230}, { 590, T_RM2_LHY} }, //SELECT            5
-    { {T_RM2_RHX, 1300}, { 670, T_RM2_RHY}, {T_RM2_LHX, 1200}, { 690, T_RM2_LHY} }, //UNDO              6
-    { {T_RM2_RHX, 1190}, { 770, T_RM2_RHY}, {T_RM2_LHX,    0}, { 790, T_RM2_LHY} }, //REDO              7
-    { {      160, 1470}, { 470,       220}, {     1140,    0}, { 480,      1600} }, //ERASER_ERASE      8
-    { {      280, 1470}, { 570,       220}, {     1140,    0}, { 580,      1600} }, //ERASER_SELECTION  9
-    { {      280, 1300}, { 660,       220}, {     1140,    0}, { 670,      1600} }, //ERASER_ERASE_ALL 10
+    { {T_RM2_RHX, 1620}, { 280, T_RM2_RHY}, {T_RM2_LHX, 1600}, { 270, T_RM2_LHY} }, //TEXT              3
+    { {T_RM2_RHX, 1510}, { 370, T_RM2_RHY}, {T_RM2_LHX, 1510}, { 360, T_RM2_LHY} }, //ERASER_PANEL      4
+    { {T_RM2_RHX, 1410}, { 450, T_RM2_RHY}, {T_RM2_LHX, 1410}, { 440, T_RM2_LHY} }, //SELECT            5
+    { {T_RM2_RHX, 1300}, { 600, T_RM2_RHY}, {T_RM2_LHX, 1300}, { 550, T_RM2_LHY} }, //UNDO              6
+    { {T_RM2_RHX, 1190}, { 700, T_RM2_RHY}, {T_RM2_LHX, 1190}, { 670, T_RM2_LHY} }, //REDO              7
+    { {      180, 1440}, { 340,       170}, {     1000, 1440}, { 430,      1450} }, //ERASER_ERASE      8
+    { {      290, 1440}, { 340,       270}, {     1140, 1440}, { 430,      1580} }, //ERASER_SELECTION  9
+    { {      200, 1280}, { 480,       190}, {     1050, 1280}, { 670,      1480} }, //ERASER_ERASE_ALL 10
   },
   {//PDF
    // RHP                RHL                LHP                LHL
@@ -76,13 +76,13 @@ static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
     { {T_RM2_RHX, 1850}, {  70, T_RM2_RHY}, {T_RM2_LHX, 1810}, {  80, T_RM2_LHY} }, //TOOLBAR           1
     { {T_RM2_RHX, 1720}, { 150, T_RM2_RHY}, {T_RM2_LHX, 1700}, { 160, T_RM2_LHY} }, //WRITING           2
     { {        0,    0}, {   0,         0}, {        0,    0}, {   0,         0} }, //TEXT              3
-    { {T_RM2_RHX, 1620}, { 450, T_RM2_RHY}, {T_RM2_LHX, 1400}, { 480, T_RM2_LHY} }, //ERASER_PANEL      4
-    { {T_RM2_RHX, 1510}, { 570, T_RM2_RHY}, {T_RM2_LHX, 1230}, { 590, T_RM2_LHY} }, //SELECT            5
-    { {T_RM2_RHX, 1410}, { 670, T_RM2_RHY}, {T_RM2_LHX, 1200}, { 690, T_RM2_LHY} }, //UNDO              6
-    { {T_RM2_RHX, 1300}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //REDO              7
-    { {      160, 1550}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE      8
-    { {      280, 1550}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_SELECTION  9
-    { {      280, 1410}, { 770, T_RM2_RHY}, {T_RM2_LHX, 1100}, { 790, T_RM2_LHY} }, //ERASER_ERASE_ALL 10
+    { {T_RM2_RHX, 1620}, { 280, T_RM2_RHY}, {T_RM2_LHX, 1600}, { 270, T_RM2_LHY} }, //ERASER_PANEL      4
+    { {T_RM2_RHX, 1510}, { 370, T_RM2_RHY}, {T_RM2_LHX, 1510}, { 360, T_RM2_LHY} }, //SELECT            5
+    { {T_RM2_RHX, 1410}, { 490, T_RM2_RHY}, {T_RM2_LHX, 1410}, { 470, T_RM2_LHY} }, //UNDO              6
+    { {T_RM2_RHX, 1300}, { 600, T_RM2_RHY}, {T_RM2_LHX, 1300}, { 580, T_RM2_LHY} }, //REDO              7
+    { {      180, 1550}, { 250,       170}, {     1000, 1530}, { 340,      1450} }, //ERASER_ERASE      8
+    { {      290, 1550}, { 250,       270}, {     1140, 1530}, { 340,      1580} }, //ERASER_SELECTION  9
+    { {      200, 1400}, { 250,       190}, {     1050, 1400}, { 580,      1480} }, //ERASER_ERASE_ALL 10
   }
 };
 
