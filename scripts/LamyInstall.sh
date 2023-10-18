@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Check whether we are actually SSH'd into a reMarkable
 (uname -a | grep reMarkable) || (echo "Please SSH into your remarkable" && exit)
