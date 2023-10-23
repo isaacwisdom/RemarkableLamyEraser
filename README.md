@@ -2,38 +2,19 @@
 
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
-This is a continuation of
-[Isaac Wisdom's][ghub:isaac-wisdom]
-[repository][ghub:lamy:orig]
-(also see [here][ghub:lamy:orig:maintenance]),
-updated to work with the reMarkable 2 version 3.5.x.
-
-**NOTE:** This repository is in an early stage.
-Fully expect the executable to misbehave
-if you are not running in right handed mode.
-Issues regarding wrong coordinates are very welcome.
-
-Further, the original repository was altered in the following major ways:
-
-  - ReMarkable 1 support has been removed.
-
-If you object to any of these,
-and are willing to maintain the respective functionality,
-feel free to open a pull request.
-
 # Installation
 
 The tool will definitely break when the reMarkable updates.
 When that happens, just reinstall!
 
 ``` console
-$ sh -c "$(wget https://raw.githubusercontent.com/slotThe/RemarkableLamyEraser/main/scripts/LamyInstall.sh -O-)"
+$ sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/main/scripts/LamyInstall.sh -O-)"
 ```
 
 ## Uninstall
 
 ``` console
- $ sh -c "$(wget https://raw.githubusercontent.com/slotThe/RemarkableLamyEraser/main/scripts/LamyUninstall.sh -O-)"
+ $ sh -c "$(wget https://github.com/isaacwisdom/RemarkableLamyEraser/raw/main/scripts/LamyUninstall.sh -O-)"
 ```
 
 # Usage
@@ -132,9 +113,18 @@ Running this is a bit awkward, as it requires teaching docker about X forwarding
 $ docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --env="QT_X11_NO_MITSHM=1" remarkable
 ```
 
+# Incompatibilities
+
+Support for the reMarkable 1 was removed from this branch;
+see the `v2-3.0.0-fix` and `v1` branches for that.
+
+If you object to this,
+and are willing to maintain this functionality,
+feel free to open a pull request.
+
 # Other Styli
 
-The project was—at one point in time—also confirmed to work with:
+The project was, at one point, confirmed to work with:
 
  * Kindle Scribe Pen
  * Samsung S6 S Pen
