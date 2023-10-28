@@ -10,6 +10,9 @@
 #include "orientation.h"
 #include "triggers.h"
 
+// Cries in no API.
+#define SLEEP -1
+
 void write_event(int fd, struct input_event event) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
@@ -139,12 +142,16 @@ int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orienta
     }
   } else { // Touch
     for (int i = 0; i < numLocations; i++) {
-      action            = va_arg(actionType, int);
-      actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
-                                               [orientation->orientation][0];
-      actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
-                                               [orientation->orientation][1];
-      write_tap_with_touch(fd, actionLocation);
+      action = va_arg(actionType, int);
+      if (action == SLEEP) {
+        usleep(50000);
+      } else {
+        actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                                 [orientation->orientation][0];
+        actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                                 [orientation->orientation][1];
+        write_tap_with_touch(fd, actionLocation);
+      }
     }
   }
   va_end(actionType);
@@ -234,9 +241,10 @@ static int toolEraseSelect = 0;
 void activate_tool_eraser_select(int fd_touch) {
   // printf("Activating ToolEraseSelect: writing erase_select tool on\n");
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 8, ERASER_PANEL,
-                              ERASER_PANEL, ERASER_SELECTION, TOOLBAR, ERASER_PANEL,
-                              ERASER_PANEL, ERASER_SELECTION, TOOLBAR);
+  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, ERASER_PANEL,
+                              ERASER_PANEL, SLEEP, ERASER_SELECTION, SLEEP, TOOLBAR,
+                              SLEEP, ERASER_PANEL, SLEEP, ERASER_PANEL, SLEEP,
+                              ERASER_SELECTION, SLEEP, TOOLBAR);
   toolEraseSelect = 1;
 }
 
