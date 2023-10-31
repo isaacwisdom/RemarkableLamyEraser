@@ -11,7 +11,8 @@
 #include "triggers.h"
 
 // Cries in no API.
-#define SLEEP -1
+#define SLEEP      -1
+#define LONG_SLEEP -2
 
 void write_event(int fd, struct input_event event) {
   struct timeval tv;
@@ -145,6 +146,8 @@ int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orienta
       action = va_arg(actionType, int);
       if (action == SLEEP) {
         usleep(50000);
+      } else if (action == LONG_SLEEP) {
+        usleep(200000);
       } else {
         actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
                                                  [orientation->orientation][0];
@@ -194,6 +197,30 @@ void action_redo(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
   write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, REDO, TOOLBAR, REDO,
                               TOOLBAR);
+}
+
+void action_fineliner(int fd_touch) {
+  toolbar_orientation orientation = get_toolbar_orientation();
+  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING,
+                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING, TOOLBAR);
+}
+
+void action_calligraphy(int fd_touch) {
+  toolbar_orientation orientation = get_toolbar_orientation();
+  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING,
+                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING, TOOLBAR);
+}
+
+void action_black(int fd_touch) {
+  toolbar_orientation orientation = get_toolbar_orientation();
+  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_BLACK, WRITING,
+                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_BLACK, WRITING, TOOLBAR);
+}
+
+void action_grey(int fd_touch) {
+  toolbar_orientation orientation = get_toolbar_orientation();
+  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_GREY, WRITING,
+                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR);
 }
 
 /*-----------------------------------------------------------------
@@ -310,6 +337,22 @@ void test_locations(int device, int fd) {
 
     printf("tapping writing utensil...\n");
     write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING);
+    getchar();
+
+    printf("tapping fineliner...\n");
+    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_FINELINER);
+    getchar();
+
+    printf("tapping calligraphy pen...\n");
+    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_CALLIGRAPHY);
+    getchar();
+
+    printf("tapping black...\n");
+    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_BLACK);
+    getchar();
+
+    printf("tapping grey...\n");
+    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_GREY);
     getchar();
 
     printf("tapping eraser panel...\n");

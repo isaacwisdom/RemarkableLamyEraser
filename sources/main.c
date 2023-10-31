@@ -187,6 +187,22 @@ int main(int argc, char *argv[]) {
         printf("writing redo\n");
         action_redo(fd_touch);
         break;
+      case WRITING_FINELINER:
+        printf("writing fineliner\n");
+        action_fineliner(fd_touch);
+        break;
+      case WRITING_CALLIGRAPHY:
+        printf("writing calligraphy pen\n");
+        action_calligraphy(fd_touch);
+        break;
+      case WRITING_BLACK:
+        printf("writing black colour\n");
+        action_black(fd_touch);
+        break;
+      case WRITING_GREY:
+        printf("writing grey colour\n");
+        action_grey(fd_touch);
+        break;
 
       // tools here
       case ERASER_ERASE:
