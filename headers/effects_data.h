@@ -5,26 +5,27 @@
 #define TOUCH   1
 
 //[DOCTYPE]
-#define NOTEBOOK        0
-#define PDF             1
+#define NOTEBOOK 0
+#define PDF      1
 
-#define NUM_EFFECTS     15
-//[EFFECT]:
-#define NULL_EFFECT          0 //null effect
-#define TOOLBAR              1 //action: toolbar
-#define WRITING              2 //action: writing
-#define TEXT                 3 //action: text button
-#define ERASER_PANEL         4 //tap on eraser panel, not useful on it's own
-#define SELECT               5 //action: select
-#define UNDO                 6 //action: undo button
-#define REDO                 7 //action: redo button
-#define ERASER_ERASE         8 //action: eraser
-#define ERASER_SELECTION     9 //action: eraser-select
-#define ERASER_ERASE_ALL    10 //action: eraser-eraser-all
-#define WRITING_FINELINER   11 //action: writing-fineliner
-#define WRITING_CALLIGRAPHY 12 //action: writing-calligraphy
-#define WRITING_BLACK       13 //action: writing-black
-#define WRITING_GREY        14 //action: writing-grey
+enum effects {
+  NULL_EFFECT,         // Null effect
+  TOOLBAR,             // action: toolbar
+  WRITING,             // action: writing
+  TEXT,                // action: text button
+  ERASER_PANEL,        // tap on eraser panel, not useful on it's own
+  SELECT,              // action: select
+  UNDO,                // action: undo button
+  REDO,                // action: redo button
+  ERASER_ERASE,        // action: eraser
+  ERASER_SELECTION,    // action: eraser-select
+  ERASER_ERASE_ALL,    // action: eraser-eraser-all
+  WRITING_FINELINER,   // action: writing-fineliner
+  WRITING_CALLIGRAPHY, // action: writing-calligraphy
+  WRITING_BLACK,       // action: writing-black
+  WRITING_GREY,        // action: writing-grey
+  NUM_EFFECTS,         // Total number of effects
+};
 
 //define offsets for the effect functions
 #define HOLD_OFF_OFFSET      0x0ff
