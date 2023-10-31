@@ -103,21 +103,4 @@ static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
   }
 };
 
-#define W_RM2_RHY 730    // define toolbar column wacom location
-#define W_RM2_RHX 530
-#define W_RM2_LHY 15210
-#define W_RM2_LHX 20260
-                                  //[EFFECT][ORIENTATION][x/y]
-static const int LOCATION_LOOKUP_WACOM[NUM_EFFECTS][4][2] = {
-    //RHP                  //RHL                //LHP                //LHL
-    { {     0,          0}, {         0,     0}, {     0,          0}, {   0,           0} }, //NO_EFFECT      0
-    { { 20290,  W_RM2_RHY}, { W_RM2_RHX,   700}, { 20300,  W_RM2_LHY}, { W_RM2_LHX,   680} }, //TOOLBAR        1
-    { { 18930,  W_RM2_RHY}, { W_RM2_RHX,  1900}, { 18920,  W_RM2_LHY}, { W_RM2_LHX,  1910} }, //WRITING        2
-    { { 17600,  W_RM2_RHY}, { W_RM2_RHX,  3500}, { 17600,  W_RM2_LHY}, { W_RM2_LHX,  3500} }, //STROKE         3
-    { { 16130,  W_RM2_RHY}, { W_RM2_RHX,  4630}, { 16030,  W_RM2_LHY}, { W_RM2_LHX,  4780} }, //ERASER_PANEL   4
-    { { 14820,  W_RM2_RHY}, { W_RM2_RHX,  5950}, { 14900,  W_RM2_LHY}, { W_RM2_LHX,  6180} }, //SELECT         5
-    { { 13380,  W_RM2_RHY}, { W_RM2_RHX,  7610}, { 13350,  W_RM2_LHY}, { W_RM2_LHX,  7450} }, //UNDO           6
-    { { 12220,  W_RM2_RHY}, { W_RM2_RHX,  8880}, { 12300,  W_RM2_LHY}, { W_RM2_LHX,  8780} }, //REDO           7
-};
-
 #endif //EFFECTS_DATA_H

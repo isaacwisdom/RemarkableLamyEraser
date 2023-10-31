@@ -17,8 +17,8 @@ int get_trigger_config(const char *path, struct configuration *config) {
   int     lineNum = 0;
   size_t  len     = 0;
   ssize_t read;
-  char    trigger[24] = "--";
-  char    effect[24]  = "--";
+  char    trigger[24]  = "--";
+  char    effect[24]   = "--";
   int     read_trigger = -1, read_effect = -1;
 
   fp = fopen(path, "r");

@@ -73,59 +73,7 @@ void write_tap_with_touch(int fd_touch, const int location[2]) {
   write_event(fd_touch, event);
 }
 
-void writeTapWithWacom(int fd_wacom, const int location[2]) {
-  struct input_event event;
-  struct timeval     tv;
-
-  // this is the minimum (probably) seqeunce of events that must be sent to tap
-  // the screen in a location.
-  // SYN
-  // touch off
-  // new x and y
-  // touch on
-  // touch off
-  // SYN
-  gettimeofday(&tv, NULL);
-  event.time = tv;
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; // SYN
-  // printf("Writing SYN Report\n");
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 0}; // TOUCH OFF
-  // printf("Writing BTN_TOUCH: %d\n", event.value);
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; // SYN
-  // printf("Writing SYN Report\n");
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_ABS, .code = ABS_X, .value = location[0]}; // X
-  // printf("Writing Pen X: %d\n", event.value);
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_ABS, .code = ABS_Y, .value = location[1]}; // Y
-  // printf("Writing Pen Y: %d\n", event.value);
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 1}; // TOUCH ON
-  // printf("Writing BTN_TOUCH: %d\n", event.value);
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; // SYN
-  // printf("Writing SYN Report\n");
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_KEY, .code = BTN_TOUCH, .value = 0}; // TOUCH OFF
-  // printf("Writing BTN_TOUCH: %d\n", event.value);
-  write(fd_wacom, &event, sizeof(struct input_event));
-
-  event = (struct input_event){.type = EV_SYN, .code = SYN_REPORT, .value = 1}; // SYN
-  // printf("Writing SYN Report\n");
-  write(fd_wacom, &event, sizeof(struct input_event));
-}
-
-int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orientation,
+int write_oriented_tap_sequence(int fd, toolbar_orientation *orientation,
                                 int numLocations, ...) {
   // give the file descriptor to use, a pointer to a toolbar_orientation
   // struct, and a list of action locations returns 0 on success, -1 on
@@ -134,29 +82,22 @@ int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orienta
   int     action;
   va_list actionType;
   va_start(actionType, numLocations);
-  if (device == WACOM) {
-    for (int i = 0; i < numLocations; i++) {
-      action            = va_arg(actionType, int);
-      actionLocation[0] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][0];
-      actionLocation[1] = LOCATION_LOOKUP_WACOM[action][orientation->orientation][1];
-      writeTapWithWacom(fd, actionLocation);
-    }
-  } else { // Touch
-    for (int i = 0; i < numLocations; i++) {
-      action = va_arg(actionType, int);
-      if (action == SLEEP) {
-        usleep(50000);
-      } else if (action == LONG_SLEEP) {
-        usleep(200000);
-      } else {
-        actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
-                                                 [orientation->orientation][0];
-        actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
-                                                 [orientation->orientation][1];
-        write_tap_with_touch(fd, actionLocation);
-      }
+
+  for (int i = 0; i < numLocations; i++) {
+    action = va_arg(actionType, int);
+    if (action == SLEEP) {
+      usleep(50000);
+    } else if (action == LONG_SLEEP) {
+      usleep(200000);
+    } else {
+      actionLocation[0] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                               [orientation->orientation][0];
+      actionLocation[1] = LOCATION_LOOKUP_TOUCH[orientation->doc_type][action]
+                                               [orientation->orientation][1];
+      write_tap_with_touch(fd, actionLocation);
     }
   }
+
   va_end(actionType);
   return 0;
 }
@@ -167,60 +108,65 @@ int write_oriented_tap_sequence(int device, int fd, toolbar_orientation *orienta
 
 void action_toolbar(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 1, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 1, TOOLBAR);
 }
 
 void action_writing(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
                               TOOLBAR);
 }
 
 void action_text(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 3, TEXT, TOOLBAR, TEXT);
+  write_oriented_tap_sequence(fd_touch, &orientation, 3, TEXT, TOOLBAR, TEXT);
 }
 
 void action_eraser_panel(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 3, ERASER_PANEL, TOOLBAR,
+  write_oriented_tap_sequence(fd_touch, &orientation, 3, ERASER_PANEL, TOOLBAR,
                               ERASER_PANEL);
 }
 
 void action_undo(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, UNDO, TOOLBAR, UNDO,
-                              TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, UNDO, TOOLBAR, UNDO, TOOLBAR);
 }
 
 void action_redo(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, REDO, TOOLBAR, REDO,
-                              TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, REDO, TOOLBAR, REDO, TOOLBAR);
 }
 
 void action_fineliner(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING,
-                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 14, SELECT, WRITING, WRITING,
+                              LONG_SLEEP, WRITING_FINELINER, WRITING, TOOLBAR, SELECT,
+                              WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING,
+                              TOOLBAR);
 }
 
 void action_calligraphy(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING,
-                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 14, SELECT, WRITING, WRITING,
+                              LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING, TOOLBAR, SELECT,
+                              WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING,
+                              TOOLBAR);
 }
 
 void action_black(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_BLACK, WRITING,
-                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_BLACK, WRITING, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 14, SELECT, WRITING, WRITING,
+                              LONG_SLEEP, WRITING_BLACK, WRITING, TOOLBAR, SELECT,
+                              WRITING, WRITING, LONG_SLEEP, WRITING_BLACK, WRITING,
+                              TOOLBAR);
 }
 
 void action_grey(int fd_touch) {
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_GREY, WRITING,
-                              TOOLBAR, SELECT, WRITING, WRITING, LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 14, SELECT, WRITING, WRITING,
+                              LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR, SELECT, WRITING,
+                              WRITING, LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR);
 }
 
 /*-----------------------------------------------------------------
@@ -268,17 +214,17 @@ static int toolEraseSelect = 0;
 void activate_tool_eraser_select(int fd_touch) {
   // printf("Activating ToolEraseSelect: writing erase_select tool on\n");
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 14, ERASER_PANEL,
-                              ERASER_PANEL, SLEEP, ERASER_SELECTION, SLEEP, TOOLBAR,
-                              SLEEP, ERASER_PANEL, SLEEP, ERASER_PANEL, SLEEP,
-                              ERASER_SELECTION, SLEEP, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, &orientation, 14, ERASER_PANEL, ERASER_PANEL,
+                              SLEEP, ERASER_SELECTION, SLEEP, TOOLBAR, SLEEP,
+                              ERASER_PANEL, SLEEP, ERASER_PANEL, SLEEP, ERASER_SELECTION,
+                              SLEEP, TOOLBAR);
   toolEraseSelect = 1;
 }
 
 void deactivate_tool_eraser_select(int fd_touch) {
   // printf("Deactivating ToolEraseSelect: writing writing_tool on\n");
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
                               TOOLBAR);
   toolEraseSelect = 0;
 }
@@ -295,7 +241,7 @@ static int toolSelect = 0;
 void activate_tool_select(int fd_touch) {
   // printf("Activating ToolSelect: writing select tool on\n");
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, SELECT, TOOLBAR, SELECT,
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, SELECT, TOOLBAR, SELECT,
                               TOOLBAR);
   toolSelect = 1;
 }
@@ -303,7 +249,7 @@ void activate_tool_select(int fd_touch) {
 void deactivate_tool_select(int fd_touch) {
   // printf("Deactivating ToolSelect: writing writing tool on\n");
   toolbar_orientation orientation = get_toolbar_orientation();
-  write_oriented_tap_sequence(TOUCH, fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
+  write_oriented_tap_sequence(fd_touch, &orientation, 4, WRITING, TOOLBAR, WRITING,
                               TOOLBAR);
   toolSelect = 0;
 }
@@ -316,7 +262,7 @@ void toggle_tool_select(int fd_touch) {
 }
 
 // Test stored locations in effects_data.h
-void test_locations(int device, int fd) {
+void test_locations(int fd) {
   const char *str[4];
   str[0] = "Right Hand Portrait";
   str[1] = "Right Hand Landscape";
@@ -332,55 +278,55 @@ void test_locations(int device, int fd) {
 
     toolbar_orientation orientation = get_toolbar_orientation();
     printf("opening Toolbar...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, TOOLBAR);
+    write_oriented_tap_sequence(fd, &orientation, 1, TOOLBAR);
     getchar();
 
     printf("tapping writing utensil...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING);
+    write_oriented_tap_sequence(fd, &orientation, 1, WRITING);
     getchar();
 
     printf("tapping fineliner...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_FINELINER);
+    write_oriented_tap_sequence(fd, &orientation, 1, WRITING_FINELINER);
     getchar();
 
     printf("tapping calligraphy pen...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_CALLIGRAPHY);
+    write_oriented_tap_sequence(fd, &orientation, 1, WRITING_CALLIGRAPHY);
     getchar();
 
     printf("tapping black...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_BLACK);
+    write_oriented_tap_sequence(fd, &orientation, 1, WRITING_BLACK);
     getchar();
 
     printf("tapping grey...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, WRITING_GREY);
+    write_oriented_tap_sequence(fd, &orientation, 1, WRITING_GREY);
     getchar();
 
     printf("tapping eraser panel...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, ERASER_PANEL);
+    write_oriented_tap_sequence(fd, &orientation, 1, ERASER_PANEL);
     getchar();
 
     printf("tapping eraser panel...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, ERASER_PANEL);
+    write_oriented_tap_sequence(fd, &orientation, 1, ERASER_PANEL);
     getchar();
 
     printf("tapping erase selection...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, ERASER_SELECTION);
+    write_oriented_tap_sequence(fd, &orientation, 1, ERASER_SELECTION);
     getchar();
 
     printf("tapping eraser...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, ERASER_ERASE);
+    write_oriented_tap_sequence(fd, &orientation, 1, ERASER_ERASE);
     getchar();
 
     printf("tapping select tool...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, SELECT);
+    write_oriented_tap_sequence(fd, &orientation, 1, SELECT);
     getchar();
 
     printf("tapping undo...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, UNDO);
+    write_oriented_tap_sequence(fd, &orientation, 1, UNDO);
     getchar();
 
     printf("tapping redo...\n");
-    write_oriented_tap_sequence(device, fd, &orientation, 1, REDO);
+    write_oriented_tap_sequence(fd, &orientation, 1, REDO);
 
     printf("Completed %s.\n", str[i]);
   }

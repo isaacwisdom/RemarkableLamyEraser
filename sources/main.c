@@ -76,14 +76,7 @@ int main(int argc, char *argv[]) {
     if (!strcmp(argv[i], "--config-file")) {
       confPath = argv[++i];
     } else if (!strcmp(argv[i], "--test-locations")) {
-      if (!strcmp(argv[i + 1], "WACOM")) {
-        test_locations(WACOM, fd_wacom); // program will exit
-      } else if (!strcmp(argv[i + 1], "TOUCH")) {
-        test_locations(TOUCH, fd_touch); // program will exit
-      } else {
-        printf("Unknown device %s. Exiting...", argv[i + 1]);
-        exit(EXIT_FAILURE);
-      }
+      test_locations(fd_touch); // program will exit
     } else {
       printf("Unknown argument %s. Valid options are:\n"
              "--config-file </path/to/config>\n"
