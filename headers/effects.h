@@ -16,8 +16,7 @@ static const struct input_event tool_rubber_off =  {.type = EV_KEY, .code = BTN_
 void write_event(int fd_touch, struct input_event event);
 void handle_current_tracking_ID(struct input_event *event);
 void write_tap_with_touch(int fd_touch, const int location[2]);
-int  write_oriented_tap_sequence(int fd_touch, toolbar_orientation *orientation,
-                                 int num_locations, ...);
+int  write_oriented_tap_sequence(int fd_touch, int num_locations, ...);
 
 void activate_tool_eraser(int fd_pen);
 void deactivate_tool_eraser(int fd_pen);
