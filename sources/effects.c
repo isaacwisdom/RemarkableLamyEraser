@@ -199,10 +199,9 @@ void action_tool_eraser(struct input_event *ev_pen, int fd_pen) {
 static int toolEraseSelect = 0;
 
 void activate_tool_eraser_select(int fd_touch) {
-  write_oriented_tap_sequence(fd_touch, 14, ERASER_PANEL, ERASER_PANEL,
-                              SLEEP, ERASER_SELECTION, SLEEP, TOOLBAR, SLEEP,
-                              ERASER_PANEL, SLEEP, ERASER_PANEL, SLEEP, ERASER_SELECTION,
-                              SLEEP, TOOLBAR);
+  write_oriented_tap_sequence(fd_touch, 10, ERASER_PANEL, ERASER_PANEL,
+                              LONG_SLEEP, ERASER_SELECTION, TOOLBAR, ERASER_PANEL,
+                              ERASER_PANEL, LONG_SLEEP, ERASER_SELECTION, TOOLBAR);
   toolEraseSelect = 1;
 }
 
