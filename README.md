@@ -112,11 +112,12 @@ $ docker run --rm -ti --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp/.X11-uni
 
 # Other Styli
 
-The original project was also confirmed to work with:
+The project was—at one point in time—also confirmed to work with:
 
  * Kindle Scribe Pen
  * Samsung S6 S Pen
  * Wacom One Pen CP91300B2Z
+ * iFlytec T1 4096
 
 [ghub:isaac-wisdom]: https://github.com/isaacwisdom
 [ghub:lamy:orig]: https://github.com/isaacwisdom/RemarkableLamyEraser
