@@ -124,7 +124,7 @@ feel free to open a pull request.
 
 # Other Styli
 
-The project was, at one point, confirmed to work with:
+The project was—at one point in time—also confirmed to work with:
 
  * Kindle Scribe Pen
  * Samsung S6 S Pen
