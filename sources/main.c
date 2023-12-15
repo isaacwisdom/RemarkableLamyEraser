@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
         action_redo(fd_touch);
         break;
       case WRITING_FINELINER:
-        printf("writing fineliner\n");
+        printf("writing fineliner pen\n");
         action_fineliner(fd_touch);
         break;
       case WRITING_CALLIGRAPHY:
@@ -199,41 +199,41 @@ int main(int argc, char *argv[]) {
 
       // tools here
       case ERASER_ERASE:
-        printf("writing eraser\n");
+        printf("writing eraser [on]\n");
         activate_tool_eraser(fd_wacom);
         break;
       case ERASER_ERASE_OFF:
-        printf("writing eraser\n");
+        printf("writing eraser [off]\n");
         deactivate_tool_eraser(fd_wacom);
         break;
       case ERASER_ERASE_TOGGLE:
-        printf("writing eraser\n");
+        printf("writing eraser [toggle]\n");
         toggle_tool_eraser(fd_wacom);
         break;
 
       case ERASER_SELECTION:
-        printf("writing erase selection\n");
+        printf("writing erase selection [on]\n");
         activate_tool_eraser_select(fd_touch);
         break;
       case ERASER_SELECTION_OFF:
-        printf("writing erase selection off\n");
+        printf("writing erase selection [off]\n");
         deactivate_tool_eraser_select(fd_touch);
         break;
       case ERASER_SELECT_TOGGLE:
-        printf("writing erase selection off\n");
+        printf("writing erase selection [toggle]\n");
         toggle_tool_eraser_select(fd_touch);
         break;
 
       case SELECT:
-        printf("writing select\n");
+        printf("writing select [on]\n");
         activate_tool_select(fd_touch);
         break;
       case SELECT_OFF:
-        printf("writing select\n");
+        printf("writing select [off]\n");
         deactivate_tool_select(fd_touch);
         break;
       case SELECT_TOGGLE:
-        printf("writing select\n");
+        printf("writing select [toggle]\n");
         toggle_tool_select(fd_touch);
         break;
     }
