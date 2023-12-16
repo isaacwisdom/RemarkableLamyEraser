@@ -57,6 +57,13 @@ The recognized triggers are:
   * triple-press&hold
   * quadruple-press&hold
   * quintuple-press&hold
+  * long-click
+
+The "long click" trigger only activates if you press, hold, and release the button without writing.
+Note that if you map this trigger, you will have to be careful about not accidentally activating it:
+if you press the button intending to use the press&hold trigger, but later change you mind and release it,
+this will send a long-click!
+To abort in this situation, simply move your pen away from the screen before releasing the button.
 
 Effects are divided into *tools* and *actions*;
 actions are compatible with click-type actions,

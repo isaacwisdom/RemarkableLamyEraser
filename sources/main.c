@@ -119,6 +119,26 @@ int main(int argc, char *argv[]) {
   if (TOGGLE)
     config.click5Effect += TOGGLE_OFFSET;
 
+  temp = config.longClick1Effect;
+  if (TOGGLE)
+    config.longClick1Effect += TOGGLE_OFFSET;
+
+  temp = config.longClick2Effect;
+  if (TOGGLE)
+    config.longClick2Effect += TOGGLE_OFFSET;
+
+  temp = config.longClick3Effect;
+  if (TOGGLE)
+    config.longClick3Effect += TOGGLE_OFFSET;
+
+  temp = config.longClick4Effect;
+  if (TOGGLE)
+    config.longClick4Effect += TOGGLE_OFFSET;
+
+  temp = config.longClick5Effect;
+  if (TOGGLE)
+    config.longClick5Effect += TOGGLE_OFFSET;
+
   int flags = fcntl(fd_touch, F_GETFL, 0);
   fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
 
@@ -139,6 +159,12 @@ int main(int argc, char *argv[]) {
       case CLICK_3: effect = config.click3Effect; break;
       case CLICK_4: effect = config.click4Effect; break;
       case CLICK_5: effect = config.click5Effect; break;
+
+      case LCLICK_1: effect = config.longClick1Effect; break;
+      case LCLICK_2: effect = config.longClick2Effect; break;
+      case LCLICK_3: effect = config.longClick3Effect; break;
+      case LCLICK_4: effect = config.longClick4Effect; break;
+      case LCLICK_5: effect = config.longClick5Effect; break;
 
       case HOLD_1_ON: effect = config.hold1Effect; break;
       case HOLD_2_ON: effect = config.hold2Effect; break;

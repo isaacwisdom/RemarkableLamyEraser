@@ -27,6 +27,8 @@ int get_triggger(struct input_event *ev_pen) {
   static bool           abort;
   static struct timeval possiblyReleasedTime;
   static bool           possiblyReleased;
+  static bool           possiblyLongClick;
+  static bool           longClick;
 
   int trigger = NULL_TRIGGER;
 
@@ -39,6 +41,9 @@ int get_triggger(struct input_event *ev_pen) {
         // the pen moved away from the screen, and has just re-approached; abort and reset state
         printf("Aborting trigger\n");
         clickRegistered = false;
+        possiblyLongClick = false;
+        possiblyReleased = false;
+        longClick = false;
         if (sent) {
           trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
           sent    = false;
@@ -76,12 +81,22 @@ int get_triggger(struct input_event *ev_pen) {
     possiblyReleased = true;
   }
 
+  if (sent && ev_pen->code == ABS_PRESSURE) possiblyLongClick = false; // abort long click if pen touches screen
+
   if (ev_pen->code == BTN_STYLUS && ev_pen->value == 1) {
     prevTime = ev_pen->time; // update most recent time
     clicks += 1;
     // don't set the trigger as we don't have enough
     // info to ascertain the state yet.
     clickRegistered = false;
+  }
+
+  if (longClick) {
+    printf("Long click triggered\n");
+    trigger = 0x00 | clicks; // long click type message 0b00xxxxxx
+    clicks = 0;
+    longClick = false;
+    possiblyLongClick = false;
   }
 
   if (clicks > 0) {
@@ -98,13 +113,15 @@ int get_triggger(struct input_event *ev_pen) {
           // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           trigger = 0xc0 | clicks; // press hold on type message 0b11xxxxxx
           sent    = true;
+          possiblyLongClick = true;
         }
 
         if (released) {
           // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
-          clicks  = 0;
           sent    = false;
+          if (possiblyLongClick) longClick = true; // send a long click in the next cycle
+          else clicks = 0;
         }
       }
     } else { // after MDCT
@@ -117,8 +134,9 @@ int get_triggger(struct input_event *ev_pen) {
       if (released) {
         // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
         trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
-        clicks  = 0;
         sent    = false;
+        if (possiblyLongClick) longClick = true; // send a long click in the next cycle
+        else clicks = 0;
       }
     }
   }

@@ -23,6 +23,12 @@
 #define CLICK_4      0x84
 #define CLICK_5      0x85
 
+#define LCLICK_1 0x01
+#define LCLICK_2 0x02
+#define LCLICK_3 0x03
+#define LCLICK_4 0x04
+#define LCLICK_5 0x05
+
 #define HOLD_1_ON    0xc1
 #define HOLD_2_ON    0xc2
 #define HOLD_3_ON    0xc3
@@ -34,7 +40,6 @@
 #define HOLD_3_OFF   0x43
 #define HOLD_4_OFF   0x44
 #define HOLD_5_OFF   0x45
-
 
 #define MAX_CYCLE_TIME         0.01 //seconds
 #define MAX_CLICK_TIME         0.2  //seconds
