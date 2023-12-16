@@ -129,6 +129,7 @@ int main(int argc, char *argv[]) {
     }
     // Note: read pauses until there is data
     read(fd_wacom, &ev_wacom, input_event_size);
+    // printf("event: %x, %d\n", ev_wacom.code, ev_wacom.value);
     trigger = get_triggger(&ev_wacom);
     // printTriggers(trigger, false);
 
