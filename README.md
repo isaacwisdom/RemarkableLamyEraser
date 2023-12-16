@@ -78,6 +78,8 @@ The available tools are:
   * select: Changes to select tool.
     On deactivation, changes back to writing utensil
 
+You can also toggle between the fineliner and the highlighter using writing-hl.
+
 After making changes to the configuration file,
 run this command to restart the program:
 

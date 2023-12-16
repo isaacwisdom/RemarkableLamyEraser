@@ -9,6 +9,7 @@
 
 #include "configuration.h"
 #include "effects.h"
+#include "effects_data.h"
 #include "orientation.h"
 #include "triggers.h"
 
@@ -95,24 +96,27 @@ int main(int argc, char *argv[]) {
   printf("----------------------------------\n");
 
   int temp;
+
+#define TOGGLE temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT || temp == WRITING_HL
+
   temp = config.click1Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
+  if (TOGGLE)
     config.click1Effect += TOGGLE_OFFSET;
 
   temp = config.click2Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
+  if (TOGGLE)
     config.click2Effect += TOGGLE_OFFSET;
 
   temp = config.click3Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
+  if (TOGGLE)
     config.click3Effect += TOGGLE_OFFSET;
 
   temp = config.click4Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
+  if (TOGGLE)
     config.click4Effect += TOGGLE_OFFSET;
 
   temp = config.click5Effect;
-  if (temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT)
+  if (TOGGLE)
     config.click5Effect += TOGGLE_OFFSET;
 
   int flags = fcntl(fd_touch, F_GETFL, 0);
@@ -195,6 +199,14 @@ int main(int argc, char *argv[]) {
       case WRITING_GREY:
         printf("writing grey colour\n");
         action_grey(fd_touch);
+        break;
+      case WRITING_HL:
+        printf("writing highlighter\n");
+        action_hl(fd_touch);
+        break;
+      case HL_TOGGLE:
+        printf("toggle highlighter\n");
+        toggle_hl(fd_touch);
         break;
 
       // tools here
