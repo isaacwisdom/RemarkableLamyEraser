@@ -24,6 +24,7 @@ enum effects {
   WRITING_CALLIGRAPHY, // action: writing-calligraphy
   WRITING_BLACK,       // action: writing-black
   WRITING_GREY,        // action: writing-grey
+  WRITING_HL,          // action: writing-hl
   NUM_EFFECTS,         // Total number of effects
 };
 
@@ -39,6 +40,7 @@ enum effects {
 #define ERASER_ERASE_TOGGLE  (ERASER_ERASE     + TOGGLE_OFFSET)
 #define ERASER_SELECT_TOGGLE (ERASER_SELECTION + TOGGLE_OFFSET)
 #define SELECT_TOGGLE        (SELECT           + TOGGLE_OFFSET)
+#define HL_TOGGLE            (WRITING_HL       + TOGGLE_OFFSET)
 
 //recognized words in config file
 static const char* EFFECTS[NUM_EFFECTS] = {
@@ -57,6 +59,7 @@ static const char* EFFECTS[NUM_EFFECTS] = {
   "writing-calligraphy",//WRITING_CALLIGRAPHY 12
   "writing-black",      //WRITING_BLACK       13
   "writing-grey",       //WRITING_GREY        14
+  "writing-hl",         //WRITING_HL          15
 };
 
 #define T_RM2_RHX 60  // Define RM2 toolbar column touchscreen location
@@ -82,6 +85,7 @@ static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
     { {      520, 1540}, { 330,       490}, {     1220, 1530}, { 330,      1680} }, //WRITING_CALLIGRAPHY 12
     { {      200, 1150}, { 720,       180}, {      900, 1120}, { 730,      1380} }, //WRITING_BLACK       13
     { {      300, 1150}, { 720,       280}, {     1020, 1140}, { 730,      1480} }, //WRITING_GREY        14
+    { {      190, 1540}, { 330,       170}, {      900, 1530}, { 330,      1370} }, //WRITING_HL          15
   },
   {//PDF
    // RHP                RHL                LHP                LHL
@@ -100,6 +104,7 @@ static const int LOCATION_LOOKUP_TOUCH[2][NUM_EFFECTS][4][2] = {
     { {      520, 1540}, { 330,       490}, {     1220, 1530}, { 330,      1680} }, //WRITING_CALLIGRAPHY 12
     { {      200, 1150}, { 720,       180}, {      900, 1120}, { 730,      1380} }, //WRITING_BLACK       13
     { {      300, 1150}, { 720,       280}, {     1020, 1140}, { 730,      1480} }, //WRITING_GREY        14
+    { {      190, 1540}, { 330,       170}, {      900, 1530}, { 330,      1370} }, //WRITING_HL          15
   }
 };
 

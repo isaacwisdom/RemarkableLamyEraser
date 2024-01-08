@@ -42,6 +42,8 @@ void action_fineliner(int fd_touch);
 void action_calligraphy(int fd_touch);
 void action_black(int fd_touch);
 void action_grey(int fd_touch);
+void action_hl(int fd_touch);
+void toggle_hl(int fd_touch);
 
 void test_locations(int fd);
 

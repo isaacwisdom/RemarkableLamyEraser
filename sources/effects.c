@@ -129,11 +129,14 @@ void action_redo(int fd_touch) {
   write_oriented_tap_sequence(fd_touch, 4, REDO, TOOLBAR, REDO, TOOLBAR);
 }
 
+static bool hl = false;
+
 void action_fineliner(int fd_touch) {
   write_oriented_tap_sequence(fd_touch, 14, SELECT, WRITING, WRITING,
                               LONG_SLEEP, WRITING_FINELINER, WRITING, TOOLBAR, SELECT,
                               WRITING, WRITING, LONG_SLEEP, WRITING_FINELINER, WRITING,
                               TOOLBAR);
+  hl = false;
 }
 
 void action_calligraphy(int fd_touch) {
@@ -141,6 +144,7 @@ void action_calligraphy(int fd_touch) {
                               LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING, TOOLBAR, SELECT,
                               WRITING, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, WRITING,
                               TOOLBAR);
+  hl = false;
 }
 
 void action_black(int fd_touch) {
@@ -154,6 +158,14 @@ void action_grey(int fd_touch) {
   write_oriented_tap_sequence(fd_touch, 14, SELECT, WRITING, WRITING,
                               LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR, SELECT, WRITING,
                               WRITING, LONG_SLEEP, WRITING_GREY, WRITING, TOOLBAR);
+}
+
+void action_hl(int fd_touch) {
+  printf("setting hl\n");
+  write_oriented_tap_sequence(fd_touch, 14, SELECT, WRITING, WRITING,
+                              LONG_SLEEP, WRITING_HL, WRITING, TOOLBAR, SELECT, WRITING,
+                              WRITING, LONG_SLEEP, WRITING_HL, WRITING, TOOLBAR);
+  hl = true;
 }
 
 /*-----------------------------------------------------------------
@@ -182,6 +194,15 @@ void toggle_tool_eraser(int fd_pen) {
     deactivate_tool_eraser(fd_pen);
   else
     activate_tool_eraser(fd_pen);
+}
+
+void toggle_hl(int fd_pen) {
+  if (hl) {
+    action_fineliner(fd_pen);
+  }
+  else {
+    action_hl(fd_pen);
+  }
 }
 
 void action_tool_eraser(struct input_event *ev_pen, int fd_pen) {
@@ -279,6 +300,10 @@ void test_locations(int fd) {
 
     printf("tapping grey...\n");
     write_oriented_tap_sequence(fd, 1, WRITING_GREY);
+    getchar();
+
+    printf("tapping hl...\n");
+    write_oriented_tap_sequence(fd, 1, WRITING_HL);
     getchar();
 
     printf("tapping eraser panel...\n");

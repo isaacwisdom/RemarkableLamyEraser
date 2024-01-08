@@ -12,7 +12,7 @@ struct configuration {
   int hold3Effect;
   int hold4Effect;
   int hold5Effect;
-} configuration;
+};
 
 #define NUM_TRIGGERS  11
 //triggers:
