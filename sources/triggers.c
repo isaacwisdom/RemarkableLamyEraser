@@ -1,3 +1,4 @@
+#include <bits/types/struct_timeval.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -18,62 +19,129 @@ int get_triggger(struct input_event *ev_pen) {
   // Bits 0-5 encodes the number ie. (click, double click, press and hold,
   // double press and hold)
 
-  static double         elapsedTime; // time between presses of button
-  static int            trigger = NULL_TRIGGER;
   static int            clicks  = 0;
-  static bool           clickDetected;
+  static bool           clickRegistered;
   static bool           sent = 0;
   static struct timeval prevTime;
+  static struct timeval abortTime;
+  static bool           abort;
+  static struct timeval possiblyReleasedTime;
+  static bool           possiblyReleased;
+  static bool           possiblyLongClick;
+  static bool           longClick;
+
+  int trigger = NULL_TRIGGER;
+
+  if (abort) {
+    if (!(ev_pen->code == EV_SYN || ev_pen->code == BTN_STYLUS)) {
+      abort = false;
+
+      double elapsedTime = getTimeDelta(&(ev_pen->time), &abortTime);
+      if (elapsedTime > MAX_CYCLE_TIME) {
+        // the pen moved away from the screen, and has just re-approached; abort and reset state
+        printf("Aborting trigger\n");
+        clickRegistered = false;
+        possiblyLongClick = false;
+        possiblyReleased = false;
+        longClick = false;
+        if (sent) {
+          trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
+          sent    = false;
+        }
+        clicks  = 0;
+      }
+    }
+  }
+
+  if (ev_pen->code == BTN_TOOL_PEN && ev_pen->value == 0) {
+    abortTime = ev_pen->time;
+    abort = true;
+  }
+
+  bool released = false;
+
+  if (ev_pen->code != EV_SYN && possiblyReleased) {
+    possiblyReleased = false;
+
+    double elapsedTime = getTimeDelta(&(ev_pen->time), &possiblyReleasedTime);
+    if (elapsedTime < MAX_CYCLE_TIME) {
+      released = true;
+    }
+    else if (sent) { // otherwise, it was a press-and-pull-away
+      trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
+      clicks  = 0;
+      sent    = false;
+    }
+  }
+
+  if (ev_pen->code == BTN_STYLUS && ev_pen->value == 0) {
+    // don't register release immediately to ignore spurious signals
+    // when moving pen away from screen with button pressed
+    possiblyReleasedTime = ev_pen->time;
+    possiblyReleased = true;
+  }
+
+  if (sent && ev_pen->code == ABS_PRESSURE) possiblyLongClick = false; // abort long click if pen touches screen
 
   if (ev_pen->code == BTN_STYLUS && ev_pen->value == 1) {
     prevTime = ev_pen->time; // update most recent time
     clicks += 1;
-    trigger = NULL_TRIGGER; // set the trigger to NULL as we don't have enough
-                            // info to ascertain the state yet.
-    clickDetected = false;
+    // don't set the trigger as we don't have enough
+    // info to ascertain the state yet.
+    clickRegistered = false;
+  }
+
+  if (longClick) {
+    printf("Long click triggered\n");
+    trigger = 0x00 | clicks; // long click type message 0b00xxxxxx
+    clicks = 0;
+    longClick = false;
+    possiblyLongClick = false;
   }
 
   if (clicks > 0) {
-    elapsedTime = getTimeDelta(&(ev_pen->time), &prevTime);
+    double elapsedTime = getTimeDelta(&(ev_pen->time), &prevTime);  // time between presses of button
     if (elapsedTime < MAX_CLICK_TIME) {
-      if (ev_pen->code == BTN_STYLUS && ev_pen->value == 0) {
-        // printf("Click Detected\n");
-        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickDeteced = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickDetected);
-        clickDetected = true;
+      if (released) {
+        printf("Click Detected\n");
+        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
+        clickRegistered = true;
       }
     } else if (elapsedTime < MAX_DOUBLE_CLICK_TIME) { // between MCT and MCDT
-      if (!clickDetected) {
+      if (!clickRegistered) { // button still held or just released
         if (!sent) {
-          // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickDeteced = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickDetected);
+          // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           trigger = 0xc0 | clicks; // press hold on type message 0b11xxxxxx
           sent    = true;
-        } else
-          trigger = NULL_TRIGGER;
+          possiblyLongClick = true;
+        }
 
-        if (ev_pen->code == BTN_STYLUS && ev_pen->value == 0) {
-          // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickDeteced = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickDetected);
+        if (released) {
+          // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
-          clicks  = 0;
           sent    = false;
+          if (possiblyLongClick) longClick = true; // send a long click in the next cycle
+          else clicks = 0;
         }
       }
     } else { // after MDCT
-      if (clickDetected) {
-        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickDeteced = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickDetected);
+      if (clickRegistered) {
+        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
         trigger       = 0x80 | clicks; // click type message 0b10xxxxxx
-        clickDetected = false;
+        clickRegistered = false;
         clicks        = 0;
       }
-      if (ev_pen->code == BTN_STYLUS && ev_pen->value == 0) {
-        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickDeteced = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickDetected);
+      if (released) {
+        // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
         trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
-        clicks  = 0;
         sent    = false;
+        if (possiblyLongClick) longClick = true; // send a long click in the next cycle
+        else clicks = 0;
       }
     }
-  } else
-    trigger = NULL_TRIGGER;
+  }
 
+  // printf("%x, %d\n", trigger, clickRegistered);
   return trigger;
 }
 

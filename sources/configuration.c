@@ -60,16 +60,17 @@ int get_trigger_config(const char *path, struct configuration *config) {
     }
 
     switch (read_trigger) {
-      case TRIGGER_CLICK_1: config->click1Effect = read_effect; break;
-      case TRIGGER_CLICK_2: config->click2Effect = read_effect; break;
-      case TRIGGER_CLICK_3: config->click3Effect = read_effect; break;
-      case TRIGGER_CLICK_4: config->click4Effect = read_effect; break;
-      case TRIGGER_CLICK_5: config->click5Effect = read_effect; break;
-      case TRIGGER_HOLD_1:  config->hold1Effect  = read_effect; break;
-      case TRIGGER_HOLD_2:  config->hold2Effect  = read_effect; break;
-      case TRIGGER_HOLD_3:  config->hold3Effect  = read_effect; break;
-      case TRIGGER_HOLD_4:  config->hold4Effect  = read_effect; break;
-      case TRIGGER_HOLD_5:  config->hold5Effect  = read_effect; break;
+      case TRIGGER_CLICK_1: config->click1Effect     = read_effect; break;
+      case TRIGGER_CLICK_2: config->click2Effect     = read_effect; break;
+      case TRIGGER_CLICK_3: config->click3Effect     = read_effect; break;
+      case TRIGGER_CLICK_4: config->click4Effect     = read_effect; break;
+      case TRIGGER_CLICK_5: config->click5Effect     = read_effect; break;
+      case TRIGGER_HOLD_1:  config->hold1Effect      = read_effect; break;
+      case TRIGGER_HOLD_2:  config->hold2Effect      = read_effect; break;
+      case TRIGGER_HOLD_3:  config->hold3Effect      = read_effect; break;
+      case TRIGGER_HOLD_4:  config->hold4Effect      = read_effect; break;
+      case TRIGGER_HOLD_5:  config->hold5Effect      = read_effect; break;
+      case TRIGGER_LCLICK:  config->longClick1Effect = read_effect; break;
     }
     strcpy(trigger, "--");
     strcpy(effect, "--");
@@ -91,4 +92,5 @@ void print_config(struct configuration *config) {
   printf("hold3Effect: %x\n", config->hold3Effect);
   printf("hold4Effect: %x\n", config->hold4Effect);
   printf("hold5Effect: %x\n", config->hold5Effect);
+  printf("longClick1Effect: %x\n", config->longClick1Effect);
 }
