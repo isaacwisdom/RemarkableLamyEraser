@@ -41,7 +41,10 @@
 #define HOLD_4_OFF   0x44
 #define HOLD_5_OFF   0x45
 
+#define PEN_UP       0x50
+
 #define MAX_CYCLE_TIME         0.01 //seconds
+#define MAX_CONTACT_CLICK_TIME 0.01 //seconds
 #define MAX_CLICK_TIME         0.2  //seconds
 #define MAX_DOUBLE_CLICK_TIME  0.4  //seconds
 

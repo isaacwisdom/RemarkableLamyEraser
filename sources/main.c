@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
   char               wacom_device_path[18], touch_device_path[18];
   int                rm_version    = get_rm_version();
   int                sw_version[4] = {0, 0, 0, 0};
+  bool trigger_debug = false;
   get_software_version(sw_version);
 
   printf("RemarkableLamyEraser 2.2.0\n");
@@ -78,6 +79,8 @@ int main(int argc, char *argv[]) {
       confPath = argv[++i];
     } else if (!strcmp(argv[i], "--test-locations")) {
       test_locations(fd_touch); // program will exit
+    } else if (!strcmp(argv[i], "--trigger-debug")) {
+      trigger_debug = true;
     } else {
       printf("Unknown argument %s. Valid options are:\n"
              "--config-file </path/to/config>\n"
@@ -87,13 +90,14 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
   }
-
-  printf("Using configuration file at %s\n", confPath);
-  if (get_trigger_config(confPath, &config) != 0) {
-    printf("Reading configuration file failed. Exiting...\n");
-    exit(EXIT_FAILURE);
+  if (!trigger_debug) {
+    printf("Using configuration file at %s\n", confPath);
+    if (get_trigger_config(confPath, &config) != 0) {
+      printf("Reading configuration file failed. Exiting...\n");
+      exit(EXIT_FAILURE);
+    }
+    printf("----------------------------------\n");
   }
-  printf("----------------------------------\n");
 
   int temp;
 
@@ -142,15 +146,23 @@ int main(int argc, char *argv[]) {
   int flags = fcntl(fd_touch, F_GETFL, 0);
   fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
 
+  setAssumeTBOpen(config.assumeTBOpen);
+
   // Main loop body
   for (;;) {
     if (read(fd_touch, &ev_touch, input_event_size)) { // non-blocking
       handle_current_tracking_ID(&ev_touch);
+      // you can get a continous stream of touch events by holding the pen close to the screen while tapping with your finger
+      if (ev_touch.code == ABS_MT_POSITION_X || ev_touch.code == ABS_MT_POSITION_Y) {
+        // printf("event: %x, %d\n", ev_touch.code, ev_touch.value);
+      }
     }
     // Note: read pauses until there is data
     read(fd_wacom, &ev_wacom, input_event_size);
     // printf("event: %x, %d\n", ev_wacom.code, ev_wacom.value);
     trigger = get_triggger(&ev_wacom);
+    
+    if (trigger_debug) continue;
     // printTriggers(trigger, false);
 
     switch (trigger) {
@@ -177,6 +189,8 @@ int main(int argc, char *argv[]) {
       case HOLD_3_OFF: effect = config.hold3Effect + HOLD_OFF_OFFSET; break;
       case HOLD_4_OFF: effect = config.hold4Effect + HOLD_OFF_OFFSET; break;
       case HOLD_5_OFF: effect = config.hold5Effect + HOLD_OFF_OFFSET; break;
+
+      case PEN_UP: pen_up(fd_touch, fd_wacom); break;
       default:
         effect = NULL_EFFECT;
     }
@@ -274,6 +288,21 @@ int main(int argc, char *argv[]) {
       case SELECT_TOGGLE:
         printf("writing select [toggle]\n");
         toggle_tool_select(fd_touch);
+        break;
+
+      case ONE_OFF_ERASER_SELECTION:
+        printf("one-off eraser select\n");
+        one_off_erase_select(fd_touch);
+        break;
+
+      case ONE_OFF_ERASER:
+        printf("one-off eraser\n");
+        one_off_eraser(fd_wacom);
+        break;
+
+      case ONE_OFF_HL:
+        printf("one-off highlighter\n");
+        one_off_hl(fd_touch);
         break;
     }
     action_tool_eraser(&ev_wacom, fd_wacom);

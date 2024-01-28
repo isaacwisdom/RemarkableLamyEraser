@@ -17,9 +17,9 @@ int get_trigger_config(const char *path, struct configuration *config) {
   int     lineNum = 0;
   size_t  len     = 0;
   ssize_t read;
-  char    trigger[24]  = "--";
+  char    cfg[24]  = "--";
   char    effect[24]   = "--";
-  int     read_trigger = -1, read_effect = -1;
+  int     read_cfg = -1, read_effect = -1;
 
   fp = fopen(path, "r");
   if (fp == NULL) return -1;
@@ -29,16 +29,16 @@ int get_trigger_config(const char *path, struct configuration *config) {
       continue;
     }
 
-    if (sscanf(line, "%s %s", trigger, effect) == 2) {
-      printf("Line %2d: Read trigger <%s> with effect <%s>\n", lineNum, trigger, effect);
+    if (sscanf(line, "%s %s", cfg, effect) == 2) {
+      printf("Line %2d: Read trigger <%s> with effect <%s>\n", lineNum, cfg, effect);
     } else {
-      // printf("Line %2d: Read trigger <%s> has no effect.\n", lineNum, trigger);
+      // printf("Line %2d: Read trigger <%s> has no effect.\n", lineNum, cfg);
       strcpy(effect, "null-effect");
     }
 
-    for (int i = 0; i < NUM_TRIGGERS; i++) {
-      if (!strcmp(trigger, triggers[i])) {
-        read_trigger = i;
+    for (int i = 0; i < NUM_TOTAL_CONFIGS; i++) {
+      if (!strcmp(cfg, configs[i])) {
+        read_cfg = i;
         break;
       }
     }
@@ -48,8 +48,8 @@ int get_trigger_config(const char *path, struct configuration *config) {
         break;
       }
     }
-    if (read_trigger == -1) {
-      printf("Invalid trigger %s in line %d of configuration file at %s\n", trigger,
+    if (read_cfg == -1) {
+      printf("Invalid config key %s in line %d of configuration file at %s\n", cfg,
              lineNum, path);
       return 1;
     }
@@ -59,7 +59,7 @@ int get_trigger_config(const char *path, struct configuration *config) {
       return 1;
     }
 
-    switch (read_trigger) {
+    switch (read_cfg) {
       case TRIGGER_CLICK_1: config->click1Effect     = read_effect; break;
       case TRIGGER_CLICK_2: config->click2Effect     = read_effect; break;
       case TRIGGER_CLICK_3: config->click3Effect     = read_effect; break;
@@ -71,10 +71,11 @@ int get_trigger_config(const char *path, struct configuration *config) {
       case TRIGGER_HOLD_4:  config->hold4Effect      = read_effect; break;
       case TRIGGER_HOLD_5:  config->hold5Effect      = read_effect; break;
       case TRIGGER_LCLICK:  config->longClick1Effect = read_effect; break;
+      case ASSUME_TB_OPEN:  config->assumeTBOpen     = 1          ; break;
     }
-    strcpy(trigger, "--");
+    strcpy(cfg, "--");
     strcpy(effect, "--");
-    read_trigger = -1;
+    read_cfg = -1;
     read_effect  = -1;
   }
   fclose(fp);
