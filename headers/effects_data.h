@@ -31,19 +31,11 @@ enum effects {
   NUM_EFFECTS,              // Total number of effects
 };
 
-//define offsets for the effect functions
-#define HOLD_OFF_OFFSET      0x0ff
-#define TOGGLE_OFFSET        0xfff
-
-//effects that require a deactivate/toggle function
-#define ERASER_ERASE_OFF     (ERASER_ERASE     + HOLD_OFF_OFFSET)
-#define ERASER_SELECTION_OFF (ERASER_SELECTION + HOLD_OFF_OFFSET)
-#define SELECT_OFF           (SELECT           + HOLD_OFF_OFFSET)
-
-#define ERASER_ERASE_TOGGLE  (ERASER_ERASE     + TOGGLE_OFFSET)
-#define ERASER_SELECT_TOGGLE (ERASER_SELECTION + TOGGLE_OFFSET)
-#define SELECT_TOGGLE        (SELECT           + TOGGLE_OFFSET)
-#define HL_TOGGLE            (WRITING_HL       + TOGGLE_OFFSET)
+enum effect_type {
+  on,
+  toggle,
+  off,
+};
 
 //recognized words in config file
 static const char* EFFECTS[NUM_EFFECTS] = {

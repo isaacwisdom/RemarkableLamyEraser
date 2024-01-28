@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "effects.h"
+#include "effects_data.h"
 #include "orientation.h"
 #include "triggers.h"
 
@@ -166,16 +167,16 @@ void action_redo(int fd_touch) {
   write_oriented_tap_sequence_toolbar(fd_touch, 1, REDO);
 }
 
-static bool hl = false;
+static bool hlOn = false;
 
 void action_fineliner(int fd_touch) {
   write_oriented_tap_sequence_toolbar(fd_touch, 13, SELECT, SLEEP, SELECT, HALF_SLEEP, WRITING, HALF_SLEEP, WRITING, LONG_SLEEP, WRITING_FINELINER, SLEEP, WRITING_FINELINER, HALF_SLEEP, WRITING);
-  hl = false;
+  hlOn = false;
 }
 
 void action_calligraphy(int fd_touch) {
   write_oriented_tap_sequence_toolbar(fd_touch, 9, SELECT, HALF_SLEEP, WRITING, HALF_SLEEP, WRITING, LONG_SLEEP, WRITING_CALLIGRAPHY, HALF_SLEEP, WRITING);
-  hl = false;
+  hlOn = false;
 }
 
 void action_black(int fd_touch) {
@@ -188,7 +189,7 @@ void action_grey(int fd_touch) {
 
 void action_hl(int fd_touch) {
   write_oriented_tap_sequence_toolbar(fd_touch, 13, SELECT, SLEEP, SELECT, HALF_SLEEP, WRITING, HALF_SLEEP, WRITING, LONG_SLEEP, WRITING_HL, SLEEP, WRITING_HL, HALF_SLEEP, WRITING);
-  hl = true;
+  hlOn = true;
 }
 
 /*-----------------------------------------------------------------
@@ -198,6 +199,23 @@ void action_hl(int fd_touch) {
 
 static int ToolEraserRM2 = 0;
 static int oneOffEraser = 0;
+
+char * etype_to_string(enum effect_type etype){
+  switch (etype) {
+    case on: return "on";
+    case toggle: return "toggle";
+    case off: return "off";
+  }
+}
+
+void tool_eraser(enum effect_type etype, int fd_touch) {
+  printf("writing eraser [%s]\n", etype_to_string(etype));
+  switch (etype) {
+    case on:     activate_tool_eraser(fd_touch); break;
+    case toggle: toggle_tool_eraser(fd_touch); break;
+    case off:    deactivate_tool_eraser(fd_touch); break;
+  }
+}
 
 void activate_tool_eraser(int fd_pen) {
   printf("Activating ToolEraserRM2: writing eraser on\n");
@@ -222,8 +240,17 @@ void toggle_tool_eraser(int fd_pen) {
 
 static int oneOffHl = 0;
 
+void hl(enum effect_type etype, int fd_touch) {
+  printf("highlighter [%s]\n", etype_to_string(etype));
+  switch (etype) {
+    case on:     action_hl(fd_touch); break;
+    case toggle: toggle_hl(fd_touch); break;
+    case off:    action_fineliner(fd_touch); break;
+  }
+}
+
 void toggle_hl(int fd_pen) {
-  if (hl) {
+  if (hlOn) {
     action_fineliner(fd_pen);
   }
   else {
@@ -246,6 +273,15 @@ void action_tool_eraser(struct input_event *ev_pen, int fd_pen) {
 static int toolEraseSelect = 0;
 static int oneOffEraseSelect = 0;
 
+void tool_eraser_select(enum effect_type etype, int fd_touch) {
+  printf("writing erase selection [%s]\n", etype_to_string(etype));
+  switch (etype) {
+    case on:     activate_tool_eraser_select(fd_touch); break;
+    case toggle: toggle_tool_eraser_select(fd_touch); break;
+    case off:    deactivate_tool_eraser_select(fd_touch); break;
+  }
+}
+
 void activate_tool_eraser_select(int fd_touch) {
   printf("activating eraser select...\n");
   write_oriented_tap_sequence_toolbar(fd_touch, 4, ERASER_PANEL, ERASER_PANEL, ERASER_SELECTION, ERASER_PANEL);
@@ -266,6 +302,15 @@ void toggle_tool_eraser_select(int fd_touch) {
 }
 
 static int toolSelect = 0;
+
+void tool_select(enum effect_type etype, int fd_touch) {
+  printf("writing select [%s]\n", etype_to_string(etype));
+  switch (etype) {
+    case on:     activate_tool_select(fd_touch); break;
+    case toggle: toggle_tool_select(fd_touch); break;
+    case off:    deactivate_tool_select(fd_touch); break;
+  }
+}
 
 void activate_tool_select(int fd_touch) {
   // printf("Activating ToolSelect: writing select tool on\n");
@@ -320,21 +365,23 @@ void one_off_eraser(int fd_pen) {
   }
 }
 
-void pen_up(int fd_touch, int fd_pen) {
+int pen_up() {
   if (oneOffEraseSelect) {
-    write_oriented_tap_sequence(fd_touch, 4, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP);
-    deactivate_tool_eraser_select(fd_touch);
+    write_oriented_tap_sequence(0, 4, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP);
     oneOffEraseSelect = false;
+    return ERASER_SELECTION;
   }
   else if (oneOffEraser) {
-    deactivate_tool_eraser(fd_pen);
     oneOffEraser = false;
+    return ERASER_ERASE;
   }
   else if (oneOffHl) {
-    write_oriented_tap_sequence(fd_touch, 4, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP);
-    action_fineliner(fd_touch);
+    write_oriented_tap_sequence(0, 4, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP, LONG_SLEEP);
     oneOffHl = false;
+    return WRITING_FINELINER;
   }
+
+  return 0;
 }
 
 void setAssumeTBOpen(bool new) {

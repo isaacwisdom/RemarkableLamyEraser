@@ -20,15 +20,18 @@ void handle_current_tracking_ID(struct input_event *event);
 void write_tap_with_touch(int fd_touch, const int location[2]);
 int  write_oriented_tap_sequence(int fd_touch, int num_locations, ...);
 
+void tool_eraser(enum effect_type, int fd_pen);
 void activate_tool_eraser(int fd_pen);
 void deactivate_tool_eraser(int fd_pen);
 void toggle_tool_eraser(int fd_pen);
 void action_tool_eraser(struct input_event *ev_pen, int fd_pen);
 
+void tool_eraser_select(enum effect_type, int fd_touch);
 void activate_tool_eraser_select(int fd_touch);
 void deactivate_tool_eraser_select(int fd_touch);
 void toggle_tool_eraser_select(int fd_touch);
 
+void tool_select(enum effect_type, int fd_touch);
 void activate_tool_select(int fd_touch);
 void deactivate_tool_select(int fd_touch);
 void toggle_tool_select(int fd_touch);
@@ -44,6 +47,8 @@ void action_fineliner(int fd_touch);
 void action_calligraphy(int fd_touch);
 void action_black(int fd_touch);
 void action_grey(int fd_touch);
+
+void hl(enum effect_type, int fd_touch);
 void action_hl(int fd_touch);
 void toggle_hl(int fd_touch);
 
@@ -51,7 +56,7 @@ void one_off_erase_select(int fd_touch);
 void one_off_eraser(int fd_touch);
 void one_off_hl(int fd_touch);
 
-void pen_up(int fd_touch, int fd_pen);
+int pen_up();
 
 void test_locations(int fd);
 

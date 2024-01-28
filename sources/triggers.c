@@ -55,7 +55,7 @@ int get_triggger(struct input_event *ev_pen) {
         if (pressHoldSent) {
           // pen was pressed and later pulled away... can only know to send hold off after pen re-approaches screen
           printf("Event: PEN PRESS-PULL-AWAY...\n");
-          trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
+          trigger = HOLD_OFF | clicks; // press hold off type message
           pressHoldSent    = false;
         }
         clicks   = 0;
@@ -159,7 +159,7 @@ int get_triggger(struct input_event *ev_pen) {
 
   if (longClick) {
     printf("Event: PEN LONG CLICK (%d)...\n", clicks);
-    trigger = 0x00 | clicks; // long click type message 0b00xxxxxx
+    trigger = LCLICK | clicks; // long click type message
     clicks = 0;
     longClick = false;
     possiblyLongClick = false;
@@ -178,14 +178,14 @@ int get_triggger(struct input_event *ev_pen) {
         if (!pressHoldSent) {
           // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           printf("Event: PEN HOLD START (%d)...\n", clicks);
-          trigger = 0xc0 | clicks; // press hold on type message 0b11xxxxxx
+          trigger = HOLD_ON | clicks; // press hold on type message
           pressHoldSent    = true;
           possiblyLongClick = true; // (long click will be aborted if pen touches screen before button release)
         }
         else if (released) { // edge case: button pressed held and released between MCT and MCDT, pen hold end
           // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
           printf("Event: PEN HOLD END (%d)...\n", clicks);
-          trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
+          trigger = HOLD_OFF | clicks; // press hold off type message
           pressHoldSent    = false;
           if (possiblyLongClick) longClick = true; // send a long click in the next cycle
           else clicks = 0;
@@ -195,14 +195,14 @@ int get_triggger(struct input_event *ev_pen) {
       if (clickRegistered) {
         // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
         printf("Event: PEN CLICK (%d)...\n", clicks);
-        trigger       = 0x80 | clicks; // click type message 0b10xxxxxx
+        trigger       = CLICK | clicks; // click type message
         clickRegistered = false;
         clicks        = 0;
       }
       if (released) {
         // printf("Clicks: %d, prevTime=%ld.%ld, now=%ld.%ld\n" "elapsedTime = %f, clickRegistered = %d\n\n", clicks, prevTime.tv_sec, prevTime.tv_usec, ev_pen->time.tv_sec, ev_pen->time.tv_usec, elapsedTime, clickRegistered);
         printf("Event: PEN HOLD END (%d)...\n", clicks);
-        trigger = 0x40 | clicks; // press hold off type message 0b01xxxxxx
+        trigger = HOLD_OFF | clicks; // press hold off type message
         pressHoldSent    = false;
         if (possiblyLongClick) longClick = true; // send a long click in the next cycle
         else clicks = 0;
