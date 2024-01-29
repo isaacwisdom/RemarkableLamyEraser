@@ -62,7 +62,7 @@ The recognized triggers are:
 Additionally, you can set the following flags (with no arguments);
   * assume-toolbar-open (*)
 
-(*) NOTE: Since the release of Remarkable OS O.0.8, the UI has become less responsive to the the screen taps that this plugin simulates.
+(*) NOTE: Since the release of Remarkable OS 3.9, the UI has become less responsive to the the screen taps that this plugin simulates.
 So, we have had to increase some of the delays when switching tools, which unfortunately results in toolbar flickering and a slower response time.
 To avoid this, you can also set the field `assume-toolbar-open`,
 which will tell the program to not attempt to open+close the toolbar (which is does to access the buttons and preserve the current toolbar state).

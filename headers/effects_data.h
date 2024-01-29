@@ -32,9 +32,9 @@ enum effects {
 };
 
 enum effect_type {
-  on,
+  temp_on,
   toggle,
-  off,
+  temp_off,
 };
 
 //recognized words in config file

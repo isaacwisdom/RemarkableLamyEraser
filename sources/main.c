@@ -104,6 +104,9 @@ int main(int argc, char *argv[]) {
 
   setAssumeTBOpen(config.assumeTBOpen);
 
+  bool contact = false; // is the pen currently touching the screen?
+  bool held = false; // is the pen button currently registered as held?
+
   // Main loop body
   for (;;) {
     if (read(fd_touch, &ev_touch, input_event_size)) { // non-blocking
@@ -124,24 +127,53 @@ int main(int argc, char *argv[]) {
     int trigger_type = trigger & 0xf0;
     int trigger_count = trigger & 0x0f;
 
-    enum effect_type etype = on;
+    enum effect_type etype = temp_on;
 
     if (trigger_type == CLICK || trigger_type == LCLICK) etype = toggle;
-    else if (trigger_type == HOLD_OFF || trigger_type == PEN_UP) etype = off;
+    else if (trigger_type == HOLD_OFF || trigger_type == PEN_UP) etype = temp_off;
 
-    switch (trigger_type) {
-      case CLICK: effect = config.clickEffect[trigger_count - 1]; break;
+    bool ingoreTrigger = (trigger_type == HOLD_ON && contact) || (trigger_type == HOLD_OFF && !held);
 
-      case LCLICK: effect = config.longClickEffect[trigger_count - 1]; break;
+    effect = NULL_EFFECT;
 
-      case HOLD_ON: effect = config.holdEffect[trigger_count - 1]; break;
+    if (!ingoreTrigger) {
+      switch (trigger_type) {
+        case CLICK: effect = config.clickEffect[trigger_count - 1]; break;
 
-      case HOLD_OFF: effect = config.holdEffect[trigger_count - 1]; break;
+        case LCLICK: effect = config.longClickEffect[trigger_count - 1]; break;
 
-      case PEN_UP: effect = pen_up(); break;
+        case HOLD_ON: effect = config.holdEffect[trigger_count - 1]; held = true; break;
 
-      default:
-        effect = NULL_EFFECT;
+        case HOLD_OFF:
+          if (!contact) effect = temp_effect_end(); // defer disabling temporary effect to PEN_UP if pen is still on screen
+          held = false;
+          break;
+
+        case PEN_DOWN: contact = true; break;
+
+        case PEN_UP:
+          if (!held) effect = temp_effect_end(); // defer disabling temporary effect to HOLD_OFF if pen button is still held
+          contact = false;
+          break;
+      }
+    }
+
+    switch (effect) {
+      case ONE_OFF_HL:
+        printf("one-off highlighter\n");
+        effect = WRITING_HL;
+        etype = one_off();
+        break;
+      case ONE_OFF_ERASER:
+        printf("one-off eraser\n");
+        effect = ERASER_ERASE;
+        etype = one_off();
+        break;
+      case ONE_OFF_ERASER_SELECTION:
+        printf("one-off eraser select\n");
+        effect = ERASER_SELECTION;
+        etype = one_off();
+        break;
     }
 
     /*if(effect != 0)
@@ -190,11 +222,12 @@ int main(int argc, char *argv[]) {
         printf("writing grey colour\n");
         action_grey(fd_touch);
         break;
+
+      // toggle tools
       case WRITING_HL:
         hl(etype, fd_touch);
         break;
 
-      // tools here
       case ERASER_ERASE:
         tool_eraser(etype, fd_wacom);
         break;
@@ -205,21 +238,6 @@ int main(int argc, char *argv[]) {
 
       case SELECT:
         tool_select(etype, fd_touch);
-        break;
-
-      case ONE_OFF_ERASER_SELECTION:
-        printf("one-off eraser select\n");
-        one_off_erase_select(fd_touch);
-        break;
-
-      case ONE_OFF_ERASER:
-        printf("one-off eraser\n");
-        one_off_eraser(fd_wacom);
-        break;
-
-      case ONE_OFF_HL:
-        printf("one-off highlighter\n");
-        one_off_hl(fd_touch);
         break;
     }
     action_tool_eraser(&ev_wacom, fd_wacom);

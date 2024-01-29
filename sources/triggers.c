@@ -116,6 +116,7 @@ int get_triggger(struct input_event *ev_pen) {
   } else {
     if (ev_pen->code == ABS_DISTANCE && ev_pen->value == 0) {
       printf("Event: PEN CONTACT...\n");
+      trigger = PEN_DOWN; // pen-down type message
       contact = true;
     }
   }

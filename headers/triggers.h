@@ -27,6 +27,8 @@
 
 #define PEN_UP       0x50
 
+#define PEN_DOWN     0x60
+
 #define MAX_CYCLE_TIME         0.01 //seconds
 #define MAX_CONTACT_CLICK_TIME 0.01 //seconds
 #define MAX_CLICK_TIME         0.2  //seconds

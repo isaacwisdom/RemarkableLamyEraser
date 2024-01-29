@@ -52,11 +52,9 @@ void hl(enum effect_type, int fd_touch);
 void action_hl(int fd_touch);
 void toggle_hl(int fd_touch);
 
-void one_off_erase_select(int fd_touch);
-void one_off_eraser(int fd_touch);
-void one_off_hl(int fd_touch);
+enum effect_type one_off();
 
-int pen_up();
+int temp_effect_end();
 
 void test_locations(int fd);
 
