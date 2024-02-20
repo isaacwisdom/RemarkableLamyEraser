@@ -13,20 +13,25 @@ static const struct input_event tool_pen_off =     {.type = EV_KEY, .code = BTN_
 static const struct input_event tool_rubber_on =   {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 1}; // used when rubber approaches the screen
 static const struct input_event tool_rubber_off =  {.type = EV_KEY, .code = BTN_TOOL_RUBBER, .value = 0};
 
+static bool assumeTBOpen = false;
+
 void write_event(int fd_touch, struct input_event event);
 void handle_current_tracking_ID(struct input_event *event);
 void write_tap_with_touch(int fd_touch, const int location[2]);
 int  write_oriented_tap_sequence(int fd_touch, int num_locations, ...);
 
+void tool_eraser(enum effect_type, int fd_pen);
 void activate_tool_eraser(int fd_pen);
 void deactivate_tool_eraser(int fd_pen);
 void toggle_tool_eraser(int fd_pen);
 void action_tool_eraser(struct input_event *ev_pen, int fd_pen);
 
+void tool_eraser_select(enum effect_type, int fd_touch);
 void activate_tool_eraser_select(int fd_touch);
 void deactivate_tool_eraser_select(int fd_touch);
 void toggle_tool_eraser_select(int fd_touch);
 
+void tool_select(enum effect_type, int fd_touch);
 void activate_tool_select(int fd_touch);
 void deactivate_tool_select(int fd_touch);
 void toggle_tool_select(int fd_touch);
@@ -42,9 +47,17 @@ void action_fineliner(int fd_touch);
 void action_calligraphy(int fd_touch);
 void action_black(int fd_touch);
 void action_grey(int fd_touch);
+
+void hl(enum effect_type, int fd_touch);
 void action_hl(int fd_touch);
 void toggle_hl(int fd_touch);
 
+enum effect_type one_off();
+
+int temp_effect_end();
+
 void test_locations(int fd);
+
+void setAssumeTBOpen(bool assumeTBOpen);
 
 #endif // EFFECTS_H

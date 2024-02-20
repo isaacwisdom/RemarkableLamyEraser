@@ -59,6 +59,16 @@ The recognized triggers are:
   * quintuple-press&hold
   * long-click
 
+Additionally, you can set the following flags (with no arguments);
+  * assume-toolbar-open (*)
+
+(*) NOTE: Since the release of Remarkable OS 3.9, the UI has become less responsive to the the screen taps that this plugin simulates.
+So, we have had to increase some of the delays when switching tools, which unfortunately results in toolbar flickering and a slower response time.
+To avoid this, you can also set the field `assume-toolbar-open`,
+which will tell the program to not attempt to open+close the toolbar (which is does to access the buttons and preserve the current toolbar state).
+The downside of this, of course, is that you must always keep the toolbar open while using this tool.
+Unfortunately, this is not a complete solution either and you may still find that some effects do not fully execute.
+
 The "long click" trigger only activates if you press, hold, and release the button without writing.
 Note that if you map this trigger, you will have to be careful about not accidentally activating it:
 if you press the button intending to use the press&hold trigger, but later change you mind and release it,
@@ -84,6 +94,9 @@ The available tools are:
     note this mode uses special features available from the marker plus.
   * select: Changes to select tool.
     On deactivation, changes back to writing utensil
+  * one-off-eraser/one-off-eraser-selection/one-off-hl: Changes to eraser/eraser select/highlighter tool,
+    and back to writing tool after you're done erasing.
+    Abort by activating again.
 
 You can also toggle between the fineliner and the highlighter using writing-hl.
 

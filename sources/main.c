@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
   char               wacom_device_path[18], touch_device_path[18];
   int                rm_version    = get_rm_version();
   int                sw_version[4] = {0, 0, 0, 0};
+  bool trigger_debug = false;
   get_software_version(sw_version);
 
   printf("RemarkableLamyEraser 2.2.0\n");
@@ -78,6 +79,8 @@ int main(int argc, char *argv[]) {
       confPath = argv[++i];
     } else if (!strcmp(argv[i], "--test-locations")) {
       test_locations(fd_touch); // program will exit
+    } else if (!strcmp(argv[i], "--trigger-debug")) {
+      trigger_debug = true;
     } else {
       printf("Unknown argument %s. Valid options are:\n"
              "--config-file </path/to/config>\n"
@@ -87,98 +90,90 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
   }
-
-  printf("Using configuration file at %s\n", confPath);
-  if (get_trigger_config(confPath, &config) != 0) {
-    printf("Reading configuration file failed. Exiting...\n");
-    exit(EXIT_FAILURE);
+  if (!trigger_debug) {
+    printf("Using configuration file at %s\n", confPath);
+    if (get_trigger_config(confPath, &config) != 0) {
+      printf("Reading configuration file failed. Exiting...\n");
+      exit(EXIT_FAILURE);
+    }
+    printf("----------------------------------\n");
   }
-  printf("----------------------------------\n");
-
-  int temp;
-
-#define TOGGLE temp == ERASER_ERASE || temp == ERASER_SELECTION || temp == SELECT || temp == WRITING_HL
-
-  temp = config.click1Effect;
-  if (TOGGLE)
-    config.click1Effect += TOGGLE_OFFSET;
-
-  temp = config.click2Effect;
-  if (TOGGLE)
-    config.click2Effect += TOGGLE_OFFSET;
-
-  temp = config.click3Effect;
-  if (TOGGLE)
-    config.click3Effect += TOGGLE_OFFSET;
-
-  temp = config.click4Effect;
-  if (TOGGLE)
-    config.click4Effect += TOGGLE_OFFSET;
-
-  temp = config.click5Effect;
-  if (TOGGLE)
-    config.click5Effect += TOGGLE_OFFSET;
-
-  temp = config.longClick1Effect;
-  if (TOGGLE)
-    config.longClick1Effect += TOGGLE_OFFSET;
-
-  temp = config.longClick2Effect;
-  if (TOGGLE)
-    config.longClick2Effect += TOGGLE_OFFSET;
-
-  temp = config.longClick3Effect;
-  if (TOGGLE)
-    config.longClick3Effect += TOGGLE_OFFSET;
-
-  temp = config.longClick4Effect;
-  if (TOGGLE)
-    config.longClick4Effect += TOGGLE_OFFSET;
-
-  temp = config.longClick5Effect;
-  if (TOGGLE)
-    config.longClick5Effect += TOGGLE_OFFSET;
 
   int flags = fcntl(fd_touch, F_GETFL, 0);
   fcntl(fd_touch, F_SETFL, flags | O_NONBLOCK);
+
+  setAssumeTBOpen(config.assumeTBOpen);
+
+  bool contact = false; // is the pen currently touching the screen?
+  bool held = false; // is the pen button currently registered as held?
 
   // Main loop body
   for (;;) {
     if (read(fd_touch, &ev_touch, input_event_size)) { // non-blocking
       handle_current_tracking_ID(&ev_touch);
+      // you can get a continous stream of touch events by holding the pen close to the screen while tapping with your finger
+      if (ev_touch.code == ABS_MT_POSITION_X || ev_touch.code == ABS_MT_POSITION_Y) {
+        // printf("event: %x, %d\n", ev_touch.code, ev_touch.value);
+      }
     }
     // Note: read pauses until there is data
     read(fd_wacom, &ev_wacom, input_event_size);
     // printf("event: %x, %d\n", ev_wacom.code, ev_wacom.value);
     trigger = get_triggger(&ev_wacom);
+    
+    if (trigger_debug) continue;
     // printTriggers(trigger, false);
 
-    switch (trigger) {
-      case CLICK_1: effect = config.click1Effect; break;
-      case CLICK_2: effect = config.click2Effect; break;
-      case CLICK_3: effect = config.click3Effect; break;
-      case CLICK_4: effect = config.click4Effect; break;
-      case CLICK_5: effect = config.click5Effect; break;
+    int trigger_type = trigger & 0xf0;
+    int trigger_count = trigger & 0x0f;
 
-      case LCLICK_1: effect = config.longClick1Effect; break;
-      case LCLICK_2: effect = config.longClick2Effect; break;
-      case LCLICK_3: effect = config.longClick3Effect; break;
-      case LCLICK_4: effect = config.longClick4Effect; break;
-      case LCLICK_5: effect = config.longClick5Effect; break;
+    enum effect_type etype = temp_on;
 
-      case HOLD_1_ON: effect = config.hold1Effect; break;
-      case HOLD_2_ON: effect = config.hold2Effect; break;
-      case HOLD_3_ON: effect = config.hold3Effect; break;
-      case HOLD_4_ON: effect = config.hold4Effect; break;
-      case HOLD_5_ON: effect = config.hold5Effect; break;
+    if (trigger_type == CLICK || trigger_type == LCLICK) etype = toggle;
+    else if (trigger_type == HOLD_OFF || trigger_type == PEN_UP) etype = temp_off;
 
-      case HOLD_1_OFF: effect = config.hold1Effect + HOLD_OFF_OFFSET; break;
-      case HOLD_2_OFF: effect = config.hold2Effect + HOLD_OFF_OFFSET; break;
-      case HOLD_3_OFF: effect = config.hold3Effect + HOLD_OFF_OFFSET; break;
-      case HOLD_4_OFF: effect = config.hold4Effect + HOLD_OFF_OFFSET; break;
-      case HOLD_5_OFF: effect = config.hold5Effect + HOLD_OFF_OFFSET; break;
-      default:
-        effect = NULL_EFFECT;
+    bool ingoreTrigger = (trigger_type == HOLD_ON && contact) || (trigger_type == HOLD_OFF && !held);
+
+    effect = NULL_EFFECT;
+
+    if (!ingoreTrigger) {
+      switch (trigger_type) {
+        case CLICK: effect = config.clickEffect[trigger_count - 1]; break;
+
+        case LCLICK: effect = config.longClickEffect[trigger_count - 1]; break;
+
+        case HOLD_ON: effect = config.holdEffect[trigger_count - 1]; held = true; break;
+
+        case HOLD_OFF:
+          if (!contact) effect = temp_effect_end(); // defer disabling temporary effect to PEN_UP if pen is still on screen
+          held = false;
+          break;
+
+        case PEN_DOWN: contact = true; break;
+
+        case PEN_UP:
+          if (!held) effect = temp_effect_end(); // defer disabling temporary effect to HOLD_OFF if pen button is still held
+          contact = false;
+          break;
+      }
+    }
+
+    switch (effect) {
+      case ONE_OFF_HL:
+        printf("one-off highlighter\n");
+        effect = WRITING_HL;
+        etype = one_off();
+        break;
+      case ONE_OFF_ERASER:
+        printf("one-off eraser\n");
+        effect = ERASER_ERASE;
+        etype = one_off();
+        break;
+      case ONE_OFF_ERASER_SELECTION:
+        printf("one-off eraser select\n");
+        effect = ERASER_SELECTION;
+        etype = one_off();
+        break;
     }
 
     /*if(effect != 0)
@@ -227,53 +222,22 @@ int main(int argc, char *argv[]) {
         printf("writing grey colour\n");
         action_grey(fd_touch);
         break;
+
+      // toggle tools
       case WRITING_HL:
-        printf("writing highlighter\n");
-        action_hl(fd_touch);
-        break;
-      case HL_TOGGLE:
-        printf("toggle highlighter\n");
-        toggle_hl(fd_touch);
+        hl(etype, fd_touch);
         break;
 
-      // tools here
       case ERASER_ERASE:
-        printf("writing eraser [on]\n");
-        activate_tool_eraser(fd_wacom);
-        break;
-      case ERASER_ERASE_OFF:
-        printf("writing eraser [off]\n");
-        deactivate_tool_eraser(fd_wacom);
-        break;
-      case ERASER_ERASE_TOGGLE:
-        printf("writing eraser [toggle]\n");
-        toggle_tool_eraser(fd_wacom);
+        tool_eraser(etype, fd_wacom);
         break;
 
       case ERASER_SELECTION:
-        printf("writing erase selection [on]\n");
-        activate_tool_eraser_select(fd_touch);
-        break;
-      case ERASER_SELECTION_OFF:
-        printf("writing erase selection [off]\n");
-        deactivate_tool_eraser_select(fd_touch);
-        break;
-      case ERASER_SELECT_TOGGLE:
-        printf("writing erase selection [toggle]\n");
-        toggle_tool_eraser_select(fd_touch);
+        tool_eraser_select(etype, fd_touch);
         break;
 
       case SELECT:
-        printf("writing select [on]\n");
-        activate_tool_select(fd_touch);
-        break;
-      case SELECT_OFF:
-        printf("writing select [off]\n");
-        deactivate_tool_select(fd_touch);
-        break;
-      case SELECT_TOGGLE:
-        printf("writing select [toggle]\n");
-        toggle_tool_select(fd_touch);
+        tool_select(etype, fd_touch);
         break;
     }
     action_tool_eraser(&ev_wacom, fd_wacom);

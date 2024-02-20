@@ -2,21 +2,10 @@
 #define CONFIGURATION_H
 
 struct configuration {
-  int click1Effect;
-  int click2Effect;
-  int click3Effect;
-  int click4Effect;
-  int click5Effect;
-  int longClick1Effect;
-  int longClick2Effect;
-  int longClick3Effect;
-  int longClick4Effect;
-  int longClick5Effect;
-  int hold1Effect;
-  int hold2Effect;
-  int hold3Effect;
-  int hold4Effect;
-  int hold5Effect;
+  int clickEffect[5];
+  int longClickEffect[5];
+  int holdEffect[5];
+  int assumeTBOpen;
 };
 
 #define NUM_TRIGGERS  12
@@ -33,8 +22,15 @@ struct configuration {
 #define TRIGGER_HOLD_5     10
 #define TRIGGER_LCLICK     11
 
+#define NUM_FLAGS          1
+
+//non-trigger config values
+#define ASSUME_TB_OPEN     12
+
+#define NUM_TOTAL_CONFIGS NUM_TRIGGERS + NUM_FLAGS
+
 // Recognized words in configuration file.
-static const char *triggers[NUM_TRIGGERS] = {
+static const char *configs[NUM_TOTAL_CONFIGS] = {
     "",                     // for alignment    0
     "click",                // TRIGGER_CLICK_1  1
     "double-click",         // TRIGGER_CLICK_2  2
@@ -47,6 +43,7 @@ static const char *triggers[NUM_TRIGGERS] = {
     "quadruple-press&hold", // TRIGGER_PRESS_4  9
     "quintuple-press&hold", // TRIGGER_PRESS_5  10
     "long-click",           // TRIGGER_LCLICK_1 11
+    "assume-toolbar-open",  // ASSUME_TB_OPEN   12
 };
 
 int get_trigger_config(const char *path, struct configuration *config);
