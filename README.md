@@ -2,6 +2,12 @@
 
 Standalone tool that turns the button on the Lamy Pen into an eraser on the reMarkable.
 
+This branch is updated to work with the reMarkable 2 version 3.5.x and above.
+Further, ReMarkable 1 support has been removed.
+If you object to this,
+and are willing to maintain the respective functionality,
+feel free to open a pull request.
+
 # Installation
 
 The tool will definitely break when the reMarkable updates.
@@ -26,7 +32,7 @@ However, your configuration can be customised by changing the configuration file
 (for example, by running `nano ~/.config/LamyEraser/LamyEraser.conf`).
 In this file, you can freely assign effects to different triggers.
 
-The recognized triggers are:
+The recognised triggers are:
 
   * click
   * double-click
@@ -43,10 +49,13 @@ The recognized triggers are:
 Additionally, you can set the following flags (with no arguments);
   * assume-toolbar-open (*)
 
-(*) NOTE: Since the release of Remarkable OS 3.9, the UI has become less responsive to the the screen taps that this plugin simulates.
-So, we have had to increase some of the delays when switching tools, which unfortunately results in toolbar flickering and a slower response time.
+(*) NOTE: Since the release of reMarkable OS 3.9,
+the UI has become less responsive to the the screen taps that this plugin simulates.
+As a result, we have had to increase some of the delays when switching tools,
+which unfortunately results in toolbar flickering and a slower response time.
 To avoid this, you can also set the field `assume-toolbar-open`,
-which will tell the program to not attempt to open+close the toolbar (which is does to access the buttons and preserve the current toolbar state).
+which will tell the program to not attempt to open and close the toolbar
+(which it otherwise does to access the buttons and preserve the current toolbar state).
 The downside of this, of course, is that you must always keep the toolbar open while using this tool.
 Unfortunately, this is not a complete solution either and you may still find that some effects do not fully execute.
 
@@ -63,19 +72,19 @@ or with click-type triggers as toggles.
 
 The available actions are:
 
-  * toolbar: Presses the toolbar panel button.
-  * writing: Presses the writing utensil button.
-  * undo: Presses the undo button.
-  * redo: Presses the redo button.
+  * `toolbar`: Presses the toolbar panel button.
+  * `writing`: Presses the writing utensil button.
+  * `undo`: Presses the undo button.
+  * `redo`: Presses the redo button.
 
 The available tools are:
 
-  * eraser-erase: Changes to eraser tool.
+  * `eraser-erase`: Changes to eraser tool.
     On deactivation, changes back to writing utensil;
     note this mode uses special features available from the marker plus.
-  * select: Changes to select tool.
+  * `select`: Changes to select tool.
     On deactivation, changes back to writing utensil
-  * one-off-eraser/one-off-eraser-selection/one-off-hl: Changes to eraser/eraser select/highlighter tool,
+  * `one-off-eraser`/`one-off-eraser-selection`/`one-off-hl`: Changes to eraser/eraser select/highlighter tool,
     and back to writing tool after you're done erasing.
     Abort by activating again.
 
@@ -90,7 +99,7 @@ $ systemctl restart LamyEraser.service
 
 You can also check your current config by running the program directly
 
-``` Shell
+``` console
 $ systemctl stop LamyEraser.service
 $ RemarkableLamyEraser
 ```
