@@ -37,7 +37,8 @@ void deactivate_tool_select(int fd_touch);
 void toggle_tool_select(int fd_touch);
 
 void action_toolbar(int fd_touch);
-void action_writing(int fd_touch);
+void action_writing1(int fd_touch);
+void action_writing2(int fd_touch);
 void action_stroke_panel(int fd_touch);
 void action_text(int fd_touch);
 void action_eraser_panel(int fd_touch);

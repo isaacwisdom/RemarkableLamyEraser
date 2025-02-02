@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
     read(fd_wacom, &ev_wacom, input_event_size);
     // printf("event: %x, %d\n", ev_wacom.code, ev_wacom.value);
     trigger = get_triggger(&ev_wacom);
-    
+
     if (trigger_debug) continue;
     // printTriggers(trigger, false);
 
@@ -186,9 +186,13 @@ int main(int argc, char *argv[]) {
         printf("writing toolbar\n");
         action_toolbar(fd_touch);
         break;
-      case WRITING:
-        printf("writing write\n");
-        action_writing(fd_touch);
+      case WRITING1:
+        printf("writing write1\n");
+        action_writing1(fd_touch);
+        break;
+      case WRITING2:
+        printf("writing write2\n");
+        action_writing2(fd_touch);
         break;
       case TEXT:
         printf("writing text\n");
